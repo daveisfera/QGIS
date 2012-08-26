@@ -31,6 +31,11 @@ class QgsGraphArc
      * return index of incoming vertex
      */
     int inVertex() const;
+
+	/**
+	 * return user data
+	 */
+    QVariant userData() const;
 };
 
 
@@ -72,6 +77,11 @@ class QgsGraphVertex
      * return vertex point
      */
     QgsPoint point() const; 
+    
+	/**
+	 * return user data
+	 */
+    QVariant userData() const;
 };
 
 /**

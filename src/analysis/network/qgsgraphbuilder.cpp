@@ -33,14 +33,14 @@ QgsGraphBuilder::~QgsGraphBuilder()
     delete mGraph;
 }
 
-void QgsGraphBuilder::addVertex( int, const QgsPoint& pt )
+void QgsGraphBuilder::addVertex( int, const QgsPoint& pt, const QVariant& userData )
 {
-  mGraph->addVertex( pt );
+  mGraph->addVertex( pt, userData );
 }
 
-void QgsGraphBuilder::addArc( int pt1id, const QgsPoint&, int pt2id, const QgsPoint&, const QVector< QVariant >& prop )
+void QgsGraphBuilder::addArc( int pt1id, const QgsPoint&, int pt2id, const QgsPoint&, const QVector< QVariant >& prop, const QVariant& userData )
 {
-  mGraph->addArc( pt1id, pt2id, prop );
+  mGraph->addArc( pt1id, pt2id, prop, userData );
 }
 
 QgsGraph* QgsGraphBuilder::graph()

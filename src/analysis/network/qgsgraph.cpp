@@ -26,19 +26,20 @@ QgsGraph::~QgsGraph()
 
 }
 
-int QgsGraph::addVertex( const QgsPoint& pt )
+int QgsGraph::addVertex( const QgsPoint& pt, const QVariant& userData )
 {
-  mGraphVertexes.append( QgsGraphVertex( pt ) );
+  mGraphVertexes.append( QgsGraphVertex( pt, userData ) );
   return mGraphVertexes.size() - 1;
 }
 
-int QgsGraph::addArc( int outVertexIdx, int inVertexIdx, const QVector< QVariant >& properties )
+int QgsGraph::addArc( int outVertexIdx, int inVertexIdx, const QVector< QVariant >& properties, const QVariant& userData )
 {
   QgsGraphArc e;
 
   e.mProperties = properties;
   e.mOut = outVertexIdx;
   e.mIn  = inVertexIdx;
+  e.mUserData = userData;
   mGraphArc.push_back( e );
   int edgeIdx = mGraphArc.size() - 1;
 
@@ -107,8 +108,13 @@ int QgsGraphArc::outVertex() const
   return mOut;
 }
 
-QgsGraphVertex::QgsGraphVertex( const QgsPoint& point )
-    : mCoordinate( point )
+QVariant QgsGraphArc::userData() const
+{
+  return mUserData;
+}
+
+QgsGraphVertex::QgsGraphVertex( const QgsPoint& point, const QVariant& userData )
+    : mCoordinate( point ), mUserData( userData )
 {
 
 }
@@ -126,4 +132,9 @@ QgsGraphArcIdList QgsGraphVertex::inArc() const
 QgsPoint QgsGraphVertex::point() const
 {
   return mCoordinate;
+}
+
+QVariant QgsGraphVertex::userData() const
+{
+  return mUserData;
 }

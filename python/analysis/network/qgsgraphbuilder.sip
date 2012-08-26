@@ -21,9 +21,9 @@ class QgsGraphBuilder : QgsGraphBuilderInterface
     /*
      * MANDATORY BUILDER PROPERTY DECLARATION
      */
-    virtual void addVertex( int id, const QgsPoint& pt );
+    virtual void addVertex( int id, const QgsPoint& pt, const QVariant& userData = QVariant() );
 
-    virtual void addArc( int pt1id, const QgsPoint& pt1, int pt2id, const QgsPoint& pt2, const QVector< QVariant >& prop );
+    virtual void addArc( int pt1id, const QgsPoint& pt1, int pt2id, const QgsPoint& pt2, const QVector< QVariant >& prop, const QVariant& userData = QVariant() );
 
     /**
      * return QgsGraph result;

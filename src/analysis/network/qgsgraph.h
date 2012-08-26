@@ -67,9 +67,15 @@ class ANALYSIS_EXPORT QgsGraphArc
      */
     int inVertex() const;
 
+    /**
+     * return user data
+     */
+    QVariant userData() const;
+
   private:
 
     QVector< QVariant > mProperties;
+    QVariant mUserData;
 
     int mOut;
     int mIn;
@@ -97,7 +103,7 @@ class ANALYSIS_EXPORT QgsGraphVertex
      * This constructor initializes QgsGraphVertex object and associates a vertex with a point
      */
 
-    QgsGraphVertex( const QgsPoint& point );
+    QgsGraphVertex( const QgsPoint& point, const QVariant& userData = QVariant() );
 
     /**
      * return outgoing edges
@@ -114,8 +120,14 @@ class ANALYSIS_EXPORT QgsGraphVertex
      */
     QgsPoint point() const;
 
+    /**
+     * return user data
+     */
+    QVariant userData() const;
+
   private:
     QgsPoint mCoordinate;
+    QVariant mUserData;
     QgsGraphArcIdList mOutArc;
     QgsGraphArcIdList mInArc;
 
@@ -139,12 +151,12 @@ class ANALYSIS_EXPORT QgsGraph
     /**
      * add vertex to a grap
      */
-    int addVertex( const QgsPoint& pt );
+    int addVertex( const QgsPoint& pt, const QVariant& userData = QVariant() );
 
     /**
      * add edge to a graph
      */
-    int addArc( int outVertexIdx, int inVertexIdx, const QVector< QVariant >& properties );
+    int addArc( int outVertexIdx, int inVertexIdx, const QVector< QVariant >& properties, const QVariant& userData = QVariant() );
 
     /**
      * return vertex count

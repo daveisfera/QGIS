@@ -103,6 +103,9 @@ qgsprojectionselector.cpp
 qgsrasterlayersaveasdialog.cpp
 qgsrasterformatsaveoptionswidget.cpp
 qgsrasterpyramidsoptionswidget.cpp
+qgsrelationmanagerdialog.cpp
+qgsrelationmanagertreemodel.cpp
+qgsrelationadddlg.cpp
 qgsrubberband.cpp
 qgsscalecombobox.cpp
 qgssvgannotationitem.cpp
@@ -215,6 +218,9 @@ qgsprojectionselector.h
 qgsrasterlayersaveasdialog.h
 qgsrasterformatsaveoptionswidget.h
 qgsrasterpyramidsoptionswidget.h
+qgsrelationmanagerdialog.h
+qgsrelationmanagertreemodel.h
+qgsrelationadddlg.h
 qgsludialog.h
 qgsprojectbadlayerguihandler.h
 qgslonglongvalidator.h

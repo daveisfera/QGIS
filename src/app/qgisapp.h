@@ -57,6 +57,7 @@ class QgsPoint;
 class QgsProviderRegistry;
 class QgsPythonUtils;
 class QgsRectangle;
+class QgsRelationManager;
 class QgsUndoWidget;
 class QgsVectorLayer;
 
@@ -175,6 +176,10 @@ class APP_EXPORT QgisApp : public QMainWindow, private Ui::MainWindow
     /** Get the mapcanvas object from the app */
     QgsMapCanvas *mapCanvas();
 
+    /** Get the relation manager */
+    QgsRelationManager* relationManager();
+
+    /** Return the messageBar object which allows to display unobtrusive messages to the user.*/
     QgsMessageBar* messageBar();
 
     /** Get the mapcanvas object from the app */
@@ -1420,6 +1425,8 @@ class APP_EXPORT QgisApp : public QMainWindow, private Ui::MainWindow
     QString mStartupPath;
     //! full path name of the current map file (if it has been saved or loaded)
     QString mFullPathName;
+    //! Relation manager
+    QgsRelationManager* mRelationManager;
 
     //! interface to QgisApp for plugins
     QgisAppInterface *mQgisInterface;

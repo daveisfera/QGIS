@@ -176,6 +176,7 @@
 #include "qgsrasterrenderer.h"
 #include "qgsrasterlayersaveasdialog.h"
 #include "qgsrectangle.h"
+#include "qgsrelationmanager.h"
 #include "qgsscalecombobox.h"
 #include "qgsshortcutsmanager.h"
 #include "qgssinglebandgrayrenderer.h"
@@ -512,6 +513,8 @@ QgisApp::QgisApp( QSplashScreen *splash, bool restorePlugins, QWidget * parent, 
   mMapLegend = new QgsLegend( mMapCanvas, this, "theMapLegend" );
 
   mMapLayerOrder = new QgsLayerOrder( mMapLegend, this, "theMapLayerOrder" );
+
+  mRelationManager = new QgsRelationManager();
 
   // create undo widget
   mUndoWidget = new QgsUndoWidget( NULL, mMapCanvas );
@@ -2124,6 +2127,12 @@ QgsMapCanvas *QgisApp::mapCanvas()
 {
   Q_ASSERT( mMapCanvas );
   return mMapCanvas;
+}
+
+QgsRelationManager *QgisApp::relationManager()
+{
+  Q_ASSERT( mRelationManager );
+  return mRelationManager;
 }
 
 QgsPalLabeling *QgisApp::palLabeling()

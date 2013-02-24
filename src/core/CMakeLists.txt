@@ -106,6 +106,7 @@ SET(QGIS_CORE_SRCS
   qgsprovidermetadata.cpp
   qgsproviderregistry.cpp
   qgspythonrunner.cpp
+  qgsrelationmanager.cpp
   qgsrendercontext.cpp
   qgsrenderchecker.cpp
   qgsrectangle.cpp
@@ -310,6 +311,7 @@ SET(QGIS_CORE_MOC_HDRS
   qgspluginlayer.h
   qgsproject.h
   qgsrunprocess.h
+  qgsrelationmanager.h
   qgsvectorlayer.h
   qgsvectorlayereditbuffer.h
   qgsnetworkaccessmanager.h
@@ -426,6 +428,7 @@ SET(QGIS_CORE_HDRS
   qgsrectangle.h
   qgsrendercontext.h
   qgsrenderchecker.h
+  qgsrelationmanager.h
   qgsrunprocess.h
   qgsscalecalculator.h
   qgssnapper.h

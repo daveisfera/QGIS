@@ -152,6 +152,15 @@
             <normaloff>:/images/themes/default/propertyicons/action.svg</normaloff>:/images/themes/default/propertyicons/action.svg</iconset>
           </property>
          </item>
+         <item>
+          <property name="text">
+           <string>Relations</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../../images/images.qrc">
+            <normaloff>:/images/themes/classic/mActionTouch.png</normaloff>:/images/themes/classic/mActionTouch.png</iconset>
+          </property>
+         </item>
         </widget>
        </item>
       </layout>
@@ -1968,6 +1977,13 @@
              </widget>
             </widget>
            </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="mTabRelations">
+          <layout class="QGridLayout" name="gridLayout_16">
+           <property name="margin">
+            <number>0</number>
+           </property>
           </layout>
          </widget>
         </widget>

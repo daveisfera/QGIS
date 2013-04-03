@@ -357,6 +357,10 @@ void QgsAttributeTypeDialog::setPageForEditType( QgsVectorLayer::EditType editTy
     case QgsVectorLayer::Color:
       setPage( 16 );
       break;
+
+    case QgsVectorLayer::Relation:
+      setPage( 17 );
+      break;
   }
 }
 

@@ -28,6 +28,7 @@ class QgsVectorLayer;
 class QComboBox;
 class QListWidget;
 class QgsAttributeEditorElement;
+class QgsDualView;
 
 /* \brief create attribute widget for editing */
 class GUI_EXPORT QgsAttributeEditor : public QObject
@@ -78,6 +79,7 @@ class GUI_EXPORT QgsAttributeEditor : public QObject
   private:
     static QComboBox *comboBox( QWidget *editor, QWidget *parent );
     static QListWidget *listWidget( QWidget *editor, QWidget *parent );
+    static QgsDualView* dualView( QWidget* editor, QWidget* parent );
 
   public slots:
     void selectFileName();

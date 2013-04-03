@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 #include "qgsattributeeditor.h"
+#include <qgsdualview.h>
 #include <qgsvectorlayer.h>
 #include <qgsvectordataprovider.h>
 #include <qgscategorizedsymbolrendererv2.h>
@@ -263,6 +264,17 @@ QListWidget *QgsAttributeEditor::listWidget( QWidget *editor, QWidget *parent )
   return lw;
 }
 
+QgsDualView* QgsAttributeEditor::dualView( QWidget* editor, QWidget* parent )
+{
+  QgsDualView *dv = 0;
+  if ( editor )
+    dv = qobject_cast<QgsDualView *>( editor );
+  else
+    dv = new QgsDualView();
+
+  return dv;
+}
+
 QWidget *QgsAttributeEditor::createAttributeEditor( QWidget *parent, QWidget *editor, QgsVectorLayer *vl, int idx, const QVariant &value )
 {
   QMap<int, QWidget*> dummyProxyWidgets;
@@ -443,6 +455,16 @@ QWidget *QgsAttributeEditor::createAttributeEditor( QWidget *parent, QWidget *ed
       }
     }
     break;
+
+
+    case QgsVectorLayer::Relation:
+    {
+      QgsDualView *dv = dualView( editor, parent );
+
+      myWidget = dv;
+    }
+    break;
+
 
     case QgsVectorLayer::Classification:
     {

@@ -764,6 +764,7 @@ void QgsFieldsProperties::setupEditTypes()
   editTypeMap.insert( QgsVectorLayer::TextEdit, tr( "Text edit" ) );
   editTypeMap.insert( QgsVectorLayer::Calendar, tr( "Calendar" ) );
   editTypeMap.insert( QgsVectorLayer::ValueRelation, tr( "Value relation" ) );
+  editTypeMap.insert( QgsVectorLayer::Relation, tr( "Relation" ) );
   editTypeMap.insert( QgsVectorLayer::UuidGenerator, tr( "UUID generator" ) );
   editTypeMap.insert( QgsVectorLayer::Photo, tr( "Photo" ) );
   editTypeMap.insert( QgsVectorLayer::WebView, tr( "Web view" ) );

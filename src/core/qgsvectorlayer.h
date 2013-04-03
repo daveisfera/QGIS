@@ -444,6 +444,7 @@ class CORE_EXPORT QgsVectorLayer : public QgsMapLayer
       Photo,         /**< phote widget @note added in 1.9 */
       WebView,       /**< webview widget @note added in 1.9 */
       Color,         /**< color @note added in 1.9 */
+      Relation,      /**< related rows from a table @note added in 2.1 */
     };
 
     /** Types of feature form suppression after feature creation

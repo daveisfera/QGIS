@@ -64,7 +64,7 @@ void QgsRelationManager::readProject( const QDomDocument & doc )
   }
   else
   {
-    qDebug() << "No relations data present in this document";
+    QgsDebugMsg( "No relations data present in this document" );
   }
 }
 

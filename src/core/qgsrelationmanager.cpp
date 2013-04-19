@@ -13,21 +13,29 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <QDebug>
-
-#include "qgsexception.h"
 #include "qgslogger.h"
 #include "qgsproject.h"
 #include "qgsrelationmanager.h"
 #include "qgsmaplayerregistry.h"
 #include "qgsvectorlayer.h"
+#include "qgsapplication.h"
 
-QgsRelationManager::QgsRelationManager(QObject *parent) :
-  QObject(parent)
+QgsRelationManager* QgsRelationManager::mInstance = NULL;
+
+QgsRelationManager::QgsRelationManager() :
+  QObject( QgsApplication::instance() )
 {
   QgsProject* project = QgsProject::instance();
   connect( project, SIGNAL( readProject( const QDomDocument& ) ), SLOT ( readProject( const QDomDocument& ) ) );
   connect( project, SIGNAL( writeProject( QDomDocument& ) ), SLOT ( writeProject( QDomDocument& ) ) );
+}
+
+QgsRelationManager* QgsRelationManager::instance()
+{
+  if ( !mInstance )
+    mInstance = new QgsRelationManager();
+
+  return mInstance;
 }
 
 void QgsRelationManager::setRelations( const QList<QgsRelation> &relations )
@@ -52,14 +60,7 @@ void QgsRelationManager::readProject( const QDomDocument & doc )
     int relCount = relationNodes.count();
     for ( int i = 0; i < relCount; ++i )
     {
-      try
-      {
-        mRelations.append( QgsRelation::createFromXML( relationNodes.at(i) ) );
-      }
-      catch ( QgsException e )
-      {
-        qDebug() << e.what();
-      }
+      mRelations.append( QgsRelation::createFromXML( relationNodes.at(i) ) );
     }
   }
   else
@@ -93,7 +94,7 @@ QgsRelation QgsRelation::createFromXML( const QDomNode &node )
 
   if ( elem.tagName() != "relation" )
   {
-    throw QgsException( QString( "Cannot create relation. Unexpected tag '%1'" ).arg( elem.tagName() ) );
+    QgsLogger::warning( QApplication::translate( "QgsRelation", "Cannot create relation. Unexpected tag '%1'" ).arg( elem.tagName() ) );
   }
 
   QgsRelation relation;
@@ -107,25 +108,24 @@ QgsRelation QgsRelation::createFromXML( const QDomNode &node )
   QgsMapLayer* referencingLayer = mapLayers[referencingLayerId];
   QgsMapLayer* referencedLayer = mapLayers[referencedLayerId];;
 
-
   if ( NULL == referencingLayer )
   {
-    throw QgsException( QString( "Relation defined for layer '%1' which does not exist." ).arg( referencingLayerId ) );
+    QgsLogger::warning( QApplication::translate( "QgsRelation", "Relation defined for layer '%1' which does not exist." ).arg( referencingLayerId ) );
   }
 
   if ( NULL == referencedLayer )
   {
-    throw QgsException( QString( "Relation defined for layer '%1' which does not exist." ).arg( referencedLayerId ) );
+    QgsLogger::warning( QApplication::translate( "QgsRelation", "Relation defined for layer '%1' which does not exist." ).arg( referencedLayerId ) );
   }
 
   if ( QgsMapLayer::VectorLayer  != referencingLayer->type() )
   {
-    throw QgsException( QString( "Relation defined for layer '%1' which is not of type VectorLayer." ).arg( referencingLayerId ) );
+    QgsLogger::warning( QApplication::translate( "QgsRelation", "Relation defined for layer '%1' which is not of type VectorLayer." ).arg( referencingLayerId ) );
   }
 
   if ( QgsMapLayer::VectorLayer  != referencedLayer->type() )
   {
-    throw QgsException( QString( "Relation defined for layer '%1' which is not of type VectorLayer." ).arg( referencedLayerId ) );
+    QgsLogger::warning( QApplication::translate( "QgsRelation", "Relation defined for layer '%1' which is not of type VectorLayer." ).arg( referencedLayerId ) );
   }
 
   relation.mReferencingLayerId = referencingLayerId;

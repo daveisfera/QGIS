@@ -32,10 +32,6 @@ class QgsRelation
 
     QgsRelation() {}
 
-    /**
-     *
-     * @throws QgsException
-     */
     static QgsRelation createFromXML( const QDomNode& node );
     void writeXML( QDomNode& node, QDomDocument& doc ) const;
 
@@ -67,12 +63,18 @@ class QgsRelation
 
 /**
  * This class manages a set of relations between layers.
+ *
+ * @note This class is a singleton. Call QgsRelationManager::instance() to get access to the instance.
  */
 class QgsRelationManager : public QObject
 {
     Q_OBJECT
+
+  private:
+    explicit QgsRelationManager();
+
   public:
-    explicit QgsRelationManager( QObject *parent = 0 );
+    static QgsRelationManager* instance();
     void setRelations( const QList<QgsRelation>& relations );
     const QList<QgsRelation>& relations();
 
@@ -87,6 +89,7 @@ class QgsRelationManager : public QObject
   private:
     /** The references */
     QList<QgsRelation> mRelations;
+    static QgsRelationManager* mInstance;
 };
 
 #endif // QGSRELATIONMANAGER_H

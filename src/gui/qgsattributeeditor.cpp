@@ -16,18 +16,20 @@
  ***************************************************************************/
 
 #include "qgsattributeeditor.h"
+#include <qgscategorizedsymbolrendererv2.h>
+#include <qgscolorbutton.h>
 #include <qgsdualview.h>
+#include <qgsexpression.h>
+#include <qgsfieldvalidator.h>
+#include <qgsfilterlineedit.h>
+#include <qgslogger.h>
+#include <qgslonglongvalidator.h>
+#include <qgsmaplayerregistry.h>
+#include <qgsnetworkaccessmanager.h>
+#include <qgsrelationmanager.h>
+#include <qgsattributedialog.h>
 #include <qgsvectorlayer.h>
 #include <qgsvectordataprovider.h>
-#include <qgscategorizedsymbolrendererv2.h>
-#include <qgslonglongvalidator.h>
-#include <qgsfieldvalidator.h>
-#include <qgsmaplayerregistry.h>
-#include <qgslogger.h>
-#include <qgsexpression.h>
-#include <qgsfilterlineedit.h>
-#include <qgscolorbutton.h>
-#include <qgsnetworkaccessmanager.h>
 
 #include <QScrollArea>
 #include <QPushButton>
@@ -459,8 +461,10 @@ QWidget *QgsAttributeEditor::createAttributeEditor( QWidget *parent, QWidget *ed
 
     case QgsVectorLayer::Relation:
     {
-      QgsDualView *dv = dualView( editor, parent );
+      QgsRelation* relation = vl->referencingRelation( idx );
+      QgsVectorLayer* referencedLayer = relation->referencedLayer();
 
+      QgsAttributesDialog* dlg;
       myWidget = dv;
     }
     break;

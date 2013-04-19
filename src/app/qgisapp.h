@@ -1425,8 +1425,6 @@ class APP_EXPORT QgisApp : public QMainWindow, private Ui::MainWindow
     QString mStartupPath;
     //! full path name of the current map file (if it has been saved or loaded)
     QString mFullPathName;
-    //! Relation manager
-    QgsRelationManager* mRelationManager;
 
     //! interface to QgisApp for plugins
     QgisAppInterface *mQgisInterface;

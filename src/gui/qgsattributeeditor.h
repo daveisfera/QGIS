@@ -21,6 +21,7 @@
 #include <QMetaType>
 
 #include "qgsfeature.h"
+#include "qgsrelationmanager.h"
 
 class QObject;
 class QWidget;
@@ -29,6 +30,7 @@ class QComboBox;
 class QListWidget;
 class QgsAttributeEditorElement;
 class QgsDualView;
+class QgsRelationManager;
 
 /* \brief create attribute widget for editing */
 class GUI_EXPORT QgsAttributeEditor : public QObject
@@ -61,7 +63,7 @@ class GUI_EXPORT QgsAttributeEditor : public QObject
      * @param value the value to initiate this widget with
      *
      */
-    static QWidget *createAttributeEditor( QWidget *parent, QWidget *editor, QgsVectorLayer *vl, int idx, const QVariant &value );
+    static QWidget *createAttributeEditor( QWidget *parent, QWidget *editor, QgsVectorLayer *vl, int idx, const QVariant &value, QgsRelationManager* relationManager = NULL );
     /**
      * Creates a widget form a QgsAttributeEditorElement definition. Will recursively generate containers and widgets.
      * @param widgetDef The definition for the widget

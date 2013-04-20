@@ -15,10 +15,10 @@
  *                                                                         *
  ***************************************************************************/
 
+
 #include "qgsattributeeditor.h"
 #include <qgscategorizedsymbolrendererv2.h>
 #include <qgscolorbutton.h>
-#include <qgsdualview.h>
 #include <qgsexpression.h>
 #include <qgsfieldvalidator.h>
 #include <qgsfilterlineedit.h>
@@ -264,17 +264,6 @@ QListWidget *QgsAttributeEditor::listWidget( QWidget *editor, QWidget *parent )
     lw = new QListWidget( parent );
 
   return lw;
-}
-
-QgsDualView* QgsAttributeEditor::dualView( QWidget* editor, QWidget* parent )
-{
-  QgsDualView *dv = 0;
-  if ( editor )
-    dv = qobject_cast<QgsDualView *>( editor );
-  else
-    dv = new QgsDualView();
-
-  return dv;
 }
 
 QWidget *QgsAttributeEditor::createAttributeEditor( QWidget *parent, QWidget *editor, QgsVectorLayer *vl, int idx, const QVariant &value )

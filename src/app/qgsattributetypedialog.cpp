@@ -24,6 +24,7 @@
 #include "qgisapp.h"
 #include "qgsproject.h"
 #include "qgslogger.h"
+#include "editorwidgets/qgseditorwidgetfactory.h"
 
 #include <QTableWidgetItem>
 #include <QFile>
@@ -46,6 +47,13 @@ QgsAttributeTypeDialog::QgsAttributeTypeDialog( QgsVectorLayer *vl )
   connect( loadFromCSVButton, SIGNAL( clicked() ), this, SLOT( loadFromCSVButtonPushed() ) );
   connect( tableWidget, SIGNAL( cellChanged( int, int ) ), this, SLOT( vCellChanged( int, int ) ) );
   connect( valueRelationEditExpression, SIGNAL( clicked() ), this, SLOT( editValueRelationExpression() ) );
+
+  foreach( QgsEditWidgetFactory* widgetFactory, QgsEditorWidgetRegistry::instance()->types() )
+  {
+    QListWidgetItem* item = new QListWidgetItem( selectionListWidget );
+    item->setText( widgetFactory->name() );
+    selectionListWidget->addItem( item );
+  }
 
   valueRelationLayer->clear();
   foreach ( QgsMapLayer *l, QgsMapLayerRegistry::instance()->mapLayers() )
@@ -358,7 +366,7 @@ void QgsAttributeTypeDialog::setPageForEditType( QgsVectorLayer::EditType editTy
       setPage( 16 );
       break;
 
-    case QgsVectorLayer::Relation:
+    case QgsVectorLayer::EditorWidget:
       setPage( 17 );
       break;
   }

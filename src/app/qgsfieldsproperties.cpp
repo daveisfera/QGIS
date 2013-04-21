@@ -23,6 +23,7 @@
 #include "qgsfieldcalculator.h"
 #include "qgsvectordataprovider.h"
 #include "qgsaddtaborgroup.h"
+#include "editorwidgets/qgseditorwidgetfactory.h"
 
 #include <QTreeWidgetItem>
 #include <QWidget>
@@ -764,11 +765,11 @@ void QgsFieldsProperties::setupEditTypes()
   editTypeMap.insert( QgsVectorLayer::TextEdit, tr( "Text edit" ) );
   editTypeMap.insert( QgsVectorLayer::Calendar, tr( "Calendar" ) );
   editTypeMap.insert( QgsVectorLayer::ValueRelation, tr( "Value relation" ) );
-  editTypeMap.insert( QgsVectorLayer::Relation, tr( "Relation" ) );
   editTypeMap.insert( QgsVectorLayer::UuidGenerator, tr( "UUID generator" ) );
   editTypeMap.insert( QgsVectorLayer::Photo, tr( "Photo" ) );
   editTypeMap.insert( QgsVectorLayer::WebView, tr( "Web view" ) );
   editTypeMap.insert( QgsVectorLayer::Color, tr( "Color" ) );
+  editTypeMap.insert( QgsVectorLayer::EditorWidget, tr( "Editor Widget" ) );
 }
 
 QString QgsFieldsProperties::editTypeButtonText( QgsVectorLayer::EditType type )

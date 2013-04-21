@@ -15,7 +15,19 @@
 
 #include "qgsrelationreferencewidget.h"
 
-QgsRelationReferenceWidget::QgsRelationReferenceWidget(QObject *parent) :
-  QgsEditorWidgetWrapper(parent)
+QgsRelationReferenceWidget::QgsRelationReferenceWidget( QObject* parent ) :
+  QgsEditorWidgetWrapper( parent )
+{
+}
+
+QWidget* QgsRelationReferenceWidget::widget()
+{
+}
+
+const QVariant& QgsRelationReferenceWidget::value()
+{
+}
+
+void QgsRelationReferenceWidget::setValue(const QVariant& value)
 {
 }

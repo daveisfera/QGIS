@@ -30,6 +30,7 @@
 #include <qgsattributedialog.h>
 #include <qgsvectorlayer.h>
 #include <qgsvectordataprovider.h>
+#include <editorwidgets/qgseditorwidgetwrapper.h>
 
 #include <QScrollArea>
 #include <QPushButton>
@@ -448,16 +449,12 @@ QWidget *QgsAttributeEditor::createAttributeEditor( QWidget *parent, QWidget *ed
     break;
 
 
-    case QgsVectorLayer::Relation:
+    case QgsVectorLayer::EditorWidget:
     {
-      QgsRelation* relation = vl->referencingRelation( idx );
-      QgsVectorLayer* referencedLayer = relation->referencedLayer();
-
-      QgsAttributesDialog* dlg;
-      myWidget = dv;
+      QgsEditorWidgetWrapper* eww = vl->editorWidgetWrapper( idx, editor, value, parent );
+      myWidget = eww->widget();
     }
     break;
-
 
     case QgsVectorLayer::Classification:
     {

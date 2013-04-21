@@ -2489,6 +2489,11 @@ void QgsVectorLayer::addAttributeEditorWidget( QgsAttributeEditorElement* data )
   mAttributeEditorElements.append( data );
 }
 
+QgsEditorWidgetWrapper* QgsVectorLayer::editorWidgetWrapper( int idx, QWidget* editor, const QVariant& value, QWidget* parent )
+{
+
+}
+
 QString QgsVectorLayer::attributeAlias( int attributeIndex ) const
 {
   if ( attributeIndex < 0 || attributeIndex >= pendingFields().count() )

@@ -48,6 +48,11 @@ attributetable/qgsfeaturelistviewdelegate.cpp
 attributetable/qgsfeatureselectionmodel.cpp
 attributetable/qgsdualview.cpp
 
+editorwidgets/qgseditorwidgetwrapper.cpp
+editorwidgets/qgsrelationreferencewidget.cpp
+editorwidgets/qgseditorwidgetfactory.cpp
+editorwidgets/qgsrelreferenceconfigdlg.cpp
+
 qgisgui.cpp
 qgisinterface.cpp
 qgsannotationitem.cpp
@@ -180,6 +185,10 @@ attributetable/qgsfeatureselectionmodel.h
 attributetable/qgsfeaturelistviewdelegate.h
 attributetable/qgsdualview.h
 
+editorwidgets/qgseditorwidgetwrapper.h
+editorwidgets/qgsrelationreferencewidget.h
+editorwidgets/qgsrelreferenceconfigdlg.h
+
 qgsattributedialog.h
 qgsattributeeditor.h
 qgsblendmodecombobox.h
@@ -301,6 +310,11 @@ attributetable/qgsfeaturelistmodel.h
 attributetable/qgsfeaturelistviewdelegate.h
 attributetable/qgsfeatureselectionmodel.h
 attributetable/qgsdualview.h
+
+editorwidgets/qgseditorwidgetwrapper.h
+editorwidgets/qgsrelationreferencewidget.h
+editorwidgets/qgseditorwidgetfactory.h
+editorwidgets/qgsrelreferenceconfigdlg.h
 
 raster/qgsrasterrendererwidget.h
 )

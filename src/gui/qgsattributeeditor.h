@@ -63,7 +63,7 @@ class GUI_EXPORT QgsAttributeEditor : public QObject
      * @param value the value to initiate this widget with
      *
      */
-    static QWidget *createAttributeEditor( QWidget *parent, QWidget *editor, QgsVectorLayer *vl, int idx, const QVariant &value, QgsRelationManager* relationManager = NULL );
+    static QWidget *createAttributeEditor( QWidget *parent, QWidget *editor, QgsVectorLayer *vl, int idx, const QVariant &value );
     /**
      * Creates a widget form a QgsAttributeEditorElement definition. Will recursively generate containers and widgets.
      * @param widgetDef The definition for the widget

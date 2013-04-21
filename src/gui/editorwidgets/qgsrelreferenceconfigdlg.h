@@ -1,7 +1,7 @@
 /***************************************************************************
-    qgsrelationreferencewidget.h
+    qgsrelreferenceconfigdlgbase.h
      --------------------------------------
-    Date                 : 20.4.2013
+    Date                 : 21.4.2013
     Copyright            : (C) 2013 Matthias Kuhn
     Email                : matthias dot kuhn at gmx dot ch
  ***************************************************************************
@@ -13,26 +13,20 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef QGSRELATIONREFERENCEWIDGET_H
-#define QGSRELATIONREFERENCEWIDGET_H
+#ifndef QGSRELREFERENCECONFIGDLGBASE_H
+#define QGSRELREFERENCECONFIGDLGBASE_H
 
-#include "qgseditorwidgetwrapper.h"
+#include "ui_qgsrelreferenceconfigdlgbase.h"
 
-class QgsRelationReferenceWidget : public QgsEditorWidgetWrapper
+class QgsRelReferenceConfigDlg : public QDialog, private Ui::QgsRelReferenceConfigDlgBase
 {
     Q_OBJECT
-  public:
-    explicit QgsRelationReferenceWidget( QObject *parent = 0 );
-    virtual QWidget* widget();
-    virtual const QVariant& value();
-
-  protected:
-  signals:
-    void valueChanged( const QVariant& value );
-
-  public slots:
-    virtual void setValue( const QVariant& value );
     
+  public:
+    explicit QgsRelReferenceConfigDlg( QWidget *parent = 0 );
+    
+  protected:
+    void changeEvent( QEvent* e );
 };
 
-#endif // QGSRELATIONREFERENCEWIDGET_H
+#endif // QGSRELREFERENCECONFIGDLGBASE_H

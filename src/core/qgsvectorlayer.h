@@ -36,6 +36,7 @@ class QImage;
 
 class QgsAttributeAction;
 class QgsCoordinateTransform;
+class QgsEditorWidgetWrapper;
 class QgsFeatureRequest;
 class QgsGeometry;
 class QgsGeometryVertexIndex;
@@ -444,7 +445,7 @@ class CORE_EXPORT QgsVectorLayer : public QgsMapLayer
       Photo,         /**< phote widget @note added in 1.9 */
       WebView,       /**< webview widget @note added in 1.9 */
       Color,         /**< color @note added in 1.9 */
-      Relation,      /**< related rows from a table @note added in 2.1 */
+      EditorWidget,  /**< modularized edit widgets @note added in 2.1 */
     };
 
     /** Types of feature form suppression after feature creation
@@ -1039,6 +1040,9 @@ class CORE_EXPORT QgsVectorLayer : public QgsMapLayer
     /**Adds a tab (for the attribute editor form) holding groups and fields
       @note added in version 1.9*/
     void addAttributeEditorWidget( QgsAttributeEditorElement* data );
+
+
+    QgsEditorWidgetWrapper* editorWidgetWrapper( int idx, QWidget* editor, const QVariant& value, QWidget* parent );
 
     /**Returns a list of tabs holding groups and fields
       @note added in version 1.9*/

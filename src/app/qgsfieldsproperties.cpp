@@ -542,6 +542,11 @@ void QgsFieldsProperties::attributeTypeDialog()
     case QgsVectorLayer::UuidGenerator:
     case QgsVectorLayer::Color:
       break;
+
+    case QgsVectorLayer::EditorWidget:
+      mEditorWidgetType.insert( index, attributeTypeDialog.editorWidgetType() );
+      mEditorWidgetConfig.insert( index, attributeTypeDialog.editorWidgetConfig() );
+      break;
   }
 
   setConfigForRow( row, cfg );

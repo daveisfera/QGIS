@@ -31,6 +31,7 @@
 #include <qgsvectorlayer.h>
 #include <qgsvectordataprovider.h>
 #include <editorwidgets/qgseditorwidgetwrapper.h>
+#include <editorwidgets/qgseditorwidgetfactory.h>
 
 #include <QScrollArea>
 #include <QPushButton>
@@ -451,8 +452,13 @@ QWidget *QgsAttributeEditor::createAttributeEditor( QWidget *parent, QWidget *ed
 
     case QgsVectorLayer::EditorWidget:
     {
-      QgsEditorWidgetWrapper* eww = vl->editorWidgetWrapper( idx, editor, value, parent );
-      myWidget = eww->widget();
+      const QString& widgetType = vl->widgetType( idx );
+      const QMap<QString, QVariant>& widgetConfig = vl->widgetConfig( idx );
+
+      QgsEditorWidgetWrapper* eww = QgsEditorWidgetRegistry::instance()->create( widgetType, parent );
+
+      if ( eww )
+        myWidget = eww->widget();
     }
     break;
 

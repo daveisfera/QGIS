@@ -26,7 +26,7 @@
 class QgsEditWidgetFactory {
   public:
     virtual ~QgsEditWidgetFactory() {}
-    virtual QgsEditorWidgetWrapper* create() const = 0;
+    virtual QgsEditorWidgetWrapper* create( QObject* parent ) const = 0;
     virtual QString name() const = 0;
     virtual QWidget* configWidget( QWidget* parent ) = 0;
 };
@@ -41,7 +41,7 @@ class QgsEditWidgetFactoryHelper : public QgsEditWidgetFactory
     QgsEditWidgetFactoryHelper( QString name )
       : mName( name ) {}
 
-    QgsEditorWidgetWrapper* create() const { return new F; }
+    QgsEditorWidgetWrapper* create( QObject* parent ) const { return new F( parent ); }
     QString name() const { return mName; }
     QWidget* configWidget( QWidget* parent) { return new G( parent ); };
 
@@ -52,11 +52,13 @@ class QgsEditWidgetFactoryHelper : public QgsEditWidgetFactory
 /**
  * This class manages all known edit widget factories
  */
-class QgsEditorWidgetRegistry {
+class QgsEditorWidgetRegistry : public QObject {
+    Q_OBJECT
+
   public:
     static QgsEditorWidgetRegistry* instance();
 
-    QgsEditorWidgetWrapper* create( const QString& widgetType );
+    QgsEditorWidgetWrapper* create(const QString& widgetType , QObject* parent);
 
     const QList<QgsEditWidgetFactory*> types();
 

@@ -35,11 +35,11 @@ void QgsEditorWidgetRegistry::initKnownTypes()
         tr( "Relation Reference" ) );
 }
 
-QgsEditorWidgetWrapper*QgsEditorWidgetRegistry::create(const QString& widgetType)
+QgsEditorWidgetWrapper* QgsEditorWidgetRegistry::create( const QString& widgetType, QObject* parent )
 {
   if ( mWidgetFactories.contains( widgetType ) )
   {
-    return mWidgetFactories[widgetType]->create();
+    return mWidgetFactories[widgetType]->create( parent );
   }
   return 0;
 }

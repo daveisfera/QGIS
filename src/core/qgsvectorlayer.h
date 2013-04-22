@@ -1041,6 +1041,9 @@ class CORE_EXPORT QgsVectorLayer : public QgsMapLayer
       @note added in version 1.9*/
     void addAttributeEditorWidget( QgsAttributeEditorElement* data );
 
+    const QString& widgetType( int fieldIdx );
+
+    const QMap<QString, QVariant>& widgetConfig( int fieldIdx );
 
     QgsEditorWidgetWrapper* editorWidgetWrapper( int idx, QWidget* editor, const QVariant& value, QWidget* parent );
 
@@ -1565,6 +1568,9 @@ class CORE_EXPORT QgsVectorLayer : public QgsMapLayer
     QMap< QString, ValueRelationData > mValueRelations;
     QMap< QString, QString> mDateFormats;
     QMap< QString, QSize> mWidgetSize;
+
+    QMap<int, QString> mWidgetTypes;
+    QMap<int, QMap<QString, QVariant> > mWidgetConfigs;
 
     /** Defines the default layout to use for the attribute editor (Drag and drop, UI File, Generated) */
     EditorLayout mEditorLayout;

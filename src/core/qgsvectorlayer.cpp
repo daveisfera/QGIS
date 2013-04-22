@@ -2489,9 +2489,14 @@ void QgsVectorLayer::addAttributeEditorWidget( QgsAttributeEditorElement* data )
   mAttributeEditorElements.append( data );
 }
 
-QgsEditorWidgetWrapper* QgsVectorLayer::editorWidgetWrapper( int idx, QWidget* editor, const QVariant& value, QWidget* parent )
+const QString& QgsVectorLayer::widgetType( int fieldIdx )
 {
+  return mWidgetTypes[ fieldIdx ];
+}
 
+const QMap<QString, QVariant>& QgsVectorLayer::widgetConfig( int fieldIdx )
+{
+  return mWidgetConfigs[ fieldIdx ];
 }
 
 QString QgsVectorLayer::attributeAlias( int attributeIndex ) const

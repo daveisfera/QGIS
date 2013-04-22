@@ -187,6 +187,7 @@ attributetable/qgsdualview.h
 
 editorwidgets/qgseditorwidgetwrapper.h
 editorwidgets/qgsrelationreferencewidget.h
+editorwidgets/qgseditorwidgetfactory.h
 editorwidgets/qgsrelreferenceconfigdlg.h
 
 qgsattributedialog.h

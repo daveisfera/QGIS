@@ -64,6 +64,8 @@ class APP_EXPORT QgsFieldsProperties : public QWidget, private Ui_QgsFieldsPrope
         QPushButton* mButton;
         QString mDateFormat;
         QSize mWidgetSize;
+		QString mEditorWidgetType;
+		QMap<QString, QVariant> mEditorWidgetConfig;
     };
 
   public:

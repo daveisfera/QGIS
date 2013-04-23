@@ -48,10 +48,10 @@ attributetable/qgsfeaturelistviewdelegate.cpp
 attributetable/qgsfeatureselectionmodel.cpp
 attributetable/qgsdualview.cpp
 
-editorwidgets/qgseditorwidgetwrapper.cpp
-editorwidgets/qgsrelationreferencewidget.cpp
-editorwidgets/qgseditorwidgetfactory.cpp
-editorwidgets/qgsrelreferenceconfigdlg.cpp
+editorwidgetsv2/qgseditorwidgetwrapper.cpp
+editorwidgetsv2/qgsrelationreferencewidget.cpp
+editorwidgetsv2/qgseditorwidgetfactory.cpp
+editorwidgetsv2/qgsrelreferenceconfigdlg.cpp
 
 qgisgui.cpp
 qgisinterface.cpp
@@ -185,11 +185,11 @@ attributetable/qgsfeatureselectionmodel.h
 attributetable/qgsfeaturelistviewdelegate.h
 attributetable/qgsdualview.h
 
-editorwidgets/qgseditorwidgetwrapper.h
-editorwidgets/qgsrelationreferencewidget.h
-editorwidgets/qgseditorwidgetfactory.h
-editorwidgets/qgseditorconfigwidget.h
-editorwidgets/qgsrelreferenceconfigdlg.h
+editorwidgetsv2/qgseditorwidgetwrapper.h
+editorwidgetsv2/qgsrelationreferencewidget.h
+editorwidgetsv2/qgseditorwidgetfactory.h
+editorwidgetsv2/qgseditorconfigwidget.h
+editorwidgetsv2/qgsrelreferenceconfigdlg.h
 
 qgsattributedialog.h
 qgsattributeeditor.h
@@ -313,11 +313,11 @@ attributetable/qgsfeaturelistviewdelegate.h
 attributetable/qgsfeatureselectionmodel.h
 attributetable/qgsdualview.h
 
-editorwidgets/qgseditorwidgetwrapper.h
-editorwidgets/qgsrelationreferencewidget.h
-editorwidgets/qgseditorwidgetfactory.h
-editorwidgets/qgseditorconfigwidget.h
-editorwidgets/qgsrelreferenceconfigdlg.h
+editorwidgetsv2/qgseditorwidgetwrapper.h
+editorwidgetsv2/qgsrelationreferencewidget.h
+editorwidgetsv2/qgseditorwidgetfactory.h
+editorwidgetsv2/qgseditorconfigwidget.h
+editorwidgetsv2/qgsrelreferenceconfigdlg.h
 
 raster/qgsrasterrendererwidget.h
 )

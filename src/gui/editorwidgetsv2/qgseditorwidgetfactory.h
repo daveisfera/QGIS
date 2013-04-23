@@ -23,7 +23,8 @@
 class QgsEditorConfigWidget;
 
 /**
- * Every attribute editor widget needs a factory, which inherits this class
+ * Every attribute editor widget wrapper needs a factory, which inherits this class
+ * It provides metadata for the widgets such as the name, a configuration widget
  */
 class QgsEditWidgetFactory {
   public:

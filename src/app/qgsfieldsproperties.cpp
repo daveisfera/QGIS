@@ -23,7 +23,7 @@
 #include "qgsfieldcalculator.h"
 #include "qgsvectordataprovider.h"
 #include "qgsaddtaborgroup.h"
-#include "editorwidgets/qgseditorwidgetfactory.h"
+#include "editorwidgetsv2/qgseditorwidgetfactory.h"
 
 #include <QTreeWidgetItem>
 #include <QWidget>

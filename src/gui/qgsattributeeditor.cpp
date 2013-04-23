@@ -30,8 +30,8 @@
 #include <qgsattributedialog.h>
 #include <qgsvectorlayer.h>
 #include <qgsvectordataprovider.h>
-#include <editorwidgets/qgseditorwidgetwrapper.h>
-#include <editorwidgets/qgseditorwidgetfactory.h>
+#include <editorwidgetsv2/qgseditorwidgetwrapper.h>
+#include <editorwidgetsv2/qgseditorwidgetfactory.h>
 
 #include <QScrollArea>
 #include <QPushButton>

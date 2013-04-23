@@ -16,12 +16,11 @@
 class QgsEditorConfigWidget : public QWidget
 {
 %TypeHeaderCode
-#include <editorwidgets/qgseditoconfigwidget.h>
+#include <editorwidgetsv2/qgseditorconfigwidget.h>
 %End
 
   public:
     explicit QgsEditorConfigWidget( QWidget *parent = 0 );
-    virtual ~QgsEditorConfigWidget();
 
     virtual QMap<QString, QVariant> config() = 0;
 };

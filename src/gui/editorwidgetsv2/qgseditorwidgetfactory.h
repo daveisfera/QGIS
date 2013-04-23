@@ -60,6 +60,7 @@ class QgsEditorWidgetRegistry : public QObject {
 
   public:
     static QgsEditorWidgetRegistry* instance();
+    ~QgsEditorWidgetRegistry();
 
     QgsEditorWidgetWrapper* create(const QString& widgetType , QObject* parent);
     QgsEditorConfigWidget* createConfigWidget( const QString& widgetId, QWidget* parent );
@@ -89,8 +90,6 @@ class QgsEditorWidgetRegistry : public QObject {
      * this method.
      */
     void initKnownTypes();
-
-    ~QgsEditorWidgetRegistry();
 
   private:
     QMap<QString, QgsEditWidgetFactory*> mWidgetFactories;

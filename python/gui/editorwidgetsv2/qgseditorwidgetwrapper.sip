@@ -16,7 +16,7 @@
 class QgsEditorWidgetWrapper : public QObject
 {
 %TypeHeaderCode
-#include <qgseditorwidgetwrapper.h>
+#include <editorwidgetsv2/qgseditorwidgetwrapper.h>
 %End
 
   public:

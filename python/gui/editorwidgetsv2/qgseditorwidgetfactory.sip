@@ -18,7 +18,7 @@
  */
 class QgsEditWidgetFactory {
 %TypeHeaderCode
-#include <qgseditorwidgetfactory.h>
+#include <editorwidgetsv2/qgseditorwidgetfactory.h>
 %End
 
   public:
@@ -32,12 +32,12 @@ class QgsEditWidgetFactory {
  */
 class QgsEditorWidgetRegistry : public QObject {
 %TypeHeaderCode
-#include <qgseditorwidgetfactory.h>
+#include <editorwidgetsv2/qgseditorwidgetfactory.h>
 %End
 
   public:
     static QgsEditorWidgetRegistry* instance();
-    void QgsEditorWidgetRegistry::registerWidget( const QString& widgetType, QgsEditWidgetFactory* widgetFactory );
+    void registerWidget( const QString& widgetType, QgsEditWidgetFactory* widgetFactory /Transfer/ );
     QgsEditorWidgetWrapper* create(const QString& widgetType , QObject* parent);
     QgsEditorConfigWidget* createConfigWidget( const QString& widgetId, QWidget* parent );
 

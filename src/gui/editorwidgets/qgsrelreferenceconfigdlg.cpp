@@ -15,20 +15,16 @@
 
 #include "qgsrelreferenceconfigdlg.h"
 
-QgsRelReferenceConfigDlg::QgsRelReferenceConfigDlg(QWidget *parent) :
-  QDialog(parent)
+QgsRelReferenceConfigDlg::QgsRelReferenceConfigDlg( QWidget *parent ) :
+  QgsEditorConfigWidget( parent )
 {
   setupUi(this);
 }
 
-void QgsRelReferenceConfigDlg::changeEvent(QEvent *e)
+QMap<QString, QVariant> QgsRelReferenceConfigDlg::config()
 {
-  QDialog::changeEvent(e);
-  switch (e->type()) {
-    case QEvent::LanguageChange:
-      retranslateUi(this);
-      break;
-    default:
-      break;
-  }
+  QMap<QString, QVariant> myConfig;
+  myConfig.insert( "A", "B" );
+
+  return myConfig;
 }

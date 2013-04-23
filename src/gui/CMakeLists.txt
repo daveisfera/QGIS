@@ -188,6 +188,7 @@ attributetable/qgsdualview.h
 editorwidgets/qgseditorwidgetwrapper.h
 editorwidgets/qgsrelationreferencewidget.h
 editorwidgets/qgseditorwidgetfactory.h
+editorwidgets/qgseditorconfigwidget.h
 editorwidgets/qgsrelreferenceconfigdlg.h
 
 qgsattributedialog.h
@@ -315,6 +316,7 @@ attributetable/qgsdualview.h
 editorwidgets/qgseditorwidgetwrapper.h
 editorwidgets/qgsrelationreferencewidget.h
 editorwidgets/qgseditorwidgetfactory.h
+editorwidgets/qgseditorconfigwidget.h
 editorwidgets/qgsrelreferenceconfigdlg.h
 
 raster/qgsrasterrendererwidget.h

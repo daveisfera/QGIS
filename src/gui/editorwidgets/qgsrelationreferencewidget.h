@@ -23,7 +23,7 @@ class QgsRelationReferenceWidget : public QgsEditorWidgetWrapper
     Q_OBJECT
   public:
     explicit QgsRelationReferenceWidget( QObject *parent = 0 );
-    virtual QWidget* widget();
+    virtual QWidget* widget( QWidget* parent );
     virtual const QVariant& value();
 
   protected:
@@ -32,7 +32,6 @@ class QgsRelationReferenceWidget : public QgsEditorWidgetWrapper
 
   public slots:
     virtual void setValue( const QVariant& value );
-    
 };
 
 #endif // QGSRELATIONREFERENCEWIDGET_H

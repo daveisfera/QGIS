@@ -17,16 +17,15 @@
 #define QGSRELREFERENCECONFIGDLGBASE_H
 
 #include "ui_qgsrelreferenceconfigdlgbase.h"
+#include "qgseditorconfigwidget.h"
 
-class QgsRelReferenceConfigDlg : public QDialog, private Ui::QgsRelReferenceConfigDlgBase
+class QgsRelReferenceConfigDlg : public QgsEditorConfigWidget, private Ui::QgsRelReferenceConfigDlgBase
 {
     Q_OBJECT
     
   public:
     explicit QgsRelReferenceConfigDlg( QWidget *parent = 0 );
-    
-  protected:
-    void changeEvent( QEvent* e );
+    virtual QMap<QString, QVariant> config();
 };
 
 #endif // QGSRELREFERENCECONFIGDLGBASE_H

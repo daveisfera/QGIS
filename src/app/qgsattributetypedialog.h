@@ -20,6 +20,7 @@
 #include "ui_qgsattributetypeedit.h"
 
 #include "qgsvectorlayer.h"
+#include "editorwidgets/qgseditorconfigwidget.h"
 
 class QDialog;
 class QLayout;
@@ -57,6 +58,12 @@ class APP_EXPORT QgsAttributeTypeDialog: public QDialog, private Ui::QgsAttribut
      * @return selected edit type
      */
     QgsVectorLayer::EditType editType();
+
+    const QString editorWidgetV2Type();
+
+    const QString editorWidgetV2Test();
+
+    const QMap<QString, QVariant> editorWidgetV2Config();
 
     /**
      * Setter to value map variable to display actual value
@@ -224,6 +231,8 @@ class APP_EXPORT QgsAttributeTypeDialog: public QDialog, private Ui::QgsAttribut
     QgsVectorLayer::EditType mEditType;
     QString mDateFormat;
     QSize mWidgetSize;
+
+    QMap< QString, QgsEditorConfigWidget* > mEditorConfigWidgets;
 };
 
 #endif

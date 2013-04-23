@@ -64,8 +64,8 @@ class APP_EXPORT QgsFieldsProperties : public QWidget, private Ui_QgsFieldsPrope
         QPushButton* mButton;
         QString mDateFormat;
         QSize mWidgetSize;
-		QString mEditorWidgetType;
-		QMap<QString, QVariant> mEditorWidgetConfig;
+        QString mEditorWidgetV2Type;
+        QMap<QString, QVariant> mEditorWidgetV2Config;
     };
 
   public:
@@ -154,7 +154,7 @@ class APP_EXPORT QgsFieldsProperties : public QWidget, private Ui_QgsFieldsPrope
     static QMap< QgsVectorLayer::EditType, QString > editTypeMap;
     static void setupEditTypes();
     static QString editTypeButtonText( QgsVectorLayer::EditType type );
-    static QgsVectorLayer::EditType editTypeFromButtonText( QString text );
+    static QgsVectorLayer::EditType editTypeFromButton( QPushButton* btn );
 
 };
 

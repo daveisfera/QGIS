@@ -1,5 +1,5 @@
 /***************************************************************************
-    qgseditorwidgetwrapper.h
+    qgseditorwidgetwrapper.sip
      --------------------------------------
     Date                 : 20.4.2013
     Copyright            : (C) 2013 Matthias Kuhn
@@ -13,16 +13,12 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef QGSEDITORWIDGETWRAPPER_H
-#define QGSEDITORWIDGETWRAPPER_H
-
-#include <QObject>
-#include <QMap>
-#include <QVariant>
-
 class QgsEditorWidgetWrapper : public QObject
 {
-    Q_OBJECT
+%TypeHeaderCode
+#include <qgseditorwidgetwrapper.h>
+%End
+
   public:
     explicit QgsEditorWidgetWrapper( QObject *parent = 0 );
     virtual QWidget* widget( QWidget* parent ) = 0;
@@ -30,15 +26,9 @@ class QgsEditorWidgetWrapper : public QObject
     virtual const QVariant& value() = 0;
     QVariant config( QString key );
 
-  protected:
   signals:
     void valueChanged( const QVariant& value );
     
   public slots:
     virtual void setValue( const QVariant& value ) = 0;
-
-  private:
-    QMap<QString, QVariant> mConfig;
 };
-
-#endif // QGSEDITORWIDGETWRAPPER_H

@@ -19,3 +19,20 @@ QgsEditorWidgetWrapper::QgsEditorWidgetWrapper( QObject* parent ) :
   QObject( parent )
 {
 }
+
+void QgsEditorWidgetWrapper::setConfig(QMap<QString, QVariant> config)
+{
+  mConfig = config;
+}
+
+QVariant QgsEditorWidgetWrapper::config( QString key )
+{
+  if ( mConfig.contains( key ) )
+  {
+    return mConfig[key];
+  }
+  else
+  {
+    return QVariant();
+  }
+}

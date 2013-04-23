@@ -44,9 +44,23 @@ QgsEditorWidgetWrapper* QgsEditorWidgetRegistry::create( const QString& widgetTy
   return 0;
 }
 
-const QList<QgsEditWidgetFactory*> QgsEditorWidgetRegistry::types()
+QgsEditorConfigWidget* QgsEditorWidgetRegistry::createConfigWidget( const QString& widgetId, QWidget* parent )
 {
-  return mWidgetFactories.values();
+  if ( mWidgetFactories.contains( widgetId ) )
+  {
+    return mWidgetFactories[widgetId]->configWidget( parent );
+  }
+  return 0;
+}
+
+const QMap<QString, QgsEditWidgetFactory*> QgsEditorWidgetRegistry::factories()
+{
+  return mWidgetFactories;
+}
+
+void QgsEditorWidgetRegistry::registerWidget(const QString& widgetType, QgsEditWidgetFactory* widgetFactory)
+{
+  mWidgetFactories.insert( widgetType, widgetFactory );
 }
 
 QgsEditorWidgetRegistry::QgsEditorWidgetRegistry()

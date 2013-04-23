@@ -1,7 +1,7 @@
 /***************************************************************************
-    qgseditorwidgetwrapper.h
+    qgseditorconfigwidget.sip
      --------------------------------------
-    Date                 : 20.4.2013
+    Date                 : 24.4.2013
     Copyright            : (C) 2013 Matthias Kuhn
     Email                : matthias dot kuhn at gmx dot ch
  ***************************************************************************
@@ -13,32 +13,16 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef QGSEDITORWIDGETWRAPPER_H
-#define QGSEDITORWIDGETWRAPPER_H
-
-#include <QObject>
-#include <QMap>
-#include <QVariant>
-
-class QgsEditorWidgetWrapper : public QObject
+class QgsEditorConfigWidget : public QWidget
 {
-    Q_OBJECT
+%TypeHeaderCode
+#include <qgseditoconfigwidget.h>
+%End
+
   public:
-    explicit QgsEditorWidgetWrapper( QObject *parent = 0 );
-    virtual QWidget* widget( QWidget* parent ) = 0;
-    virtual void setConfig( QMap<QString, QVariant> config );
-    virtual const QVariant& value() = 0;
-    QVariant config( QString key );
+    explicit QgsEditorConfigWidget( QWidget *parent = 0 );
+    virtual ~QgsEditorConfigWidget();
 
-  protected:
-  signals:
-    void valueChanged( const QVariant& value );
-    
-  public slots:
-    virtual void setValue( const QVariant& value ) = 0;
-
-  private:
-    QMap<QString, QVariant> mConfig;
+    virtual QMap<QString, QVariant> config() = 0;
 };
 
-#endif // QGSEDITORWIDGETWRAPPER_H

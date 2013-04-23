@@ -449,16 +449,16 @@ QWidget *QgsAttributeEditor::createAttributeEditor( QWidget *parent, QWidget *ed
     }
     break;
 
-
-    case QgsVectorLayer::EditorWidget:
+    case QgsVectorLayer::EditorWidgetV2:
     {
-      const QString& widgetType = vl->widgetType( idx );
-      const QMap<QString, QVariant>& widgetConfig = vl->widgetConfig( idx );
+      const QString& widgetType = vl->editorWidgetV2( idx );
+      const QMap<QString, QVariant>& widgetConfig = vl->editorWidgetV2Config( idx );
 
       QgsEditorWidgetWrapper* eww = QgsEditorWidgetRegistry::instance()->create( widgetType, parent );
+      eww->setConfig( widgetConfig );
 
       if ( eww )
-        myWidget = eww->widget();
+        myWidget = eww->widget( parent );
     }
     break;
 

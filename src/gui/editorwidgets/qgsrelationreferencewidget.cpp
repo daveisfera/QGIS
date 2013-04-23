@@ -13,6 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <QPushButton>
+
 #include "qgsrelationreferencewidget.h"
 
 QgsRelationReferenceWidget::QgsRelationReferenceWidget( QObject* parent ) :
@@ -20,8 +22,9 @@ QgsRelationReferenceWidget::QgsRelationReferenceWidget( QObject* parent ) :
 {
 }
 
-QWidget* QgsRelationReferenceWidget::widget()
+QWidget* QgsRelationReferenceWidget::widget( QWidget* parent )
 {
+  return new QPushButton( config( "A" ).toString(), parent );
 }
 
 const QVariant& QgsRelationReferenceWidget::value()

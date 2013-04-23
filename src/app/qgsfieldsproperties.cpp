@@ -543,15 +543,24 @@ void QgsFieldsProperties::attributeTypeDialog()
     case QgsVectorLayer::Color:
       break;
 
-    case QgsVectorLayer::EditorWidget:
-      mEditorWidgetType.insert( index, attributeTypeDialog.editorWidgetType() );
-      mEditorWidgetConfig.insert( index, attributeTypeDialog.editorWidgetConfig() );
+    case QgsVectorLayer::EditorWidgetV2:
+      cfg.mEditorWidgetV2Type = attributeTypeDialog.editorWidgetV2Type();
+      cfg.mEditorWidgetV2Config = attributeTypeDialog.editorWidgetV2Config();
       break;
   }
 
-  setConfigForRow( row, cfg );
+  if ( cfg.mEditType == QgsVectorLayer::EditorWidgetV2 )
+  {
+    pb->setText( attributeTypeDialog.editorWidgetV2Test() );
+    pb->setProperty( "EditWidgetV2", cfg.mEditType );
+  }
+  else
+  {
+    pb->setText( editTypeButtonText( cfg.mEditType ) );
+    pb->setProperty( "EditWidgetV2", QVariant() );
+  }
 
-  pb->setText( editTypeButtonText( cfg.mEditType ) );
+  setConfigForRow( row, cfg );
 }
 
 
@@ -774,7 +783,7 @@ void QgsFieldsProperties::setupEditTypes()
   editTypeMap.insert( QgsVectorLayer::Photo, tr( "Photo" ) );
   editTypeMap.insert( QgsVectorLayer::WebView, tr( "Web view" ) );
   editTypeMap.insert( QgsVectorLayer::Color, tr( "Color" ) );
-  editTypeMap.insert( QgsVectorLayer::EditorWidget, tr( "Editor Widget" ) );
+  editTypeMap.insert( QgsVectorLayer::EditorWidgetV2, tr( "Editor Widget" ) );
 }
 
 QString QgsFieldsProperties::editTypeButtonText( QgsVectorLayer::EditType type )
@@ -782,9 +791,14 @@ QString QgsFieldsProperties::editTypeButtonText( QgsVectorLayer::EditType type )
   return editTypeMap[ type ];
 }
 
-QgsVectorLayer::EditType QgsFieldsProperties::editTypeFromButtonText( QString text )
+QgsVectorLayer::EditType QgsFieldsProperties::editTypeFromButton( QPushButton* btn )
 {
-  return editTypeMap.key( text );
+  QVariant editWidgetId = btn->property( "EditWidgetV2" );
+
+  if ( editWidgetId.isNull() )
+    return editTypeMap.key( btn->text() );
+  else
+    return QgsVectorLayer::EditorWidgetV2;
 }
 
 QgsAttributeEditorElement* QgsFieldsProperties::createAttributeEditorWidget( QTreeWidgetItem* item, QObject *parent )
@@ -901,6 +915,11 @@ void QgsFieldsProperties::apply()
       case QgsVectorLayer::TextEdit:
       case QgsVectorLayer::UuidGenerator:
       case QgsVectorLayer::Color:
+        break;
+
+      case QgsVectorLayer::EditorWidgetV2:
+        mLayer->setEditorWidgetV2( idx, cfg.mEditorWidgetV2Type );
+        mLayer->setEditorWidgetV2Config( idx, cfg.mEditorWidgetV2Config );
         break;
     }
 

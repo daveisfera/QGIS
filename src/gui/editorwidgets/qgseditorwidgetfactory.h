@@ -20,6 +20,8 @@
 #include <QString>
 #include "qgseditorwidgetwrapper.h"
 
+class QgsEditorConfigWidget;
+
 /**
  * Every attribute editor widget needs a factory, which inherits this class
  */
@@ -28,7 +30,7 @@ class QgsEditWidgetFactory {
     virtual ~QgsEditWidgetFactory() {}
     virtual QgsEditorWidgetWrapper* create( QObject* parent ) const = 0;
     virtual QString name() const = 0;
-    virtual QWidget* configWidget( QWidget* parent ) = 0;
+    virtual QgsEditorConfigWidget* configWidget( QWidget* parent ) = 0;
 };
 
 /**
@@ -43,7 +45,7 @@ class QgsEditWidgetFactoryHelper : public QgsEditWidgetFactory
 
     QgsEditorWidgetWrapper* create( QObject* parent ) const { return new F( parent ); }
     QString name() const { return mName; }
-    QWidget* configWidget( QWidget* parent) { return new G( parent ); };
+    QgsEditorConfigWidget* configWidget( QWidget* parent) { return new G( parent ); };
 
   private:
     QString mName;
@@ -59,8 +61,9 @@ class QgsEditorWidgetRegistry : public QObject {
     static QgsEditorWidgetRegistry* instance();
 
     QgsEditorWidgetWrapper* create(const QString& widgetType , QObject* parent);
+    QgsEditorConfigWidget* createConfigWidget( const QString& widgetId, QWidget* parent );
 
-    const QList<QgsEditWidgetFactory*> types();
+    const QMap<QString, QgsEditWidgetFactory*> factories();
 
     /**
      * The other part which does the boring work for you
@@ -70,6 +73,12 @@ class QgsEditorWidgetRegistry : public QObject {
     {
       mWidgetFactories.insert( widgetType, new QgsEditWidgetFactoryHelper<W, C>( name ) );
     }
+
+
+    /**
+     * Register a new widgetfactory
+     */
+    void registerWidget( const QString& widgetType, QgsEditWidgetFactory* widgetFactory );
 
   protected:
     QgsEditorWidgetRegistry();

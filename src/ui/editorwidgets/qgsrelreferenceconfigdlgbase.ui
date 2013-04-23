@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>QgsRelReferenceConfigDlgBase</class>
- <widget class="QDialog" name="QgsRelReferenceConfigDlgBase">
+ <widget class="QWidget" name="QgsRelReferenceConfigDlgBase">
   <property name="geometry">
    <rect>
     <x>0</x>

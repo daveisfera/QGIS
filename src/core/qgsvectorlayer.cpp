@@ -2489,14 +2489,14 @@ void QgsVectorLayer::addAttributeEditorWidget( QgsAttributeEditorElement* data )
   mAttributeEditorElements.append( data );
 }
 
-const QString& QgsVectorLayer::widgetType( int fieldIdx )
+const QString& QgsVectorLayer::editorWidgetV2( int fieldIdx )
 {
-  return mWidgetTypes[ fieldIdx ];
+  return mEditorWidgetV2Types[ fieldIdx ];
 }
 
-const QMap<QString, QVariant>& QgsVectorLayer::widgetConfig( int fieldIdx )
+const QMap<QString, QVariant>& QgsVectorLayer::editorWidgetV2Config( int fieldIdx )
 {
-  return mWidgetConfigs[ fieldIdx ];
+  return mEditorWidgetV2Configs[ fieldIdx ];
 }
 
 QString QgsVectorLayer::attributeAlias( int attributeIndex ) const
@@ -3010,6 +3010,16 @@ QgsVectorLayer::EditorLayout QgsVectorLayer::editorLayout()
 void QgsVectorLayer::setEditorLayout( EditorLayout editorLayout )
 {
   mEditorLayout = editorLayout;
+}
+
+void QgsVectorLayer::setEditorWidgetV2( int attrIdx, const QString& widgetType )
+{
+  mEditorWidgetV2Types[ attrIdx ] = widgetType;
+}
+
+void QgsVectorLayer::setEditorWidgetV2Config( int attrIdx, const QMap<QString, QVariant>& config )
+{
+  mEditorWidgetV2Configs[ attrIdx ] = config;
 }
 
 QString QgsVectorLayer::editForm()

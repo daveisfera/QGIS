@@ -32,6 +32,7 @@
 #include <qgsvectordataprovider.h>
 #include <editorwidgetsv2/qgseditorwidgetwrapper.h>
 #include <editorwidgetsv2/qgseditorwidgetfactory.h>
+#include <editorwidgetsv2/qgseditorwidgetregistry.h>
 
 #include <QScrollArea>
 #include <QPushButton>
@@ -1349,6 +1350,19 @@ bool QgsAttributeEditor::setValue( QWidget *editor, QgsVectorLayer *vl, int idx,
     break;
 
     case QgsVectorLayer::Hidden:
+      break;
+
+    case QgsVectorLayer::EditorWidgetV2:
+      QVariant w = editor->property( "Wrapper" );
+      if ( !w.isNull() )
+      {
+        QObject* wrapperObj = w.value<QObject*>();
+        QgsEditorWidgetWrapper* wrapper = qobject_cast<QgsEditorWidgetWrapper*>( wrapperObj );
+        if ( wrapper )
+        {
+          wrapper->setValue( value );
+        }
+      }
       break;
   }
 

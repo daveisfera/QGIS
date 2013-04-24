@@ -1,5 +1,5 @@
 /***************************************************************************
-    qgseditorwidgetfactory.sip
+    qgseditorwidgetregistry.sip
      --------------------------------------
     Date                 : 21.4.2013
     Copyright            : (C) 2013 Matthias Kuhn
@@ -14,15 +14,18 @@
  ***************************************************************************/
 
 /**
- * Every attribute editor widget needs a factory, which inherits this class
+ * This class manages all known edit widget factories
  */
-class QgsEditWidgetFactory {
+class QgsEditorWidgetRegistry : public QObject {
 %TypeHeaderCode
-#include <editorwidgetsv2/qgseditorwidgetfactory.h>
+#include <editorwidgetsv2/qgseditorwidgetregistry.h>
 %End
 
   public:
-    virtual QgsEditorWidgetWrapper* create( QObject* parent ) const = 0;
-    virtual QString name() const = 0;
-    virtual QgsEditorConfigWidget* configWidget( QWidget* parent ) = 0;
+    static QgsEditorWidgetRegistry* instance();
+    void registerWidget( const QString& widgetType, QgsEditWidgetFactory* widgetFactory /Transfer/ );
+    QgsEditorWidgetWrapper* create(const QString& widgetType , QObject* parent);
+    QgsEditorConfigWidget* createConfigWidget( const QString& widgetId, QWidget* parent );
+
+    const QMap<QString, QgsEditWidgetFactory*> factories();
 };

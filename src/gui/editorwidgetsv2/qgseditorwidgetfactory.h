@@ -26,9 +26,9 @@ class QgsEditorConfigWidget;
  * Every attribute editor widget wrapper needs a factory, which inherits this class
  * It provides metadata for the widgets such as the name, a configuration widget
  */
-class QgsEditWidgetFactory {
+class QgsEditorWidgetFactory {
   public:
-    virtual ~QgsEditWidgetFactory() {}
+    virtual ~QgsEditorWidgetFactory() {}
     virtual QgsEditorWidgetWrapper* create( QObject* parent ) const = 0;
     virtual QString name() const = 0;
     virtual QgsEditorConfigWidget* configWidget( QWidget* parent ) = 0;
@@ -38,7 +38,7 @@ class QgsEditWidgetFactory {
  * This is a templated wrapper class, which inherits QgsEditWidgetFactory and does the boring work for you.
  */
 template<typename F, typename G>
-class QgsEditWidgetFactoryHelper : public QgsEditWidgetFactory
+class QgsEditWidgetFactoryHelper : public QgsEditorWidgetFactory
 {
   public:
     QgsEditWidgetFactoryHelper( QString name )
@@ -50,50 +50,6 @@ class QgsEditWidgetFactoryHelper : public QgsEditWidgetFactory
 
   private:
     QString mName;
-};
-
-/**
- * This class manages all known edit widget factories
- */
-class QgsEditorWidgetRegistry : public QObject {
-    Q_OBJECT
-
-  public:
-    static QgsEditorWidgetRegistry* instance();
-    ~QgsEditorWidgetRegistry();
-
-    QgsEditorWidgetWrapper* create(const QString& widgetType , QObject* parent);
-    QgsEditorConfigWidget* createConfigWidget( const QString& widgetId, QWidget* parent );
-
-    const QMap<QString, QgsEditWidgetFactory*> factories();
-
-    /**
-     * The other part which does the boring work for you
-     */
-    template <class W, class C>
-    void registerWidget( const QString& widgetType, const QString& name )
-    {
-      mWidgetFactories.insert( widgetType, new QgsEditWidgetFactoryHelper<W, C>( name ) );
-    }
-
-
-    /**
-     * Register a new widgetfactory
-     */
-    void registerWidget( const QString& widgetType, QgsEditWidgetFactory* widgetFactory );
-
-  protected:
-    QgsEditorWidgetRegistry();
-
-    /**
-     * Any widget types which are compiled with this library can be registered within
-     * this method.
-     */
-    void initKnownTypes();
-
-  private:
-    QMap<QString, QgsEditWidgetFactory*> mWidgetFactories;
-    static QgsEditorWidgetRegistry* mInstance;
 };
 
 #endif // QGSEDITORWIDGETFACTORY_H

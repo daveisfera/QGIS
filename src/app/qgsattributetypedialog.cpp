@@ -25,6 +25,7 @@
 #include "qgsproject.h"
 #include "qgslogger.h"
 #include "editorwidgetsv2/qgseditorwidgetfactory.h"
+#include "editorwidgetsv2/qgseditorwidgetregistry.h"
 
 #include <QTableWidgetItem>
 #include <QFile>
@@ -48,7 +49,7 @@ QgsAttributeTypeDialog::QgsAttributeTypeDialog( QgsVectorLayer *vl )
   connect( tableWidget, SIGNAL( cellChanged( int, int ) ), this, SLOT( vCellChanged( int, int ) ) );
   connect( valueRelationEditExpression, SIGNAL( clicked() ), this, SLOT( editValueRelationExpression() ) );
 
-  QMapIterator<QString, QgsEditWidgetFactory*> i( QgsEditorWidgetRegistry::instance()->factories() );
+  QMapIterator<QString, QgsEditorWidgetFactory*> i( QgsEditorWidgetRegistry::instance()->factories() );
   while ( i.hasNext() )
   {
     i.next();

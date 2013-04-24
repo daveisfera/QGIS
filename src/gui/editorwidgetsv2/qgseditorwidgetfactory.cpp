@@ -14,6 +14,7 @@
  ***************************************************************************/
 
 #include "qgseditorwidgetfactory.h"
+#include "qgseditorwidgetregistry.h"
 #include "qgsrelationreferencewidget.h"
 #include "qgsrelreferenceconfigdlg.h"
 
@@ -51,24 +52,4 @@ QgsEditorConfigWidget* QgsEditorWidgetRegistry::createConfigWidget( const QStrin
     return mWidgetFactories[widgetId]->configWidget( parent );
   }
   return 0;
-}
-
-const QMap<QString, QgsEditWidgetFactory*> QgsEditorWidgetRegistry::factories()
-{
-  return mWidgetFactories;
-}
-
-void QgsEditorWidgetRegistry::registerWidget(const QString& widgetType, QgsEditWidgetFactory* widgetFactory)
-{
-  mWidgetFactories.insert( widgetType, widgetFactory );
-}
-
-QgsEditorWidgetRegistry::QgsEditorWidgetRegistry()
-{
-  initKnownTypes();
-}
-
-QgsEditorWidgetRegistry::~QgsEditorWidgetRegistry()
-{
-  qDeleteAll( mWidgetFactories.values() );
 }

@@ -130,4 +130,5 @@
 
 %Include editorwidgetsv2/qgseditorconfigwidget.sip
 %Include editorwidgetsv2/qgseditorwidgetfactory.sip
+%Include editorwidgetsv2/qgseditorwidgetregistry.sip
 %Include editorwidgetsv2/qgseditorwidgetwrapper.sip

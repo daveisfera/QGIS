@@ -20,17 +20,28 @@
 #include <QMap>
 #include <QVariant>
 
+class QgsVectorLayer;
+
+/**
+ * One wrapper per edit widget.
+ * Widget and wrapper share the same parent
+ */
 class QgsEditorWidgetWrapper : public QObject
 {
     Q_OBJECT
   public:
-    explicit QgsEditorWidgetWrapper( QObject *parent = 0 );
-    virtual QWidget* widget( QWidget* parent ) = 0;
+    explicit QgsEditorWidgetWrapper( QgsVectorLayer* vl, int fieldIdx, QWidget* parent = 0 );
+    virtual QWidget* widget();
     virtual void setConfig( QMap<QString, QVariant> config );
     virtual const QVariant& value() = 0;
     QVariant config( QString key );
 
+    QgsVectorLayer* layer();
+    int field();
+
   protected:
+    virtual QWidget* createWidget( QWidget* parent ) = 0;
+
   signals:
     void valueChanged( const QVariant& value );
     
@@ -39,6 +50,10 @@ class QgsEditorWidgetWrapper : public QObject
 
   private:
     QMap<QString, QVariant> mConfig;
+    QWidget* mWidget;
+    QWidget* mParent;
+    QgsVectorLayer* mLayer;
+    int mField;
 };
 
 #endif // QGSEDITORWIDGETWRAPPER_H

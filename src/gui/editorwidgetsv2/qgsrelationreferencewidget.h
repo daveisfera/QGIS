@@ -22,11 +22,10 @@ class QgsRelationReferenceWidget : public QgsEditorWidgetWrapper
 {
     Q_OBJECT
   public:
-    explicit QgsRelationReferenceWidget( QObject *parent = 0 );
-    virtual QWidget* widget( QWidget* parent );
+    explicit QgsRelationReferenceWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* parent = 0 );
+    virtual QWidget* createWidget( QWidget* parent );
     virtual const QVariant& value();
 
-  protected:
   signals:
     void valueChanged( const QVariant& value );
 

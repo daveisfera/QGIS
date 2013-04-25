@@ -1,5 +1,5 @@
 /***************************************************************************
-    qgseditorconfigwidget.sip
+    qgseditorconfigwidget.cpp
      --------------------------------------
     Date                 : 24.4.2013
     Copyright            : (C) 2013 Matthias Kuhn
@@ -13,15 +13,23 @@
  *                                                                         *
  ***************************************************************************/
 
-class QgsEditorConfigWidget : public QWidget
+#include "qgseditorconfigwidget.h"
+
+
+QgsEditorConfigWidget::QgsEditorConfigWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* parent )
+  : QWidget( parent)
+  , mLayer( vl )
 {
-%TypeHeaderCode
-#include <editorwidgetsv2/qgseditorconfigwidget.h>
-%End
+  mField = fieldIdx;
+}
 
-  public:
-    explicit QgsEditorConfigWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* parent );
+int QgsEditorConfigWidget::field()
+{
+  return mField;
+}
 
-    virtual QMap<QString, QVariant> config() = 0;
-};
+QgsVectorLayer*QgsEditorConfigWidget::layer()
+{
+  return mLayer;
+}
 

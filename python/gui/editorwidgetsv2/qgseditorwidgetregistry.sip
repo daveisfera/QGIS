@@ -23,9 +23,10 @@ class QgsEditorWidgetRegistry : public QObject {
 
   public:
     static QgsEditorWidgetRegistry* instance();
-    void registerWidget( const QString& widgetType, QgsEditWidgetFactory* widgetFactory /Transfer/ );
-    QgsEditorWidgetWrapper* create(const QString& widgetType , QObject* parent);
-    QgsEditorConfigWidget* createConfigWidget( const QString& widgetId, QWidget* parent );
+    void registerWidget( const QString& widgetType, QgsEditorWidgetFactory* widgetFactory /Transfer/ );
+    QgsEditorWidgetWrapper* create( const QString& widgetType, QgsVectorLayer* vl, int fieldIdx, QWidget* parent );
+    QgsEditorConfigWidget* createConfigWidget( const QString& widgetId, QgsVectorLayer* vl, int fieldIdx, QWidget* parent );
 
-    const QMap<QString, QgsEditWidgetFactory*> factories();
+
+    const QMap<QString, QgsEditorWidgetFactory*> factories();
 };

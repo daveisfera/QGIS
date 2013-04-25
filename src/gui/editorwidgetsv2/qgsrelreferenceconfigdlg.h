@@ -24,8 +24,9 @@ class QgsRelReferenceConfigDlg : public QgsEditorConfigWidget, private Ui::QgsRe
     Q_OBJECT
     
   public:
-    explicit QgsRelReferenceConfigDlg( QWidget *parent = 0 );
+    explicit QgsRelReferenceConfigDlg( QgsVectorLayer* vl, int fieldIdx, QWidget* parent );
     virtual QMap<QString, QVariant> config();
+    virtual void setConfig( const QMap<QString, QVariant>& config );
 };
 
 #endif // QGSRELREFERENCECONFIGDLGBASE_H

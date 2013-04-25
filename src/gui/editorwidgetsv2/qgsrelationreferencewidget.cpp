@@ -17,20 +17,22 @@
 
 #include "qgsrelationreferencewidget.h"
 
-QgsRelationReferenceWidget::QgsRelationReferenceWidget( QObject* parent ) :
-  QgsEditorWidgetWrapper( parent )
+QgsRelationReferenceWidget::QgsRelationReferenceWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* parent ) :
+  QgsEditorWidgetWrapper( vl, fieldIdx, parent )
 {
 }
 
-QWidget* QgsRelationReferenceWidget::widget( QWidget* parent )
+QWidget* QgsRelationReferenceWidget::createWidget( QWidget* parent )
 {
   return new QPushButton( config( "A" ).toString(), parent );
 }
 
 const QVariant& QgsRelationReferenceWidget::value()
 {
+
 }
 
-void QgsRelationReferenceWidget::setValue(const QVariant& value)
+void QgsRelationReferenceWidget::setValue( const QVariant& value )
 {
+
 }

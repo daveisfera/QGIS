@@ -18,15 +18,25 @@
 
 #include <QWidget>
 
+class QgsVectorLayer;
+
 class QgsEditorConfigWidget : public QWidget
 {
     Q_OBJECT
   public:
-    explicit QgsEditorConfigWidget( QWidget *parent = 0 )
-      :QWidget( parent ) {}
+    explicit QgsEditorConfigWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* parent );
+
+    int field();
+
+    QgsVectorLayer* layer();
+
     virtual ~QgsEditorConfigWidget() {}
 
     virtual QMap<QString, QVariant> config() = 0;
+
+  private:
+    QgsVectorLayer* mLayer;
+    int mField;
 };
 
 #endif // QGSEDITORCONFIGWIDGET_H

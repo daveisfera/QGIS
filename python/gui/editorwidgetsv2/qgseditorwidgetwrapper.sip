@@ -20,15 +20,22 @@ class QgsEditorWidgetWrapper : public QObject
 %End
 
   public:
-    explicit QgsEditorWidgetWrapper( QObject *parent = 0 );
-    virtual QWidget* widget( QWidget* parent ) = 0;
+    explicit QgsEditorWidgetWrapper( QgsVectorLayer* vl, int fieldIdx, QWidget* parent = 0 );
+    virtual QWidget* widget();
     virtual void setConfig( QMap<QString, QVariant> config );
     virtual const QVariant& value() = 0;
     QVariant config( QString key );
+    
+    QgsVectorLayer* layer();
+    int field();
+
+  protected:
+    virtual QWidget* createWidget( QWidget* parent ) = 0;
 
   signals:
     void valueChanged( const QVariant& value );
     
   public slots:
     virtual void setValue( const QVariant& value ) = 0;
+
 };

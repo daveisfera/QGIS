@@ -36,20 +36,20 @@ void QgsEditorWidgetRegistry::initKnownTypes()
         tr( "Relation Reference" ) );
 }
 
-QgsEditorWidgetWrapper* QgsEditorWidgetRegistry::create( const QString& widgetType, QObject* parent )
+QgsEditorWidgetWrapper* QgsEditorWidgetRegistry::create( const QString& widgetType, QgsVectorLayer* vl, int fieldIdx, QWidget* parent )
 {
   if ( mWidgetFactories.contains( widgetType ) )
   {
-    return mWidgetFactories[widgetType]->create( parent );
+    return mWidgetFactories[widgetType]->create( vl, fieldIdx, parent );
   }
   return 0;
 }
 
-QgsEditorConfigWidget* QgsEditorWidgetRegistry::createConfigWidget( const QString& widgetId, QWidget* parent )
+QgsEditorConfigWidget* QgsEditorWidgetRegistry::createConfigWidget( const QString& widgetId, QgsVectorLayer* vl, int fieldIdx, QWidget* parent )
 {
   if ( mWidgetFactories.contains( widgetId ) )
   {
-    return mWidgetFactories[widgetId]->configWidget( parent );
+    return mWidgetFactories[widgetId]->configWidget( vl, fieldIdx, parent );
   }
   return 0;
 }

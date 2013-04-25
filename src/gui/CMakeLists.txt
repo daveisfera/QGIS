@@ -52,6 +52,7 @@ editorwidgetsv2/qgseditorwidgetwrapper.cpp
 editorwidgetsv2/qgsrelationreferencewidget.cpp
 editorwidgetsv2/qgseditorwidgetfactory.cpp
 editorwidgetsv2/qgseditorwidgetregistry.cpp
+editorwidgetsv2/qgseditorconfigwidget.cpp
 editorwidgetsv2/qgsrelreferenceconfigdlg.cpp
 
 qgisgui.cpp

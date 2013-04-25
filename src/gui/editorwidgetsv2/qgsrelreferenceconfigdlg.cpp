@@ -15,16 +15,44 @@
 
 #include "qgsrelreferenceconfigdlg.h"
 
-QgsRelReferenceConfigDlg::QgsRelReferenceConfigDlg( QWidget *parent ) :
-  QgsEditorConfigWidget( parent )
+#include "qgsvectorlayer.h"
+
+QgsRelReferenceConfigDlg::QgsRelReferenceConfigDlg( QgsVectorLayer* vl, int fieldIdx, QWidget* parent )
+  : QgsEditorConfigWidget( vl, fieldIdx, parent )
 {
   setupUi(this);
+
+  const QgsFields& fields = vl->pendingFields();
+  for ( int i = 0; i < fields.count(); ++i )
+  {
+    mComboDisplayField->addItem( vl->attributeAlias( i ), fields[i].name() );
+  }
+}
+
+void QgsRelReferenceConfigDlg::setConfig( const QMap<QString, QVariant>& config )
+{
+  if ( config.contains( "AllowNull" ) )
+  {
+    mCbxAllowNull->setChecked( config[ "AllowNull" ].toBool() );
+  }
+
+  if ( config.contains( "ShowForm" ) )
+  {
+    mCbxShowForm->setChecked( config[ "ShowForm" ].toBool() );
+  }
+
+  if ( config.contains( "DisplayField" ) )
+  {
+    mComboDisplayField->setCurrentIndex( mComboDisplayField->findData( config["DisplayField"].toString() ) );
+  }
 }
 
 QMap<QString, QVariant> QgsRelReferenceConfigDlg::config()
 {
   QMap<QString, QVariant> myConfig;
-  myConfig.insert( "A", "B" );
+  myConfig.insert( "AllowNULL", mCbxAllowNull->isChecked() );
+  myConfig.insert( "ShowForm", mCbxShowForm->isChecked() );
+  myConfig.insert( "DisplayField", mComboDisplayField->currentText() );
 
   return myConfig;
 }

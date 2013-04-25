@@ -455,11 +455,11 @@ QWidget *QgsAttributeEditor::createAttributeEditor( QWidget *parent, QWidget *ed
       const QString& widgetType = vl->editorWidgetV2( idx );
       const QMap<QString, QVariant>& widgetConfig = vl->editorWidgetV2Config( idx );
 
-      QgsEditorWidgetWrapper* eww = QgsEditorWidgetRegistry::instance()->create( widgetType, parent );
+      QgsEditorWidgetWrapper* eww = QgsEditorWidgetRegistry::instance()->create( widgetType, vl, idx, parent );
       eww->setConfig( widgetConfig );
 
       if ( eww )
-        myWidget = eww->widget( parent );
+        myWidget = eww->widget();
     }
     break;
 
@@ -934,6 +934,18 @@ bool QgsAttributeEditor::retrieveValue( QWidget *widget, QgsVectorLayer *vl, int
 {
   if ( !widget )
     return false;
+
+  QVariant w = widget->property( "Wrapper" );
+
+  if ( !w.isNull() )
+  {
+    QObject* wrapperObj = w.value<QObject*>();
+    QgsEditorWidgetWrapper* wrapper = qobject_cast<QgsEditorWidgetWrapper*>( wrapperObj );
+    if ( wrapper )
+    {
+      value = wrapper->value();
+    }
+  }
 
   const QgsField &theField = vl->pendingFields()[idx];
   QgsVectorLayer::EditType editType = vl->editType( idx );

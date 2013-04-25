@@ -37,8 +37,8 @@ class QgsEditorWidgetRegistry : public QObject {
     static QgsEditorWidgetRegistry* instance();
     ~QgsEditorWidgetRegistry();
 
-    QgsEditorWidgetWrapper* create(const QString& widgetType , QObject* parent);
-    QgsEditorConfigWidget* createConfigWidget( const QString& widgetId, QWidget* parent );
+    QgsEditorWidgetWrapper* create( const QString& widgetType, QgsVectorLayer* vl, int fieldIdx, QWidget* parent );
+    QgsEditorConfigWidget* createConfigWidget( const QString& widgetId, QgsVectorLayer* vl, int fieldIdx, QWidget* parent );
 
     const QMap<QString, QgsEditorWidgetFactory*> factories();
 

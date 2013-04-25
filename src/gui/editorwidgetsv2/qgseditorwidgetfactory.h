@@ -29,9 +29,9 @@ class QgsEditorConfigWidget;
 class QgsEditorWidgetFactory {
   public:
     virtual ~QgsEditorWidgetFactory() {}
-    virtual QgsEditorWidgetWrapper* create( QObject* parent ) const = 0;
+    virtual QgsEditorWidgetWrapper* create( QgsVectorLayer* vl, int fieldIdx, QWidget* parent ) const = 0;
     virtual QString name() const = 0;
-    virtual QgsEditorConfigWidget* configWidget( QWidget* parent ) = 0;
+    virtual QgsEditorConfigWidget* configWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* parent ) = 0;
 };
 
 /**
@@ -44,9 +44,9 @@ class QgsEditWidgetFactoryHelper : public QgsEditorWidgetFactory
     QgsEditWidgetFactoryHelper( QString name )
       : mName( name ) {}
 
-    QgsEditorWidgetWrapper* create( QObject* parent ) const { return new F( parent ); }
+    QgsEditorWidgetWrapper* create( QgsVectorLayer* vl, int fieldIdx, QWidget* parent ) const { return new F( vl, fieldIdx, parent ); }
     QString name() const { return mName; }
-    QgsEditorConfigWidget* configWidget( QWidget* parent) { return new G( parent ); };
+    QgsEditorConfigWidget* configWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* parent) { return new G( vl, fieldIdx, parent ); };
 
   private:
     QString mName;

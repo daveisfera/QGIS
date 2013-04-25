@@ -16,13 +16,13 @@
 /**
  * Every attribute editor widget needs a factory, which inherits this class
  */
-class QgsEditWidgetFactory {
+class QgsEditorWidgetFactory {
 %TypeHeaderCode
 #include <editorwidgetsv2/qgseditorwidgetfactory.h>
 %End
 
   public:
-    virtual QgsEditorWidgetWrapper* create( QObject* parent ) const = 0;
+    virtual QgsEditorWidgetWrapper* create( QgsVectorLayer* vl, int fieldIdx, QWidget* parent ) const = 0;
     virtual QString name() const = 0;
-    virtual QgsEditorConfigWidget* configWidget( QWidget* parent ) = 0;
+    virtual QgsEditorConfigWidget* configWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* parent ) = 0;
 };

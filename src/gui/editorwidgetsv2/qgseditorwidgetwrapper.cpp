@@ -15,9 +15,24 @@
 
 #include "qgseditorwidgetwrapper.h"
 
-QgsEditorWidgetWrapper::QgsEditorWidgetWrapper( QObject* parent ) :
-  QObject( parent )
+#include <QWidget>
+
+QgsEditorWidgetWrapper::QgsEditorWidgetWrapper( QgsVectorLayer* vl, int fieldIdx, QWidget* parent )
+  : QObject( parent )
+  , mWidget( NULL )
+  , mParent( parent )
+  , mLayer( vl )
 {
+  mField = fieldIdx;
+}
+
+QWidget* QgsEditorWidgetWrapper::widget()
+{
+  if ( !mWidget )
+  {
+    mWidget = createWidget( mParent );
+    mWidget->setProperty( "Wrapper", QVariant( QMetaType::QObjectStar, this ) );
+  }
 }
 
 void QgsEditorWidgetWrapper::setConfig(QMap<QString, QVariant> config)
@@ -35,4 +50,14 @@ QVariant QgsEditorWidgetWrapper::config( QString key )
   {
     return QVariant();
   }
+}
+
+QgsVectorLayer*QgsEditorWidgetWrapper::layer()
+{
+  mLayer;
+}
+
+int QgsEditorWidgetWrapper::field()
+{
+  return mField;
 }

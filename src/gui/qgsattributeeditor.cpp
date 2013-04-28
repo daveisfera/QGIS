@@ -935,16 +935,12 @@ bool QgsAttributeEditor::retrieveValue( QWidget *widget, QgsVectorLayer *vl, int
   if ( !widget )
     return false;
 
-  QVariant w = widget->property( "Wrapper" );
+  QgsEditorWidgetWrapper* wrapper = QgsEditorWidgetWrapper::fromWidget( widget );
 
-  if ( !w.isNull() )
+  if ( wrapper )
   {
-    QObject* wrapperObj = w.value<QObject*>();
-    QgsEditorWidgetWrapper* wrapper = qobject_cast<QgsEditorWidgetWrapper*>( wrapperObj );
-    if ( wrapper )
-    {
-      value = wrapper->value();
-    }
+    value = wrapper->value();
+    return true;
   }
 
   const QgsField &theField = vl->pendingFields()[idx];
@@ -1365,15 +1361,10 @@ bool QgsAttributeEditor::setValue( QWidget *editor, QgsVectorLayer *vl, int idx,
       break;
 
     case QgsVectorLayer::EditorWidgetV2:
-      QVariant w = editor->property( "Wrapper" );
-      if ( !w.isNull() )
+      QgsEditorWidgetWrapper* wrapper = QgsEditorWidgetWrapper::fromWidget( editor );
+      if ( wrapper )
       {
-        QObject* wrapperObj = w.value<QObject*>();
-        QgsEditorWidgetWrapper* wrapper = qobject_cast<QgsEditorWidgetWrapper*>( wrapperObj );
-        if ( wrapper )
-        {
-          wrapper->setValue( value );
-        }
+        wrapper->setValue( value );
       }
       break;
   }

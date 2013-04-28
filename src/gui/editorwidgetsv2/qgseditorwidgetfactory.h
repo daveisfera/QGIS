@@ -31,12 +31,12 @@ class QgsEditorConfigWidget;
  */
 class QgsEditorWidgetFactory {
   public:
-    virtual ~QgsEditorWidgetFactory() {}
+    virtual ~QgsEditorWidgetFactory();
     virtual QgsEditorWidgetWrapper* create( QgsVectorLayer* vl, int fieldIdx, QWidget* parent ) const = 0;
     virtual QString name() const = 0;
     virtual QgsEditorConfigWidget* configWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* parent ) = 0;
-    virtual QMap<QString, QVariant> readConfig( const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx ) {}
-    virtual void writeConfig( QMap<QString, QVariant>config, QDomElement& configElement, const QDomDocument& doc, const QgsVectorLayer* layer, int fieldIdx ) {}
+    virtual QgsEditorWidgetConfig readConfig( const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx );
+    virtual void writeConfig( const QgsEditorWidgetConfig& config, QDomElement& configElement, const QDomDocument& doc, const QgsVectorLayer* layer, int fieldIdx );
 };
 
 /**
@@ -50,12 +50,20 @@ class QgsEditWidgetFactoryHelper : public QgsEditorWidgetFactory
     QgsEditWidgetFactoryHelper( QString name )
       : mName( name ) {}
 
-    QgsEditorWidgetWrapper* create( QgsVectorLayer* vl, int fieldIdx, QWidget* parent ) const { return new F( vl, fieldIdx, parent ); }
+    QgsEditorWidgetWrapper* create( QgsVectorLayer* vl, int fieldIdx, QWidget* parent ) const
+    {
+      return new F( vl, fieldIdx, parent );
+    }
+
     QString name() const
     {
       return mName;
     }
-    QgsEditorConfigWidget* configWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* parent) { return new G( vl, fieldIdx, parent ); };
+
+    QgsEditorConfigWidget* configWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* parent)
+    {
+      return new G( vl, fieldIdx, parent );
+    }
 
     /**
      * Implement this method yourself somewhere with the class template parameters
@@ -66,8 +74,8 @@ class QgsEditWidgetFactoryHelper : public QgsEditorWidgetFactory
      * @param configNode
      */
 
-    virtual QMap<QString, QVariant> readConfig( const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx );
-    virtual void writeConfig( QMap<QString, QVariant>config, QDomElement& configElement, const QDomDocument& doc, const QgsVectorLayer* layer, int fieldIdx );
+    virtual QgsEditorWidgetConfig readConfig( const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx );
+    virtual void writeConfig( const QgsEditorWidgetConfig& config, QDomElement& configElement, const QDomDocument& doc, const QgsVectorLayer* layer, int fieldIdx );
 
   private:
     QString mName;

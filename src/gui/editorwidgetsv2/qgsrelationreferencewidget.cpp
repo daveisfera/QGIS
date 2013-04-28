@@ -19,29 +19,45 @@
 #include "qgsrelreferenceconfigdlg.h"
 #include "qgseditorwidgetfactory.h"
 
-QgsRelationReferenceWidget::QgsRelationReferenceWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* parent ) :
-  QgsEditorWidgetWrapper( vl, fieldIdx, parent )
+QgsRelationReferenceWidget::QgsRelationReferenceWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* parent )
+  : QgsEditorWidgetWrapper( vl, fieldIdx, parent )
+  , mComboBox( NULL )
 {
 }
 
 QWidget* QgsRelationReferenceWidget::createWidget( QWidget* parent )
 {
-  return new QPushButton( config( "A" ).toString(), parent );
+  mComboBox = new QComboBox( parent );
+
+  connect( mComboBox, SIGNAL( currentIndexChanged(QString) ), this, SIGNAL( valueChanged(QVariant) ) );
+
+  mComboBox->addItem( "A", "A" );
+  mComboBox->addItem( "B", "B" );
+  mComboBox->addItem( "C", "C" );
+
+  if ( config( "AllowNULL" ).toBool() )
+  {
+    mComboBox->addItem( "[NULL]" );
+  }
+
+  return mComboBox;
 }
 
-const QVariant& QgsRelationReferenceWidget::value()
+QVariant QgsRelationReferenceWidget::value()
 {
-
+  return mComboBox->itemData( mComboBox->currentIndex() );
 }
 
 void QgsRelationReferenceWidget::setValue( const QVariant& value )
 {
-
+  mComboBox->setCurrentIndex( mComboBox->findData( value ) );
 }
 
 template <>
 QMap<QString, QVariant> QgsEditWidgetFactoryHelper<QgsRelationReferenceWidget, QgsRelReferenceConfigDlg>::readConfig( const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx )
 {
+  Q_UNUSED( layer );
+  Q_UNUSED( fieldIdx );
   QMap<QString, QVariant> cfg;
 
   cfg.insert( "AllowNULL", configElement.attribute( "AllowNULL" ) == "1" );
@@ -52,8 +68,12 @@ QMap<QString, QVariant> QgsEditWidgetFactoryHelper<QgsRelationReferenceWidget, Q
 }
 
 template <>
-void QgsEditWidgetFactoryHelper<QgsRelationReferenceWidget, QgsRelReferenceConfigDlg>::writeConfig( QMap<QString, QVariant>config, QDomElement& configElement, const QDomDocument& doc, const QgsVectorLayer* layer, int fieldIdx )
+void QgsEditWidgetFactoryHelper<QgsRelationReferenceWidget, QgsRelReferenceConfigDlg>::writeConfig( const QgsEditorWidgetConfig& config, QDomElement& configElement, const QDomDocument& doc, const QgsVectorLayer* layer, int fieldIdx )
 {
+  Q_UNUSED( doc );
+  Q_UNUSED( layer );
+  Q_UNUSED( fieldIdx );
+
   configElement.setAttribute( "AllowNULL", config["AllowNULL"].toBool() );
   configElement.setAttribute( "ShowForm", config["ShowForm"].toBool() );
   configElement.setAttribute( "DisplayField", config["DisplayField"].toString() );

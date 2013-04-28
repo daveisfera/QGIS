@@ -607,6 +607,7 @@ void QgsAttributeTypeDialog::setIndex( int index, QgsVectorLayer::EditType editT
     case QgsVectorLayer::TextEdit:
     case QgsVectorLayer::UuidGenerator:
     case QgsVectorLayer::Color:
+    case QgsVectorLayer::EditorWidgetV2:
       break;
   }
 }

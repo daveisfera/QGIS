@@ -18,19 +18,24 @@
 
 #include "qgseditorwidgetwrapper.h"
 
+#include <QComboBox>
+
 class QgsRelationReferenceWidget : public QgsEditorWidgetWrapper
 {
     Q_OBJECT
   public:
     explicit QgsRelationReferenceWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* parent = 0 );
     virtual QWidget* createWidget( QWidget* parent );
-    virtual const QVariant& value();
+    virtual QVariant value();
 
   signals:
     void valueChanged( const QVariant& value );
 
   public slots:
     virtual void setValue( const QVariant& value );
+
+  private:
+    QComboBox* mComboBox;
 };
 
 #endif // QGSRELATIONREFERENCEWIDGET_H

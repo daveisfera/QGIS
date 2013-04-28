@@ -15,3 +15,25 @@
 
 #include "qgseditorwidgetfactory.h"
 
+QgsEditorWidgetFactory::~QgsEditorWidgetFactory()
+{
+}
+
+QgsEditorWidgetConfig QgsEditorWidgetFactory::readConfig( const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx )
+{
+  Q_UNUSED( configElement );
+  Q_UNUSED( layer );
+  Q_UNUSED( fieldIdx );
+
+  return QgsEditorWidgetConfig();
+}
+
+void QgsEditorWidgetFactory::writeConfig( const QgsEditorWidgetConfig& config, QDomElement& configElement, const QDomDocument& doc, const QgsVectorLayer* layer, int fieldIdx )
+{
+  Q_UNUSED( config );
+  Q_UNUSED( configElement );
+  Q_UNUSED( doc );
+  Q_UNUSED( layer );
+  Q_UNUSED( fieldIdx );
+}
+

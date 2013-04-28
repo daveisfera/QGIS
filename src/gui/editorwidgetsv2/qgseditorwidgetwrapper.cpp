@@ -31,8 +31,10 @@ QWidget* QgsEditorWidgetWrapper::widget()
   if ( !mWidget )
   {
     mWidget = createWidget( mParent );
-    mWidget->setProperty( "Wrapper", QVariant( QMetaType::QObjectStar, this ) );
+    mWidget->setProperty( "EWV2Wrapper", QVariant::fromValue( this ) );
   }
+
+  return mWidget;
 }
 
 void QgsEditorWidgetWrapper::setConfig(QMap<QString, QVariant> config)
@@ -46,18 +48,27 @@ QVariant QgsEditorWidgetWrapper::config( QString key )
   {
     return mConfig[key];
   }
-  else
-  {
-    return QVariant();
-  }
+  return QVariant();
 }
 
-QgsVectorLayer*QgsEditorWidgetWrapper::layer()
+QgsVectorLayer* QgsEditorWidgetWrapper::layer()
 {
-  mLayer;
+  return mLayer;
 }
 
 int QgsEditorWidgetWrapper::field()
 {
   return mField;
+}
+
+QgsEditorWidgetWrapper* QgsEditorWidgetWrapper::fromWidget( QWidget* widget )
+{
+  QVariant w = widget->property( "EWV2Wrapper" );
+
+  if ( w.isNull() )
+  {
+    return NULL;
+  }
+
+  return w.value<QgsEditorWidgetWrapper*>();
 }

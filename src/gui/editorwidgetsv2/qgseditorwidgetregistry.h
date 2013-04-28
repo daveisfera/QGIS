@@ -41,6 +41,7 @@ class QgsEditorWidgetRegistry : public QObject {
     ~QgsEditorWidgetRegistry();
 
     QgsEditorWidgetWrapper* create( const QString& widgetType, QgsVectorLayer* vl, int fieldIdx, QWidget* parent );
+    QgsEditorWidgetWrapper* create( const QString& widgetType, QgsVectorLayer* vl, int fieldIdx, const QgsEditorWidgetConfig& config, QWidget* parent );
     QgsEditorConfigWidget* createConfigWidget( const QString& widgetId, QgsVectorLayer* vl, int fieldIdx, QWidget* parent );
     QString name( const QString& widgetId );
 
@@ -75,7 +76,7 @@ class QgsEditorWidgetRegistry : public QObject {
 
   private:
     QMap<QString, QgsEditorWidgetFactory*> mWidgetFactories;
-    static QgsEditorWidgetRegistry* mInstance;
+    static QgsEditorWidgetRegistry* sInstance;
 };
 
 

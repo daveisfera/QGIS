@@ -22,6 +22,8 @@
 
 class QgsVectorLayer;
 
+typedef QMap<QString, QVariant> QgsEditorWidgetConfig;
+
 /**
  * One wrapper per edit widget.
  * Widget and wrapper share the same parent
@@ -30,14 +32,21 @@ class QgsEditorWidgetWrapper : public QObject
 {
     Q_OBJECT
   public:
-    explicit QgsEditorWidgetWrapper( QgsVectorLayer* vl, int fieldIdx, QWidget* parent = 0 );
-    virtual QWidget* widget();
-    virtual void setConfig( QMap<QString, QVariant> config );
-    virtual const QVariant& value() = 0;
+    explicit QgsEditorWidgetWrapper(QgsVectorLayer* vl, int fieldIdx, QWidget* parent = 0 );
+    QWidget* widget();
+    virtual void setConfig( QgsEditorWidgetConfig config );
+    virtual QVariant value() = 0;
     QVariant config( QString key );
 
     QgsVectorLayer* layer();
     int field();
+
+    /**
+     * Will return a wrapper for a given widget
+     * @param widget The widget which was created by a wrapper
+     * @return The wrapper for the widget or NULL
+     */
+    static QgsEditorWidgetWrapper* fromWidget( QWidget* widget );
 
   protected:
     virtual QWidget* createWidget( QWidget* parent ) = 0;
@@ -49,11 +58,14 @@ class QgsEditorWidgetWrapper : public QObject
     virtual void setValue( const QVariant& value ) = 0;
 
   private:
-    QMap<QString, QVariant> mConfig;
+    QgsEditorWidgetConfig mConfig;
     QWidget* mWidget;
     QWidget* mParent;
     QgsVectorLayer* mLayer;
     int mField;
 };
+
+// We'll use this class inside a QVariant in the widgets properties
+Q_DECLARE_METATYPE( QgsEditorWidgetWrapper* )
 
 #endif // QGSEDITORWIDGETWRAPPER_H

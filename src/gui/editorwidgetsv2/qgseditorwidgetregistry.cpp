@@ -23,14 +23,14 @@
 #include "qgsmessagelog.h"
 
 
-QgsEditorWidgetRegistry*  QgsEditorWidgetRegistry::mInstance = 0;
+QgsEditorWidgetRegistry*  QgsEditorWidgetRegistry::sInstance = 0;
 
 QgsEditorWidgetRegistry* QgsEditorWidgetRegistry::instance()
 {
-  if ( !mInstance )
-    mInstance = new QgsEditorWidgetRegistry();
+  if ( !sInstance )
+    sInstance = new QgsEditorWidgetRegistry();
 
-  return mInstance;
+  return sInstance;
 }
 
 QgsEditorWidgetRegistry::QgsEditorWidgetRegistry()
@@ -59,6 +59,17 @@ QgsEditorWidgetWrapper* QgsEditorWidgetRegistry::create( const QString& widgetTy
   if ( mWidgetFactories.contains( widgetType ) )
   {
     return mWidgetFactories[widgetType]->create( vl, fieldIdx, parent );
+  }
+  return 0;
+}
+
+QgsEditorWidgetWrapper* QgsEditorWidgetRegistry::create( const QString& widgetType, QgsVectorLayer* vl, int fieldIdx, const QgsEditorWidgetConfig& config, QWidget* parent )
+{
+  if ( mWidgetFactories.contains( widgetType ) )
+  {
+     QgsEditorWidgetWrapper* fac = mWidgetFactories[widgetType]->create( vl, fieldIdx, parent );
+     fac->setConfig( config );
+     return fac;
   }
   return 0;
 }

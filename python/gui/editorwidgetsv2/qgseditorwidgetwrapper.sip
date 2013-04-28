@@ -21,9 +21,9 @@ class QgsEditorWidgetWrapper : public QObject
 
   public:
     explicit QgsEditorWidgetWrapper( QgsVectorLayer* vl, int fieldIdx, QWidget* parent = 0 );
-    virtual QWidget* widget();
+    QWidget* widget();
     virtual void setConfig( QMap<QString, QVariant> config );
-    virtual const QVariant& value() = 0;
+    virtual QVariant value() = 0;
     QVariant config( QString key );
     
     QgsVectorLayer* layer();

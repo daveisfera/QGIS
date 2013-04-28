@@ -21,6 +21,9 @@
 
 #include "qgseditorwidgetfactory.h"
 
+class QgsMapLayer;
+class QDomNode;
+
 /**
  * This class manages all known edit widget factories
  */
@@ -39,6 +42,7 @@ class QgsEditorWidgetRegistry : public QObject {
 
     QgsEditorWidgetWrapper* create( const QString& widgetType, QgsVectorLayer* vl, int fieldIdx, QWidget* parent );
     QgsEditorConfigWidget* createConfigWidget( const QString& widgetId, QgsVectorLayer* vl, int fieldIdx, QWidget* parent );
+    QString name( const QString& widgetId );
 
     const QMap<QString, QgsEditorWidgetFactory*> factories();
 
@@ -50,7 +54,6 @@ class QgsEditorWidgetRegistry : public QObject {
     {
       mWidgetFactories.insert( widgetType, new QgsEditWidgetFactoryHelper<W, C>( name ) );
     }
-
 
     /**
      * Register a new widgetfactory
@@ -65,6 +68,10 @@ class QgsEditorWidgetRegistry : public QObject {
      * this method.
      */
     void initKnownTypes();
+
+  private slots:
+    void readMapLayer( QgsMapLayer* mapLayer , const QDomElement& layerElem );
+    void writeMapLayer(QgsMapLayer* mapLayer , QDomElement& layerElem, QDomDocument& doc );
 
   private:
     QMap<QString, QgsEditorWidgetFactory*> mWidgetFactories;

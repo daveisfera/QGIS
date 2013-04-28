@@ -2102,6 +2102,7 @@ bool QgsVectorLayer::readSymbology( const QDomNode& node, QString& errorMessage 
     QgsAttributeEditorElement *attributeEditorWidget = attributeEditorElementFromDomElement( elem, this );
     mAttributeEditorElements.append( attributeEditorWidget );
   }
+
   return true;
 }
 

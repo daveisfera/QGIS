@@ -122,6 +122,7 @@
 #include "qgsdecorationnortharrow.h"
 #include "qgsdecorationscalebar.h"
 #include "qgsdecorationgrid.h"
+#include "editorwidgetsv2/qgseditorwidgetregistry.h"
 #include "qgsencodingfiledialog.h"
 #include "qgserror.h"
 #include "qgserrordialog.h"
@@ -578,6 +579,9 @@ QgisApp::QgisApp( QSplashScreen *splash, bool restorePlugins, QWidget * parent, 
   addDockWidget( Qt::BottomDockWidgetArea, mLogDock );
   mLogDock->setWidget( mLogViewer );
   mLogDock->hide();
+
+  // Init the editor widget types
+  QgsEditorWidgetRegistry::instance();
 
   mInternalClipboard = new QgsClipboard; // create clipboard
   connect( mInternalClipboard, SIGNAL( changed() ), this, SLOT( clipboardChanged() ) );

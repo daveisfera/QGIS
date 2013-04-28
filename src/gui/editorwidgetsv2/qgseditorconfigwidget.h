@@ -33,6 +33,7 @@ class QgsEditorConfigWidget : public QWidget
     virtual ~QgsEditorConfigWidget() {}
 
     virtual QMap<QString, QVariant> config() = 0;
+    virtual void setConfig( const QMap<QString, QVariant>& config ) = 0;
 
   private:
     QgsVectorLayer* mLayer;

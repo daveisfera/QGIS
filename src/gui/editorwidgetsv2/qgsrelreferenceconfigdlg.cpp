@@ -14,6 +14,7 @@
  ***************************************************************************/
 
 #include "qgsrelreferenceconfigdlg.h"
+#include "qgseditorwidgetfactory.h"
 
 #include "qgsvectorlayer.h"
 
@@ -25,15 +26,15 @@ QgsRelReferenceConfigDlg::QgsRelReferenceConfigDlg( QgsVectorLayer* vl, int fiel
   const QgsFields& fields = vl->pendingFields();
   for ( int i = 0; i < fields.count(); ++i )
   {
-    mComboDisplayField->addItem( vl->attributeAlias( i ), fields[i].name() );
+    mComboDisplayField->addItem( fields[i].name(), fields[i].name() );
   }
 }
 
 void QgsRelReferenceConfigDlg::setConfig( const QMap<QString, QVariant>& config )
 {
-  if ( config.contains( "AllowNull" ) )
+  if ( config.contains( "AllowNULL" ) )
   {
-    mCbxAllowNull->setChecked( config[ "AllowNull" ].toBool() );
+    mCbxAllowNull->setChecked( config[ "AllowNULL" ].toBool() );
   }
 
   if ( config.contains( "ShowForm" ) )

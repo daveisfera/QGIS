@@ -24,6 +24,7 @@
 #include "qgsvectordataprovider.h"
 #include "qgsaddtaborgroup.h"
 #include "editorwidgetsv2/qgseditorwidgetfactory.h"
+#include "editorwidgetsv2/qgseditorwidgetregistry.h"
 
 #include <QTreeWidgetItem>
 #include <QWidget>
@@ -332,8 +333,17 @@ void QgsFieldsProperties::setRow( int row, int idx, const QgsField &field )
     mAttributesList->item( row, i )->setFlags( mAttributesList->item( row, i )->flags() & ~Qt::ItemIsEditable );
 
   FieldConfig cfg( mLayer, idx );
-  cfg.mEditType = mLayer->editType( idx );
-  QPushButton *pb = new QPushButton( editTypeButtonText( cfg.mEditType ) );
+  QPushButton *pb;
+  if ( cfg.mEditType == QgsVectorLayer::EditorWidgetV2 )
+  {
+    pb = new QPushButton( QgsEditorWidgetRegistry::instance()->name( cfg.mEditorWidgetV2Type ) );
+    pb->setProperty( "EditWidgetV2", cfg.mEditType );
+  }
+  else
+  {
+    pb = new QPushButton( editTypeButtonText( cfg.mEditType ) );
+  }
+
   mAttributesList->setCellWidget( row, attrEditTypeCol, pb );
   connect( pb, SIGNAL( pressed() ), this, SLOT( attributeTypeDialog( ) ) );
 
@@ -496,6 +506,7 @@ void QgsFieldsProperties::attributeTypeDialog()
   attributeTypeDialog.setWidgetSize( cfg.mWidgetSize );
   attributeTypeDialog.setFieldEditable( cfg.mEditable );
   attributeTypeDialog.setLabelOnTop( cfg.mLabelOnTop );
+  attributeTypeDialog.setWidgetV2Config( cfg.mEditorWidgetV2Config );
 
   attributeTypeDialog.setIndex( index, cfg.mEditType );
   attributeTypeDialog.setFieldEditableEnabled( cfg.mEditableEnabled );
@@ -551,7 +562,7 @@ void QgsFieldsProperties::attributeTypeDialog()
 
   if ( cfg.mEditType == QgsVectorLayer::EditorWidgetV2 )
   {
-    pb->setText( attributeTypeDialog.editorWidgetV2Test() );
+    pb->setText( attributeTypeDialog.editorWidgetV2Text() );
     pb->setProperty( "EditWidgetV2", cfg.mEditType );
   }
   else
@@ -970,4 +981,6 @@ QgsFieldsProperties::FieldConfig::FieldConfig( QgsVectorLayer* layer, int idx )
   mEditType = layer->editType( idx );
   mDateFormat = layer->dateFormat( idx );
   mWidgetSize = layer->widgetSize( idx );
+  mEditorWidgetV2Type = layer->editorWidgetV2( idx );
+  mEditorWidgetV2Config = layer->editorWidgetV2Config( idx );
 }

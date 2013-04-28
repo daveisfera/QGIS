@@ -16,6 +16,8 @@
 #include <QPushButton>
 
 #include "qgsrelationreferencewidget.h"
+#include "qgsrelreferenceconfigdlg.h"
+#include "qgseditorwidgetfactory.h"
 
 QgsRelationReferenceWidget::QgsRelationReferenceWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* parent ) :
   QgsEditorWidgetWrapper( vl, fieldIdx, parent )
@@ -35,4 +37,24 @@ const QVariant& QgsRelationReferenceWidget::value()
 void QgsRelationReferenceWidget::setValue( const QVariant& value )
 {
 
+}
+
+template <>
+QMap<QString, QVariant> QgsEditWidgetFactoryHelper<QgsRelationReferenceWidget, QgsRelReferenceConfigDlg>::readConfig( const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx )
+{
+  QMap<QString, QVariant> cfg;
+
+  cfg.insert( "AllowNULL", configElement.attribute( "AllowNULL" ) == "1" );
+  cfg.insert( "ShowForm", configElement.attribute( "ShowForm" ) == "1" );
+  cfg.insert( "DisplayField", configElement.attribute( "DisplayField" ) );
+
+  return cfg;
+}
+
+template <>
+void QgsEditWidgetFactoryHelper<QgsRelationReferenceWidget, QgsRelReferenceConfigDlg>::writeConfig( QMap<QString, QVariant>config, QDomElement& configElement, const QDomDocument& doc, const QgsVectorLayer* layer, int fieldIdx )
+{
+  configElement.setAttribute( "AllowNULL", config["AllowNULL"].toBool() );
+  configElement.setAttribute( "ShowForm", config["ShowForm"].toBool() );
+  configElement.setAttribute( "DisplayField", config["DisplayField"].toString() );
 }

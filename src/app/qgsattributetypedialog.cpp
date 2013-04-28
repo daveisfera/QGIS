@@ -94,7 +94,7 @@ const QString QgsAttributeTypeDialog::editorWidgetV2Type()
   }
 }
 
-const QString QgsAttributeTypeDialog::editorWidgetV2Test()
+const QString QgsAttributeTypeDialog::editorWidgetV2Text()
 {
   QListWidgetItem* item = selectionListWidget->currentItem();
   if ( item )
@@ -121,6 +121,11 @@ const QMap<QString, QVariant> QgsAttributeTypeDialog::editorWidgetV2Config()
   }
 
   return QMap<QString, QVariant>();
+}
+
+void QgsAttributeTypeDialog::setWidgetV2Config( const QMap<QString, QVariant>& config )
+{
+  mWidgetV2Config = config;
 }
 
 QgsVectorLayer::RangeData QgsAttributeTypeDialog::rangeData()
@@ -603,10 +608,6 @@ void QgsAttributeTypeDialog::setIndex( int index, QgsVectorLayer::EditType editT
     case QgsVectorLayer::UuidGenerator:
     case QgsVectorLayer::Color:
       break;
-
-    case QgsVectorLayer::EditorWidgetV2:
-
-      break;
   }
 }
 
@@ -699,9 +700,13 @@ void QgsAttributeTypeDialog::setStackPage( int index )
             oldWdg->hide();
           }
 
-          pageEditorWidget->layout()->addWidget( cfgWdg );
+          if ( cfgWdg )
+          {
+            cfgWdg->setConfig( mWidgetV2Config );
+            pageEditorWidget->layout()->addWidget( cfgWdg );
 
-          mEditorConfigWidgets.insert( factoryId, cfgWdg );
+            mEditorConfigWidgets.insert( factoryId, cfgWdg );
+          }
         }
       }
       break;

@@ -15,6 +15,73 @@
 
 #include "qgseditorwidgetregistry.h"
 
+#include "qgseditorwidgetfactory.h"
+#include "qgsrelationreferencewidget.h"
+#include "qgsrelreferenceconfigdlg.h"
+#include "qgsproject.h"
+#include "qgsvectorlayer.h"
+#include "qgsmessagelog.h"
+
+
+QgsEditorWidgetRegistry*  QgsEditorWidgetRegistry::mInstance = 0;
+
+QgsEditorWidgetRegistry* QgsEditorWidgetRegistry::instance()
+{
+  if ( !mInstance )
+    mInstance = new QgsEditorWidgetRegistry();
+
+  return mInstance;
+}
+
+QgsEditorWidgetRegistry::QgsEditorWidgetRegistry()
+{
+  initKnownTypes();
+  connect( QgsProject::instance(), SIGNAL( readMapLayer(QgsMapLayer*,const QDomElement&) ), this, SLOT( readMapLayer(QgsMapLayer*,const QDomElement&) ) );
+  connect( QgsProject::instance(), SIGNAL( writeMapLayer(QgsMapLayer*,QDomElement&,QDomDocument&) ), this, SLOT( writeMapLayer(QgsMapLayer*,QDomElement&,QDomDocument&) ) );
+}
+
+QgsEditorWidgetRegistry::~QgsEditorWidgetRegistry()
+{
+  qDeleteAll( mWidgetFactories.values() );
+}
+
+void QgsEditorWidgetRegistry::initKnownTypes()
+{
+  // The widget for related features with FK on the current feature
+
+  registerWidget<QgsRelationReferenceWidget, QgsRelReferenceConfigDlg >(
+        "RelationReference",
+        tr( "Relation Reference" ) );
+}
+
+QgsEditorWidgetWrapper* QgsEditorWidgetRegistry::create( const QString& widgetType, QgsVectorLayer* vl, int fieldIdx, QWidget* parent )
+{
+  if ( mWidgetFactories.contains( widgetType ) )
+  {
+    return mWidgetFactories[widgetType]->create( vl, fieldIdx, parent );
+  }
+  return 0;
+}
+
+QgsEditorConfigWidget* QgsEditorWidgetRegistry::createConfigWidget( const QString& widgetId, QgsVectorLayer* vl, int fieldIdx, QWidget* parent )
+{
+  if ( mWidgetFactories.contains( widgetId ) )
+  {
+    return mWidgetFactories[widgetId]->configWidget( vl, fieldIdx, parent );
+  }
+  return 0;
+}
+
+QString QgsEditorWidgetRegistry::name(const QString& widgetId)
+{
+  if ( mWidgetFactories.contains( widgetId ) )
+  {
+    return mWidgetFactories[widgetId]->name();
+  }
+
+  return QString();
+}
+
 const QMap<QString, QgsEditorWidgetFactory*> QgsEditorWidgetRegistry::factories()
 {
   return mWidgetFactories;
@@ -25,12 +92,122 @@ void QgsEditorWidgetRegistry::registerWidget(const QString& widgetType, QgsEdito
   mWidgetFactories.insert( widgetType, widgetFactory );
 }
 
-QgsEditorWidgetRegistry::QgsEditorWidgetRegistry()
+void QgsEditorWidgetRegistry::readMapLayer(QgsMapLayer* mapLayer, const QDomElement& layerElem )
 {
-  initKnownTypes();
+  if ( mapLayer->type() != QgsMapLayer::VectorLayer )
+  {
+    return;
+  }
+
+  QgsVectorLayer* vectorLayer = qobject_cast<QgsVectorLayer*>( mapLayer );
+  if ( !vectorLayer )
+  {
+    return;
+  }
+
+  for( int idx = 0; idx < vectorLayer->pendingFields().count(); ++idx )
+  {
+    if ( vectorLayer->editType( idx ) != QgsVectorLayer::EditorWidgetV2 )
+    {
+      continue;
+    }
+
+    QDomNodeList editTypeNodes = layerElem.namedItem( "edittypes" ).childNodes();
+
+    for ( int i = 0; i < editTypeNodes.size(); i++ )
+    {
+      QDomNode editTypeNode = editTypeNodes.at( i );
+      QDomElement editTypeElement = editTypeNode.toElement();
+
+      QString name = editTypeElement.attribute( "name" );
+
+      if ( vectorLayer->fieldNameIndex( name ) < -1 )
+        continue;
+
+      QgsVectorLayer::EditType editType =
+          ( QgsVectorLayer::EditType ) editTypeElement.attribute( "type" ).toInt();
+
+      if ( editType != QgsVectorLayer::EditorWidgetV2 )
+        continue;
+
+      QString ewv2Type = editTypeElement.attribute( "widgetv2type" );
+
+      if ( mWidgetFactories.contains( ewv2Type ) )
+      {
+        vectorLayer->setEditorWidgetV2( idx, ewv2Type );
+        QDomElement ewv2CfgElem = editTypeElement.namedItem( "widgetv2config" ).toElement();
+
+        if ( !ewv2CfgElem.isNull() )
+        {
+          QMap<QString, QVariant> cfg = mWidgetFactories[ewv2Type]->readConfig( ewv2CfgElem, vectorLayer, idx );
+          vectorLayer->setEditorWidgetV2Config( idx, cfg );
+        }
+      }
+      else
+      {
+        QgsMessageLog::logMessage( tr( "Unknown attribute editor widget '%1'" ).arg( ewv2Type ) );
+      }
+    }
+  }
 }
 
-QgsEditorWidgetRegistry::~QgsEditorWidgetRegistry()
+void QgsEditorWidgetRegistry::writeMapLayer(QgsMapLayer* mapLayer, QDomElement& layerElem, QDomDocument& doc )
 {
-  qDeleteAll( mWidgetFactories.values() );
+  if ( mapLayer->type() != QgsMapLayer::VectorLayer )
+  {
+    return;
+  }
+
+  QgsVectorLayer* vectorLayer = qobject_cast<QgsVectorLayer*>( mapLayer );
+  if ( !vectorLayer )
+  {
+    return;
+  }
+
+  for( int idx = 0; idx < vectorLayer->pendingFields().count(); ++idx )
+  {
+    if ( vectorLayer->editType( idx ) != QgsVectorLayer::EditorWidgetV2 )
+    {
+      continue;
+    }
+
+    const QString& widgetType = vectorLayer->editorWidgetV2( idx );
+    if ( !mWidgetFactories.contains( widgetType ) )
+    {
+      continue;
+    }
+
+    QDomNodeList editTypeNodes = layerElem.namedItem( "edittypes" ).childNodes();
+
+    for ( int i = 0; i < editTypeNodes.size(); i++ )
+    {
+      QDomElement editTypeElement = editTypeNodes.at( i ).toElement();
+
+      QString name = editTypeElement.attribute( "name" );
+
+      if ( vectorLayer->fieldNameIndex( name ) < -1 )
+        continue;
+
+      QgsVectorLayer::EditType editType =
+          ( QgsVectorLayer::EditType ) editTypeElement.attribute( "type" ).toInt();
+
+      if ( editType != QgsVectorLayer::EditorWidgetV2 )
+        continue;
+
+      editTypeElement.setAttribute( "widgetv2type", widgetType );
+
+      if ( mWidgetFactories.contains( widgetType ) )
+      {
+        QDomElement ewv2CfgElem = doc.createElement( "widgetv2config" );
+
+        mWidgetFactories[widgetType]->writeConfig( vectorLayer->editorWidgetV2Config( idx ), ewv2CfgElem, doc, vectorLayer, idx );
+
+        editTypeElement.appendChild( ewv2CfgElem );
+      }
+      else
+      {
+        QgsMessageLog::logMessage( tr( "Unknown attribute editor widget '%1'" ).arg( widgetType ) );
+      }
+    }
+  }
 }

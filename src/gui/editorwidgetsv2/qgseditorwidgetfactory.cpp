@@ -14,42 +14,4 @@
  ***************************************************************************/
 
 #include "qgseditorwidgetfactory.h"
-#include "qgseditorwidgetregistry.h"
-#include "qgsrelationreferencewidget.h"
-#include "qgsrelreferenceconfigdlg.h"
 
-QgsEditorWidgetRegistry*  QgsEditorWidgetRegistry::mInstance = 0;
-
-QgsEditorWidgetRegistry* QgsEditorWidgetRegistry::instance()
-{
-  if ( !mInstance )
-    mInstance = new QgsEditorWidgetRegistry();
-
-  return mInstance;
-}
-
-void QgsEditorWidgetRegistry::initKnownTypes()
-{
-  // The widget for related features with FK on the current feature
-  registerWidget<QgsRelationReferenceWidget, QgsRelReferenceConfigDlg >(
-        "RelationReference",
-        tr( "Relation Reference" ) );
-}
-
-QgsEditorWidgetWrapper* QgsEditorWidgetRegistry::create( const QString& widgetType, QgsVectorLayer* vl, int fieldIdx, QWidget* parent )
-{
-  if ( mWidgetFactories.contains( widgetType ) )
-  {
-    return mWidgetFactories[widgetType]->create( vl, fieldIdx, parent );
-  }
-  return 0;
-}
-
-QgsEditorConfigWidget* QgsEditorWidgetRegistry::createConfigWidget( const QString& widgetId, QgsVectorLayer* vl, int fieldIdx, QWidget* parent )
-{
-  if ( mWidgetFactories.contains( widgetId ) )
-  {
-    return mWidgetFactories[widgetId]->configWidget( vl, fieldIdx, parent );
-  }
-  return 0;
-}

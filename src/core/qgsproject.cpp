@@ -719,7 +719,7 @@ QPair< bool, QList<QDomNode> > QgsProject::_getMapLayers( QDomDocument const &do
 
 bool QgsProject::_readRelations( const QDomDocument &doc )
 {
-
+  return true;
 } // _readRelations
 
 

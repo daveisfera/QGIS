@@ -19,7 +19,7 @@
 #include "ui_qgsrelreferenceconfigdlgbase.h"
 #include "qgseditorconfigwidget.h"
 
-class QgsRelReferenceConfigDlg : public QgsEditorConfigWidget, private Ui::QgsRelReferenceConfigDlgBase
+class GUI_EXPORT QgsRelReferenceConfigDlg : public QgsEditorConfigWidget, private Ui::QgsRelReferenceConfigDlgBase
 {
     Q_OBJECT
     

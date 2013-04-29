@@ -29,7 +29,7 @@ class QgsEditorConfigWidget;
  * Every attribute editor widget wrapper needs a factory, which inherits this class
  * It provides metadata for the widgets such as the name, a configuration widget
  */
-class QgsEditorWidgetFactory
+class GUI_EXPORT QgsEditorWidgetFactory
 {
   public:
     /**
@@ -85,7 +85,8 @@ class QgsEditorWidgetFactory
     virtual QgsEditorWidgetConfig readConfig( const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx );
 
     /**
-     * @brief writeConfig   Serialize your configuration and save it in a xml doc.
+     * Serialize your configuration and save it in a xml doc.
+     *
      * @param config        The configuration to serialize
      * @param configElement The element, where you can write your configuration into
      * @param doc           The document. You can use this to create new nodes
@@ -103,7 +104,7 @@ class QgsEditorWidgetFactory
  * C++ only
  */
 template<typename F, typename G>
-class QgsEditWidgetFactoryHelper : public QgsEditorWidgetFactory
+class GUI_EXPORT QgsEditWidgetFactoryHelper : public QgsEditorWidgetFactory
 {
   public:
     QgsEditWidgetFactoryHelper( QString name )
@@ -120,15 +121,34 @@ class QgsEditWidgetFactoryHelper : public QgsEditorWidgetFactory
     }
 
     /**
+     * Read the config from an XML file and map it to a proper {@link QgsEditorWidgetConfig}.
+     *
      * Implement this method yourself somewhere with the class template parameters
      * specified. To keep things clean, every implementation of this class should be placed
      * next to the associated widget factory implementation.
      *
-     * @param layer
-     * @param configNode
+     * @param configElement The configuration element from the project file
+     * @param layer         The layer for which this configuration applies
+     * @param fieldIdx      The field on the layer for which this configuration applies
+     *
+     * @return A configuration object. This will be passed to your widget wrapper later on
      */
 
     virtual QgsEditorWidgetConfig readConfig( const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx );
+
+    /**
+     * Serialize your configuration and save it in a xml doc.
+     *
+     * Implement this method yourself somewhere with the class template parameters
+     * specified. To keep things clean, every implementation of this class should be placed
+     * next to the associated widget factory implementation.
+     *
+     * @param config        The configuration to serialize
+     * @param configElement The element, where you can write your configuration into
+     * @param doc           The document. You can use this to create new nodes
+     * @param layer         The layer for which this configuration applies
+     * @param fieldIdx      The field on the layer for which this configuration applies
+     */
     virtual void writeConfig( const QgsEditorWidgetConfig& config, QDomElement& configElement, const QDomDocument& doc, const QgsVectorLayer* layer, int fieldIdx );
 };
 

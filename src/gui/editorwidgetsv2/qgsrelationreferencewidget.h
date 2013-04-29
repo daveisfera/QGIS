@@ -20,7 +20,7 @@
 
 #include <QComboBox>
 
-class QgsRelationReferenceWidget : public QgsEditorWidgetWrapper
+class GUI_EXPORT QgsRelationReferenceWidget : public QgsEditorWidgetWrapper
 {
     Q_OBJECT
   public:

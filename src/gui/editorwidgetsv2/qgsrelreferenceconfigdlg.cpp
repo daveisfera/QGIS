@@ -14,19 +14,27 @@
  ***************************************************************************/
 
 #include "qgsrelreferenceconfigdlg.h"
-#include "qgseditorwidgetfactory.h"
 
+#include "qgseditorwidgetfactory.h"
+#include "qgsfield.h"
+#include "qgsrelation.h"
 #include "qgsvectorlayer.h"
 
 QgsRelReferenceConfigDlg::QgsRelReferenceConfigDlg( QgsVectorLayer* vl, int fieldIdx, QWidget* parent )
   : QgsEditorConfigWidget( vl, fieldIdx, parent )
 {
-  setupUi(this);
+  setupUi( this );
 
   const QgsFields& fields = vl->pendingFields();
   for ( int i = 0; i < fields.count(); ++i )
   {
     mComboDisplayField->addItem( fields[i].name(), fields[i].name() );
+  }
+
+  foreach ( QgsRelation* relation, vl->referencingRelations( fieldIdx ) )
+  {
+    QgsField fld = relation->fieldPairs().first().second;
+    mComboRelation->addItem( fld.name() );
   }
 }
 
@@ -48,12 +56,12 @@ void QgsRelReferenceConfigDlg::setConfig( const QMap<QString, QVariant>& config 
   }
 }
 
-QMap<QString, QVariant> QgsRelReferenceConfigDlg::config()
+QgsEditorWidgetConfig QgsRelReferenceConfigDlg::config()
 {
-  QMap<QString, QVariant> myConfig;
+  QgsEditorWidgetConfig myConfig;
   myConfig.insert( "AllowNULL", mCbxAllowNull->isChecked() );
   myConfig.insert( "ShowForm", mCbxShowForm->isChecked() );
-  myConfig.insert( "DisplayField", mComboDisplayField->currentText() );
+  myConfig.insert( "DisplayField", mComboDisplayField->itemData( mComboDisplayField->currentIndex() ) );
 
   return myConfig;
 }

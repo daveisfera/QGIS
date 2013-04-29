@@ -40,9 +40,10 @@ class QgsEditorWidgetWrapper;
 class QgsFeatureRequest;
 class QgsGeometry;
 class QgsGeometryVertexIndex;
-class QgsMapToPixel;
 class QgsLabel;
+class QgsMapToPixel;
 class QgsRectangle;
+class QgsRelation;
 class QgsVectorDataProvider;
 class QgsSingleSymbolRendererV2;
 class QgsRectangle;
@@ -1167,6 +1168,20 @@ class CORE_EXPORT QgsVectorLayer : public QgsMapLayer
      * @note added in 1.8
      **/
     ValueRelationData &valueRelation( int idx );
+
+    /**
+     * Get relations, where the foreign key is on this layer
+     * @param Only get relations, where idx forms part of the foreign key
+     * @return A list of relations
+     */
+    QList<QgsRelation*> referencingRelations( int idx );
+
+    /**
+     * Get relations, where the foreign key is on another layer, referencing this layer
+     * @param Only get relations, where idx forms part of the referenced key
+     * @return A list of relations
+     */
+    QList<QgsRelation*> referencedRelations( int idx );
 
     /**access date format
      * @note added in 1.9

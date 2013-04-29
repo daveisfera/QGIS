@@ -52,6 +52,7 @@
 #include "qgspoint.h"
 #include "qgsproviderregistry.h"
 #include "qgsrectangle.h"
+#include "qgsrelationmanager.h"
 #include "qgsrendercontext.h"
 #include "qgscoordinatereferencesystem.h"
 #include "qgsvectordataprovider.h"
@@ -3849,6 +3850,11 @@ QgsVectorLayer::ValueRelationData &QgsVectorLayer::valueRelation( int idx )
   }
 
   return mValueRelations[fieldName];
+}
+
+QList<QgsRelation*> QgsVectorLayer::referencingRelations( int idx )
+{
+  return QgsRelationManager::instance()->referencingRelations( this, idx );
 }
 
 QList<QgsAttributeEditorElement*> &QgsVectorLayer::attributeEditorElements()

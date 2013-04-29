@@ -13,12 +13,11 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "qgsrelationmanager.h"
+
+#include "qgsapplication.h"
 #include "qgslogger.h"
 #include "qgsproject.h"
-#include "qgsrelationmanager.h"
-#include "qgsmaplayerregistry.h"
-#include "qgsvectorlayer.h"
-#include "qgsapplication.h"
 
 QgsRelationManager* QgsRelationManager::mInstance = NULL;
 
@@ -46,6 +45,16 @@ void QgsRelationManager::setRelations( const QList<QgsRelation> &relations )
 const QList<QgsRelation>& QgsRelationManager::relations()
 {
   return mRelations;
+}
+
+QList<QgsRelation> QgsRelationManager::referencingRelations( QgsVectorLayer* layer, int fieldIdx )
+{
+  QList<QgsRelation> relations;
+
+  foreach ( const QgsRelation& rel, mRelations )
+  {
+    if ( rel.referencedLayerId() )
+  }
 }
 
 void QgsRelationManager::readProject( const QDomDocument & doc )
@@ -87,127 +96,3 @@ void QgsRelationManager::writeProject( QDomDocument & doc )
     relation.writeXML( relationsNode, doc );
   }
 }
-
-QgsRelation QgsRelation::createFromXML( const QDomNode &node )
-{
-  QDomElement elem = node.toElement();
-
-  if ( elem.tagName() != "relation" )
-  {
-    QgsLogger::warning( QApplication::translate( "QgsRelation", "Cannot create relation. Unexpected tag '%1'" ).arg( elem.tagName() ) );
-  }
-
-  QgsRelation relation;
-
-  QString referencingLayerId = elem.attribute( "referencingLayer" );
-  QString referencedLayerId = elem.attribute( "referencedLayer" );
-  QString name = elem.attribute( "name" );
-
-  QMap<QString, QgsMapLayer*> mapLayers = QgsMapLayerRegistry::instance()->mapLayers();
-
-  QgsMapLayer* referencingLayer = mapLayers[referencingLayerId];
-  QgsMapLayer* referencedLayer = mapLayers[referencedLayerId];;
-
-  if ( NULL == referencingLayer )
-  {
-    QgsLogger::warning( QApplication::translate( "QgsRelation", "Relation defined for layer '%1' which does not exist." ).arg( referencingLayerId ) );
-  }
-
-  if ( NULL == referencedLayer )
-  {
-    QgsLogger::warning( QApplication::translate( "QgsRelation", "Relation defined for layer '%1' which does not exist." ).arg( referencedLayerId ) );
-  }
-
-  if ( QgsMapLayer::VectorLayer  != referencingLayer->type() )
-  {
-    QgsLogger::warning( QApplication::translate( "QgsRelation", "Relation defined for layer '%1' which is not of type VectorLayer." ).arg( referencingLayerId ) );
-  }
-
-  if ( QgsMapLayer::VectorLayer  != referencedLayer->type() )
-  {
-    QgsLogger::warning( QApplication::translate( "QgsRelation", "Relation defined for layer '%1' which is not of type VectorLayer." ).arg( referencedLayerId ) );
-  }
-
-  relation.mReferencingLayerId = referencingLayerId;
-  relation.mReferencingLayer = qobject_cast<QgsVectorLayer*>( referencingLayer );
-  relation.mReferencedLayerId = referencedLayerId;
-  relation.mReferencedLayer = qobject_cast<QgsVectorLayer*>( referencedLayer );
-  relation.mRelationName = name;
-
-  QDomNodeList references = elem.elementsByTagName( "fieldRef" );
-  for ( int i = 0; i < references.size(); ++i )
-  {
-    QDomElement refEl = references.at( i ).toElement();
-
-    QString referencingField = refEl.attribute( "referencingField" );
-    QString referencedField = refEl.attribute( "referencedField" );
-
-    relation.addFieldPair( referencingField, referencedField );
-  }
-
-  return relation;
-}
-
-void QgsRelation::writeXML( QDomNode &node, QDomDocument &doc ) const
-{
-  QDomElement elem = doc.createElement( "relation" );
-  elem.setAttribute( "name", mRelationName );
-  elem.setAttribute( "referencingLayer", mReferencingLayerId );
-  elem.setAttribute( "referencedLayer", mReferencedLayerId );
-
-  foreach( FieldPair fields, mFieldPairs )
-  {
-    QDomElement referenceElem = doc.createElement( "fieldRef" );
-    referenceElem.setAttribute( "referencingField", fields.first.name() );
-    referenceElem.setAttribute( "referencedField", fields.second.name() );
-    elem.appendChild( referenceElem );
-  }
-
-  node.appendChild( elem );
-}
-
-void QgsRelation::setRelationName( QString name )
-{
-  mRelationName = name;
-}
-
-void QgsRelation::setReferencingLayer( QString id )
-{
-  mReferencingLayerId = id;
-}
-
-void QgsRelation::setReferencedLayer( QString id )
-{
-  mReferencedLayerId = id;
-}
-
-void QgsRelation::addFieldPair(QString referencingField, QString referencedField)
-{
-  mFieldPairs << FieldPair( referencingField, referencedField );
-}
-
-void QgsRelation::addFieldPair( QgsRelation::FieldPair fieldPair )
-{
-  mFieldPairs << fieldPair;
-}
-
-QString QgsRelation::relationName() const
-{
-  return mRelationName;
-}
-
-QString QgsRelation::referencingLayerId() const
-{
-  return mReferencingLayerId;
-}
-
-QString QgsRelation::referencedLayerId() const
-{
-  return mReferencedLayerId;
-}
-
-QList<QgsRelation::FieldPair> QgsRelation::fieldPairs() const
-{
-  return mFieldPairs;
-}
-

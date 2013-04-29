@@ -21,45 +21,9 @@
 #include <QDomNode>
 #include <QDomDocument>
 
-#include "qgsfield.h"
+#include "qgsrelation.h"
 
 class QgsVectorLayer;
-
-class CORE_EXPORT QgsRelation
-{
-  public:
-    typedef QPair< QgsField, QgsField > FieldPair;
-
-    QgsRelation() {}
-
-    static QgsRelation createFromXML( const QDomNode& node );
-    void writeXML( QDomNode& node, QDomDocument& doc ) const;
-
-    void setRelationName( QString name );
-    void setReferencingLayer( QString id );
-    void setReferencedLayer( QString id );
-    void addFieldPair( QString referencingField, QString referencedField );
-    void addFieldPair( FieldPair fieldPair );
-
-    QString relationName() const;
-    QString referencingLayerId() const;
-    QString referencedLayerId() const;
-    QList< FieldPair > fieldPairs() const;
-
-  private:
-    QString mRelationName;
-    QString mReferencingLayerId;
-    /** The child layer */
-    QgsVectorLayer* mReferencingLayer;
-    QString mReferencedLayerId;
-    /** The parent layer */
-    QgsVectorLayer* mReferencedLayer;
-    /** A list of fields which define the relation.
-     *  In most cases there will be only one value, but multiple values
-     *  are supported for composited foreign keys.
-     *  The first field is on the referencing layer, the second on the referenced */
-    QList< FieldPair > mFieldPairs;
-};
 
 /**
  * This class manages a set of relations between layers.
@@ -77,6 +41,8 @@ class CORE_EXPORT QgsRelationManager : public QObject
     static QgsRelationManager* instance();
     void setRelations( const QList<QgsRelation>& relations );
     const QList<QgsRelation>& relations();
+
+    QList<QgsRelation*> referencingRelations( QgsVectorLayer* layer = NULL, int fieldIdx = -2 );
 
   signals:
 

@@ -25,8 +25,8 @@ class GUI_EXPORT QgsRelReferenceConfigDlg : public QgsEditorConfigWidget, privat
     
   public:
     explicit QgsRelReferenceConfigDlg( QgsVectorLayer* vl, int fieldIdx, QWidget* parent );
-    virtual QMap<QString, QVariant> config();
-    virtual void setConfig( const QMap<QString, QVariant>& config );
+    virtual QgsEditorWidgetConfig config();
+    virtual void setConfig( const QgsEditorWidgetConfig& config );
 };
 
 #endif // QGSRELREFERENCECONFIGDLGBASE_H

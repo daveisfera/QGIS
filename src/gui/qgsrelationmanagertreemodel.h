@@ -83,7 +83,7 @@ class QgsRelationManagerTreeModel : public QAbstractItemModel
     public:
       RelationTreeItemRelation( int id, QgsRelationManagerTreeModel* model, RelationTreeItemLayer* parent )
         : RelationTreeItem( id, model, parent ) {}
-      ~RelationTreeItemRelation();
+      virtual ~RelationTreeItemRelation();
       virtual int rowCount()  { return mReferences.size(); }
       virtual QVariant data( const QModelIndex& index, int role ) const;
       virtual bool spanColumn() { return true; }
@@ -102,7 +102,7 @@ class QgsRelationManagerTreeModel : public QAbstractItemModel
     public:
       RelationTreeItemReference( int id, QgsRelationManagerTreeModel* model, RelationTreeItemRelation* parent )
         : RelationTreeItem( id, model, parent ) {}
-      ~RelationTreeItemReference();
+      virtual ~RelationTreeItemReference();
       virtual int rowCount()  { return 0; }
       virtual int itemToRow( RelationTreeItem* item ) { return -1; }
       virtual QVariant data( const QModelIndex& index, int role ) const

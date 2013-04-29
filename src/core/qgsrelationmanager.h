@@ -25,7 +25,7 @@
 
 class QgsVectorLayer;
 
-class QgsRelation
+class CORE_EXPORT QgsRelation
 {
   public:
     typedef QPair< QgsField, QgsField > FieldPair;
@@ -66,7 +66,7 @@ class QgsRelation
  *
  * @note This class is a singleton. Call QgsRelationManager::instance() to get access to the instance.
  */
-class QgsRelationManager : public QObject
+class CORE_EXPORT QgsRelationManager : public QObject
 {
     Q_OBJECT
 

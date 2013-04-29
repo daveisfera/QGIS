@@ -22,7 +22,7 @@
 
 class QgsVectorLayer;
 
-class QgsEditorConfigWidget : public QWidget
+class GUI_EXPORT QgsEditorConfigWidget : public QWidget
 {
     Q_OBJECT
   public:

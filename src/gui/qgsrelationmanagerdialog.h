@@ -24,7 +24,7 @@ class QgsRelationManager;
 class QgsRelationManagerTreeModel;
 class QgsVectorLayer;
 
-class QgsRelationManagerDialog : public QWidget, private Ui::QgsRelationManagerDialogBase
+class GUI_EXPORT QgsRelationManagerDialog : public QWidget, private Ui::QgsRelationManagerDialogBase
 {
     Q_OBJECT
     

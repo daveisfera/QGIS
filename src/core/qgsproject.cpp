@@ -717,12 +717,6 @@ QPair< bool, QList<QDomNode> > QgsProject::_getMapLayers( QDomDocument const &do
 
 } // _getMapLayers
 
-bool QgsProject::_readRelations( const QDomDocument &doc )
-{
-  return true;
-} // _readRelations
-
-
 bool QgsProject::addLayer( const QDomElement& layerElem, QList<QDomNode>& brokenNodes, QList< QPair< QgsVectorLayer*, QDomElement > >& vectorLayerList )
 {
   QString type = layerElem.attribute( "type" );
@@ -904,8 +898,6 @@ bool QgsProject::read()
     // (default implementation ignores them, there's also a GUI handler that lets user choose correct path)
     mBadLayerHandler->handleBadLayers( getMapLayersResults.second, *doc );
   }
-
-  _readRelations( *doc );
 
   // read the project: used by map canvas and legend
   emit readProject( *doc );

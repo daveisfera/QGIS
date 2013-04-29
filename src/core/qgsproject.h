@@ -386,8 +386,6 @@ class CORE_EXPORT QgsProject : public QObject
 
     QPair< bool, QList<QDomNode> > _getMapLayers( QDomDocument const &doc );
 
-    bool _readRelations( QDomDocument const &doc );
-
     QString mErrorMessage;
 
     QgsProjectBadLayerHandler* mBadLayerHandler;

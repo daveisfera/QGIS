@@ -18,6 +18,8 @@
 
 #include <QWidget>
 
+#include "qgseditorwidgetwrapper.h"
+
 class QgsVectorLayer;
 
 class QgsEditorConfigWidget : public QWidget
@@ -32,8 +34,8 @@ class QgsEditorConfigWidget : public QWidget
 
     virtual ~QgsEditorConfigWidget() {}
 
-    virtual QMap<QString, QVariant> config() = 0;
-    virtual void setConfig( const QMap<QString, QVariant>& config ) = 0;
+    virtual QgsEditorWidgetConfig config() = 0;
+    virtual void setConfig( const QgsEditorWidgetConfig& config ) = 0;
 
   private:
     QgsVectorLayer* mLayer;

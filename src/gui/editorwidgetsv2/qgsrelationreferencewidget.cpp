@@ -13,34 +13,40 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "qgsrelationreferencewidget.h"
+
 #include <QPushButton>
 
-#include "qgsrelationreferencewidget.h"
 #include "qgsrelreferenceconfigdlg.h"
 #include "qgseditorwidgetfactory.h"
 
-QgsRelationReferenceWidget::QgsRelationReferenceWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* parent )
-  : QgsEditorWidgetWrapper( vl, fieldIdx, parent )
-  , mComboBox( NULL )
+QgsRelationReferenceWidget::QgsRelationReferenceWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent )
+    : QgsEditorWidgetWrapper( vl, fieldIdx, editor, parent )
+    , mComboBox( NULL )
 {
 }
 
 QWidget* QgsRelationReferenceWidget::createWidget( QWidget* parent )
 {
-  mComboBox = new QComboBox( parent );
+  return new QComboBox( parent );
+}
 
-  connect( mComboBox, SIGNAL( currentIndexChanged(QString) ), this, SIGNAL( valueChanged(QVariant) ) );
-
-  mComboBox->addItem( "A", "A" );
-  mComboBox->addItem( "B", "B" );
-  mComboBox->addItem( "C", "C" );
-
-  if ( config( "AllowNULL" ).toBool() )
+void QgsRelationReferenceWidget::initWidget( QWidget* editor )
+{
+  mComboBox = qobject_cast<QComboBox*>( editor );
+  if ( mComboBox )
   {
-    mComboBox->addItem( "[NULL]" );
-  }
+    connect( mComboBox, SIGNAL( currentIndexChanged( QString ) ), this, SIGNAL( valueChanged( QVariant ) ) );
 
-  return mComboBox;
+    mComboBox->addItem( "A", "A" );
+    mComboBox->addItem( "B", "B" );
+    mComboBox->addItem( "C", "C" );
+
+    if ( config( "AllowNULL" ).toBool() )
+    {
+      mComboBox->addItem( "[NULL]" );
+    }
+  }
 }
 
 QVariant QgsRelationReferenceWidget::value()

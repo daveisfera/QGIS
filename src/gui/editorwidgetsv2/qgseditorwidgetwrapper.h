@@ -25,20 +25,68 @@ class QgsVectorLayer;
 typedef QMap<QString, QVariant> QgsEditorWidgetConfig;
 
 /**
- * One wrapper per edit widget.
+ * Manages an editor widget
  * Widget and wrapper share the same parent
+ *
+ * You need
  */
 class QgsEditorWidgetWrapper : public QObject
 {
     Q_OBJECT
   public:
-    explicit QgsEditorWidgetWrapper(QgsVectorLayer* vl, int fieldIdx, QWidget* parent = 0 );
+    explicit QgsEditorWidgetWrapper( QgsVectorLayer* vl, int fieldIdx, QWidget* editor = 0, QWidget* parent = 0 );
+
+    /**
+     * @brief Access the widget managed by this wrapper
+     * @return The widget
+     */
     QWidget* widget();
-    virtual void setConfig( QgsEditorWidgetConfig config );
+
+    /**
+     * Will set the config of this wrapper to the specified config.
+     *
+     * @param config The config for this wrapper
+     */
+    void setConfig( QgsEditorWidgetConfig config );
+
+    /**
+     * Will be used to access the widget's value. Read the value from the widget and
+     * return it properly formatted to be saved in the attribute.
+     */
     virtual QVariant value() = 0;
+
+    /**
+     * Use this inside your overriden classes to access the configuration.
+     *
+     * @param key The configuration option you want to load
+     *
+     * @return the value assigned to this configuration option
+     */
     QVariant config( QString key );
 
+    /**
+     * Returns the whole config
+     *
+     * @return The configuration
+     */
+    const QgsEditorWidgetConfig config();
+
+    /**
+     * Access the QgsVectorLayer, you are working on
+     *
+     * @return The layer
+     *
+     * @see field()
+     */
     QgsVectorLayer* layer();
+
+    /**
+     * Access the field index.
+     *
+     * @return The index of the field you are working on
+     *
+     * @see layer()
+     */
     int field();
 
     /**
@@ -49,12 +97,41 @@ class QgsEditorWidgetWrapper : public QObject
     static QgsEditorWidgetWrapper* fromWidget( QWidget* widget );
 
   protected:
+    /**
+     * This method should create a new widget with the provided parent. This will only be called
+     * if the form did not already provide a widget, so it is not guaranteed to be called!
+     * You should not do initialisation stuff, which also has to be done for custom editor
+     * widgets inside this method. Things like filling comboboxes and assigning other data which
+     * will also be used to make widgets on forms created in the QtDesigner usable should be assigned
+     * in {@link initWidget(QWidget*)}.
+     *
+     * @param parent You should set this parent on the created widget.
+     * @return A new widget
+     */
     virtual QWidget* createWidget( QWidget* parent ) = 0;
 
+    /**
+     * This method should initialize the editor widget with runtime data. Fill your comboboxes here.
+     *
+     * @param editor The widget which will represent this attribute editor in a form.
+     */
+    virtual void initWidget( QWidget* editor );
+
   signals:
+    /**
+     * Emit this signal, whenever the value changed.
+     *
+     * @param value The new value
+     */
     void valueChanged( const QVariant& value );
-    
+
   public slots:
+    /**
+     * Is called, when the value of the widget needs to be changed. Update the widget representation
+     * to reflect the new value.
+     *
+     * @param value The new value of the attribute
+     */
     virtual void setValue( const QVariant& value ) = 0;
 
   private:

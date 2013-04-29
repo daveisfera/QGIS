@@ -36,8 +36,8 @@ QgsEditorWidgetRegistry* QgsEditorWidgetRegistry::instance()
 QgsEditorWidgetRegistry::QgsEditorWidgetRegistry()
 {
   initKnownTypes();
-  connect( QgsProject::instance(), SIGNAL( readMapLayer(QgsMapLayer*,const QDomElement&) ), this, SLOT( readMapLayer(QgsMapLayer*,const QDomElement&) ) );
-  connect( QgsProject::instance(), SIGNAL( writeMapLayer(QgsMapLayer*,QDomElement&,QDomDocument&) ), this, SLOT( writeMapLayer(QgsMapLayer*,QDomElement&,QDomDocument&) ) );
+  connect( QgsProject::instance(), SIGNAL( readMapLayer( QgsMapLayer*, const QDomElement& ) ), this, SLOT( readMapLayer( QgsMapLayer*, const QDomElement& ) ) );
+  connect( QgsProject::instance(), SIGNAL( writeMapLayer( QgsMapLayer*, QDomElement&, QDomDocument& ) ), this, SLOT( writeMapLayer( QgsMapLayer*, QDomElement&, QDomDocument& ) ) );
 }
 
 QgsEditorWidgetRegistry::~QgsEditorWidgetRegistry()
@@ -50,26 +50,17 @@ void QgsEditorWidgetRegistry::initKnownTypes()
   // The widget for related features with FK on the current feature
 
   registerWidget<QgsRelationReferenceWidget, QgsRelReferenceConfigDlg >(
-        "RelationReference",
-        tr( "Relation Reference" ) );
+    "RelationReference",
+    tr( "Relation Reference" ) );
 }
 
-QgsEditorWidgetWrapper* QgsEditorWidgetRegistry::create( const QString& widgetType, QgsVectorLayer* vl, int fieldIdx, QWidget* parent )
+QgsEditorWidgetWrapper* QgsEditorWidgetRegistry::create( const QString& widgetType, QgsVectorLayer* vl, int fieldIdx, const QgsEditorWidgetConfig& config, QWidget* editor, QWidget* parent )
 {
   if ( mWidgetFactories.contains( widgetType ) )
   {
-    return mWidgetFactories[widgetType]->create( vl, fieldIdx, parent );
-  }
-  return 0;
-}
-
-QgsEditorWidgetWrapper* QgsEditorWidgetRegistry::create( const QString& widgetType, QgsVectorLayer* vl, int fieldIdx, const QgsEditorWidgetConfig& config, QWidget* parent )
-{
-  if ( mWidgetFactories.contains( widgetType ) )
-  {
-     QgsEditorWidgetWrapper* fac = mWidgetFactories[widgetType]->create( vl, fieldIdx, parent );
-     fac->setConfig( config );
-     return fac;
+    QgsEditorWidgetWrapper* ww = mWidgetFactories[widgetType]->create( vl, fieldIdx, editor, parent );
+    ww->setConfig( config );
+    return ww;
   }
   return 0;
 }
@@ -83,7 +74,7 @@ QgsEditorConfigWidget* QgsEditorWidgetRegistry::createConfigWidget( const QStrin
   return 0;
 }
 
-QString QgsEditorWidgetRegistry::name(const QString& widgetId)
+QString QgsEditorWidgetRegistry::name( const QString& widgetId )
 {
   if ( mWidgetFactories.contains( widgetId ) )
   {
@@ -98,12 +89,12 @@ const QMap<QString, QgsEditorWidgetFactory*> QgsEditorWidgetRegistry::factories(
   return mWidgetFactories;
 }
 
-void QgsEditorWidgetRegistry::registerWidget(const QString& widgetType, QgsEditorWidgetFactory* widgetFactory)
+void QgsEditorWidgetRegistry::registerWidget( const QString& widgetType, QgsEditorWidgetFactory* widgetFactory )
 {
   mWidgetFactories.insert( widgetType, widgetFactory );
 }
 
-void QgsEditorWidgetRegistry::readMapLayer(QgsMapLayer* mapLayer, const QDomElement& layerElem )
+void QgsEditorWidgetRegistry::readMapLayer( QgsMapLayer* mapLayer, const QDomElement& layerElem )
 {
   if ( mapLayer->type() != QgsMapLayer::VectorLayer )
   {
@@ -116,7 +107,7 @@ void QgsEditorWidgetRegistry::readMapLayer(QgsMapLayer* mapLayer, const QDomElem
     return;
   }
 
-  for( int idx = 0; idx < vectorLayer->pendingFields().count(); ++idx )
+  for ( int idx = 0; idx < vectorLayer->pendingFields().count(); ++idx )
   {
     if ( vectorLayer->editType( idx ) != QgsVectorLayer::EditorWidgetV2 )
     {
@@ -136,7 +127,7 @@ void QgsEditorWidgetRegistry::readMapLayer(QgsMapLayer* mapLayer, const QDomElem
         continue;
 
       QgsVectorLayer::EditType editType =
-          ( QgsVectorLayer::EditType ) editTypeElement.attribute( "type" ).toInt();
+        ( QgsVectorLayer::EditType ) editTypeElement.attribute( "type" ).toInt();
 
       if ( editType != QgsVectorLayer::EditorWidgetV2 )
         continue;
@@ -162,7 +153,7 @@ void QgsEditorWidgetRegistry::readMapLayer(QgsMapLayer* mapLayer, const QDomElem
   }
 }
 
-void QgsEditorWidgetRegistry::writeMapLayer(QgsMapLayer* mapLayer, QDomElement& layerElem, QDomDocument& doc )
+void QgsEditorWidgetRegistry::writeMapLayer( QgsMapLayer* mapLayer, QDomElement& layerElem, QDomDocument& doc )
 {
   if ( mapLayer->type() != QgsMapLayer::VectorLayer )
   {
@@ -175,7 +166,7 @@ void QgsEditorWidgetRegistry::writeMapLayer(QgsMapLayer* mapLayer, QDomElement& 
     return;
   }
 
-  for( int idx = 0; idx < vectorLayer->pendingFields().count(); ++idx )
+  for ( int idx = 0; idx < vectorLayer->pendingFields().count(); ++idx )
   {
     if ( vectorLayer->editType( idx ) != QgsVectorLayer::EditorWidgetV2 )
     {
@@ -200,7 +191,7 @@ void QgsEditorWidgetRegistry::writeMapLayer(QgsMapLayer* mapLayer, QDomElement& 
         continue;
 
       QgsVectorLayer::EditType editType =
-          ( QgsVectorLayer::EditType ) editTypeElement.attribute( "type" ).toInt();
+        ( QgsVectorLayer::EditType ) editTypeElement.attribute( "type" ).toInt();
 
       if ( editType != QgsVectorLayer::EditorWidgetV2 )
         continue;

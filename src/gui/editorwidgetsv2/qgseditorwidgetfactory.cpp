@@ -15,8 +15,18 @@
 
 #include "qgseditorwidgetfactory.h"
 
+QgsEditorWidgetFactory::QgsEditorWidgetFactory( const QString& name )
+    : mName( name )
+{
+}
+
 QgsEditorWidgetFactory::~QgsEditorWidgetFactory()
 {
+}
+
+QString QgsEditorWidgetFactory::name()
+{
+  return mName;
 }
 
 QgsEditorWidgetConfig QgsEditorWidgetFactory::readConfig( const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx )

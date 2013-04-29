@@ -17,11 +17,11 @@
 
 #include <QWidget>
 
-QgsEditorWidgetWrapper::QgsEditorWidgetWrapper( QgsVectorLayer* vl, int fieldIdx, QWidget* parent )
-  : QObject( parent )
-  , mWidget( NULL )
-  , mParent( parent )
-  , mLayer( vl )
+QgsEditorWidgetWrapper::QgsEditorWidgetWrapper( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent )
+    : QObject( parent )
+    , mWidget( editor )
+    , mParent( parent )
+    , mLayer( vl )
 {
   mField = fieldIdx;
 }
@@ -32,14 +32,21 @@ QWidget* QgsEditorWidgetWrapper::widget()
   {
     mWidget = createWidget( mParent );
     mWidget->setProperty( "EWV2Wrapper", QVariant::fromValue( this ) );
+    initWidget( mWidget );
   }
 
   return mWidget;
 }
 
-void QgsEditorWidgetWrapper::setConfig(QMap<QString, QVariant> config)
+void QgsEditorWidgetWrapper::setConfig( QMap<QString, QVariant> config )
 {
   mConfig = config;
+  // If an editor widget was supplied, we can initialize this now
+  if ( mWidget )
+  {
+    mWidget->setProperty( "EWV2Wrapper", QVariant::fromValue( this ) );
+    initWidget( mWidget );
+  }
 }
 
 QVariant QgsEditorWidgetWrapper::config( QString key )
@@ -71,4 +78,9 @@ QgsEditorWidgetWrapper* QgsEditorWidgetWrapper::fromWidget( QWidget* widget )
   }
 
   return w.value<QgsEditorWidgetWrapper*>();
+}
+
+void QgsEditorWidgetWrapper::initWidget( QWidget* editor )
+{
+  Q_UNUSED( editor )
 }

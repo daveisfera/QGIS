@@ -24,8 +24,9 @@ class QgsRelationReferenceWidget : public QgsEditorWidgetWrapper
 {
     Q_OBJECT
   public:
-    explicit QgsRelationReferenceWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* parent = 0 );
+    explicit QgsRelationReferenceWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent = 0 );
     virtual QWidget* createWidget( QWidget* parent );
+    virtual void initWidget( QWidget* editor );
     virtual QVariant value();
 
   signals:

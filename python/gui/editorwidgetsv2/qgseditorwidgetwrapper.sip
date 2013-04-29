@@ -13,6 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
+typedef QMap<QString, QVariant> QgsEditorWidgetConfig;
+
 class QgsEditorWidgetWrapper : public QObject
 {
 %TypeHeaderCode
@@ -20,7 +22,7 @@ class QgsEditorWidgetWrapper : public QObject
 %End
 
   public:
-    explicit QgsEditorWidgetWrapper( QgsVectorLayer* vl, int fieldIdx, QWidget* parent = 0 );
+    explicit QgsEditorWidgetWrapper( QgsVectorLayer* vl, int fieldIdx, QWidget* editor = 0, QWidget* parent = 0 );
     QWidget* widget();
     virtual void setConfig( QMap<QString, QVariant> config );
     virtual QVariant value() = 0;

@@ -24,7 +24,7 @@ class QgsEditorWidgetRegistry : public QObject {
   public:
     static QgsEditorWidgetRegistry* instance();
     void registerWidget( const QString& widgetType, QgsEditorWidgetFactory* widgetFactory /Transfer/ );
-    QgsEditorWidgetWrapper* create( const QString& widgetType, QgsVectorLayer* vl, int fieldIdx, QWidget* parent );
+    QgsEditorWidgetWrapper* create( const QString& widgetType, QgsVectorLayer* vl, int fieldIdx, const QgsEditorWidgetConfig& config, QWidget* editor = NULL, QWidget* parent = NULL );
     QgsEditorConfigWidget* createConfigWidget( const QString& widgetId, QgsVectorLayer* vl, int fieldIdx, QWidget* parent );
 
 

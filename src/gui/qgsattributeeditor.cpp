@@ -455,8 +455,7 @@ QWidget *QgsAttributeEditor::createAttributeEditor( QWidget *parent, QWidget *ed
       const QString& widgetType = vl->editorWidgetV2( idx );
       const QMap<QString, QVariant>& widgetConfig = vl->editorWidgetV2Config( idx );
 
-      QgsEditorWidgetWrapper* eww = QgsEditorWidgetRegistry::instance()->create( widgetType, vl, idx, parent );
-      eww->setConfig( widgetConfig );
+      QgsEditorWidgetWrapper* eww = QgsEditorWidgetRegistry::instance()->create( widgetType, vl, idx, widgetConfig, editor, parent );
 
       if ( eww )
         myWidget = eww->widget();

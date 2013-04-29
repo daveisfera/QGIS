@@ -22,7 +22,11 @@ class QgsEditorWidgetFactory {
 %End
 
   public:
-    virtual QgsEditorWidgetWrapper* create( QgsVectorLayer* vl, int fieldIdx, QWidget* parent ) const = 0;
-    virtual QString name() const = 0;
+    QgsEditorWidgetFactory( const QString& name );
+    virtual ~QgsEditorWidgetFactory();
+    virtual QgsEditorWidgetWrapper* create( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent ) const = 0;
+    virtual QString name();
     virtual QgsEditorConfigWidget* configWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* parent ) = 0;
+    virtual QgsEditorWidgetConfig readConfig( const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx );
+    virtual void writeConfig( const QgsEditorWidgetConfig& config, QDomElement& configElement, const QDomDocument& doc, const QgsVectorLayer* layer, int fieldIdx );
 };

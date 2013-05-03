@@ -49,6 +49,12 @@ class GUI_EXPORT QgsEditorWidgetWrapper : public QObject
     explicit QgsEditorWidgetWrapper( QgsVectorLayer* vl, int fieldIdx, QWidget* editor = 0, QWidget* parent = 0 );
 
     /**
+     * Will be used to access the widget's value. Read the value from the widget and
+     * return it properly formatted to be saved in the attribute.
+     */
+    virtual QVariant value() = 0;
+
+    /**
      * @brief Access the widget managed by this wrapper
      * @return The widget
      */
@@ -60,12 +66,6 @@ class GUI_EXPORT QgsEditorWidgetWrapper : public QObject
      * @param config The config for this wrapper
      */
     void setConfig( QgsEditorWidgetConfig config );
-
-    /**
-     * Will be used to access the widget's value. Read the value from the widget and
-     * return it properly formatted to be saved in the attribute.
-     */
-    virtual QVariant value() = 0;
 
     /**
      * Use this inside your overriden classes to access the configuration.
@@ -145,6 +145,14 @@ class GUI_EXPORT QgsEditorWidgetWrapper : public QObject
      * @param value The new value of the attribute
      */
     virtual void setValue( const QVariant& value ) = 0;
+
+    /**
+     * Is used to enable or disable the edit functionality of the managed widget.
+     * By default this will enable or disable the whole widget
+     *
+     * @param enabled  Enable or disable?
+     */
+    virtual void setEnabled( bool enabled );
 
   private:
     QgsEditorWidgetConfig mConfig;

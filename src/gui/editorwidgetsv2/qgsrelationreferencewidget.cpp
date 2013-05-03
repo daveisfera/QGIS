@@ -19,6 +19,7 @@
 #include <QDialog>
 
 #include "qgsattributedialog.h"
+#include "qgscollapsiblegroupbox.h"
 #include "qgseditorwidgetfactory.h"
 #include "qgsexpression.h"
 #include "qgsfield.h"
@@ -44,11 +45,11 @@ QWidget* QgsRelationReferenceWidget::createWidget( QWidget* parent )
 
 void QgsRelationReferenceWidget::initWidget( QWidget* editor )
 {
-  QGridLayout* layout = new QGridLayout( editor );
+  QVBoxLayout* layout = new QVBoxLayout( editor );
   editor->setLayout( layout );
 
   mComboBox = new QComboBox( editor );
-  mAttributeEditorFrame = new QFrame( editor );
+  mAttributeEditorFrame = new QgsCollapsibleGroupBox( editor );
   mAttributeEditorLayout = new QVBoxLayout( mAttributeEditorFrame );
   mAttributeEditorFrame->setLayout( mAttributeEditorLayout );
 
@@ -73,6 +74,8 @@ void QgsRelationReferenceWidget::initWidget( QWidget* editor )
       QString txt = exp.evaluate( &f ).toString();
 
       mComboBox->addItem( txt, f.id() );
+
+      mFidFkMap.insert( f.id(), f.attribute( refFieldIdx ) );
     }
 
     if ( config( "AllowNULL" ).toBool() )
@@ -80,19 +83,33 @@ void QgsRelationReferenceWidget::initWidget( QWidget* editor )
       mComboBox->addItem( "[NULL]" );
     }
 
-    // Only connect after iterating, because there will be yet another request
+    // Only connect after iterating, to have only one iterator on the referenced table at once
     connect( mComboBox, SIGNAL( currentIndexChanged(int) ), this, SLOT( referenceChanged(int) ) );
   }
 }
 
 QVariant QgsRelationReferenceWidget::value()
 {
-  return mComboBox->itemData( mComboBox->currentIndex() );
+  QVariant varFid = mComboBox->itemData( mComboBox->currentIndex() );
+  if ( varFid.isNull() )
+  {
+    return QVariant();
+  }
+  else
+  {
+    return mFidFkMap.value( varFid.value<QgsFeatureId>() );
+  }
 }
 
 void QgsRelationReferenceWidget::setValue( const QVariant& value )
 {
-  mComboBox->setCurrentIndex( mComboBox->findData( value ) );
+  QgsFeatureId fid = mFidFkMap.key( value );
+  mComboBox->setCurrentIndex( mComboBox->findData( fid ) );
+}
+
+void QgsRelationReferenceWidget::setEnabled( bool enabled )
+{
+  mComboBox->setEnabled( enabled );
 }
 
 void QgsRelationReferenceWidget::referenceChanged( int index )

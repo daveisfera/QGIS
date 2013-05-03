@@ -15,6 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 #include "qgsattributedialog.h"
+#include "editorwidgetsv2/qgseditorwidgetwrapper.h"
 #include "qgsfield.h"
 #include "qgslogger.h"
 #include "qgsmapcanvas.h"
@@ -213,6 +214,14 @@ QgsAttributeDialog::QgsAttributeDialog( QgsVectorLayer *vl, QgsFeature *thepFeat
               w->setEnabled( false );
           }
         }
+        else if ( vl->editType( fldIdx ) == QgsVectorLayer::EditorWidgetV2 )
+        {
+          QgsEditorWidgetWrapper* ww = QgsEditorWidgetWrapper::fromWidget( myWidget );
+          if ( ww )
+          {
+            ww->setEnabled( false );
+          }
+        }
         else
         {
           myWidget->setEnabled( false );
@@ -280,6 +289,14 @@ QgsAttributeDialog::QgsAttributeDialog( QgsVectorLayer *vl, QgsFeature *thepFeat
             foreach ( QWidget *w, myWidget->findChildren<QWidget *>() )
             {
               w->setEnabled( qobject_cast<QWebView *>( w ) ? true : false );
+            }
+          }
+          else if ( vl->editType( fldIdx ) == QgsVectorLayer::EditorWidgetV2 )
+          {
+            QgsEditorWidgetWrapper* ww = QgsEditorWidgetWrapper::fromWidget( myWidget );
+            if ( ww )
+            {
+              ww->setEnabled( false );
             }
           }
           else

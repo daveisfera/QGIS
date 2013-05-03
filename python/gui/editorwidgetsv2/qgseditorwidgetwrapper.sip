@@ -39,5 +39,6 @@ class QgsEditorWidgetWrapper : public QObject
     
   public slots:
     virtual void setValue( const QVariant& value ) = 0;
+    virtual void setEnabled( bool enabled );
 
 };

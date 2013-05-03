@@ -84,3 +84,11 @@ void QgsEditorWidgetWrapper::initWidget( QWidget* editor )
 {
   Q_UNUSED( editor )
 }
+
+void QgsEditorWidgetWrapper::setEnabled( bool enabled )
+{
+  if ( mWidget )
+  {
+    mWidget->setEnabled( enabled );
+  }
+}

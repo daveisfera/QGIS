@@ -32,9 +32,9 @@ QgsRelationReferenceWidget::QgsRelationReferenceWidget( QgsVectorLayer* vl, int 
     , mComboBox( NULL )
     , mAttributeEditorFrame( NULL )
     , mAttributeEditorLayout( NULL )
+    , mAttributeEditorButton( NULL )
     , mReferencedLayer( NULL )
     , mAttributeDialog( NULL )
-
 {
 }
 
@@ -45,16 +45,30 @@ QWidget* QgsRelationReferenceWidget::createWidget( QWidget* parent )
 
 void QgsRelationReferenceWidget::initWidget( QWidget* editor )
 {
-  QVBoxLayout* layout = new QVBoxLayout( editor );
+  QGridLayout* layout = new QGridLayout( editor );
   editor->setLayout( layout );
 
   mComboBox = new QComboBox( editor );
-  mAttributeEditorFrame = new QgsCollapsibleGroupBox( editor );
-  mAttributeEditorLayout = new QVBoxLayout( mAttributeEditorFrame );
-  mAttributeEditorFrame->setLayout( mAttributeEditorLayout );
+  layout->addWidget( mComboBox, 0, 0, 1, 1 );
 
-  layout->addWidget( mComboBox );
-  layout->addWidget( mAttributeEditorFrame );
+  if ( config( "ShowForm", true ).toBool() )
+  {
+    mAttributeEditorFrame = new QgsCollapsibleGroupBox( editor );
+    mAttributeEditorLayout = new QVBoxLayout( mAttributeEditorFrame );
+    mAttributeEditorFrame->setLayout( mAttributeEditorLayout );
+
+    layout->addWidget( mAttributeEditorFrame, 1, 0, 1, 3 );
+  }
+  else
+  {
+    mAttributeEditorButton = new QPushButton( tr( "Open Form" ) );
+
+    layout->addWidget( mAttributeEditorButton, 0, 1, 1, 1 );
+
+    connect( mAttributeEditorButton, SIGNAL( clicked() ), this, SLOT( openForm() ) );
+  }
+
+  layout->addItem( new QSpacerItem( 0, 0, QSizePolicy::Expanding ), 0, 2, 1, 1 );
 
   QgsRelation relation = QgsRelationManager::instance()->relation( config( "Relation" ).toString() );
 
@@ -86,6 +100,15 @@ void QgsRelationReferenceWidget::initWidget( QWidget* editor )
     // Only connect after iterating, to have only one iterator on the referenced table at once
     connect( mComboBox, SIGNAL( currentIndexChanged(int) ), this, SLOT( referenceChanged(int) ) );
   }
+  else
+  {
+    QLabel* lbl = new QLabel( tr( "The relation is not valid. Please make sure your relation definitions are ok." ) );
+    QFont font = lbl->font();
+    font.setItalic( true );
+    lbl->setStyleSheet( "QLabel { color: red; } " );
+    lbl->setFont( font );
+    layout->addWidget( lbl, 1, 0, 1, 3 );
+  }
 }
 
 QVariant QgsRelationReferenceWidget::value()
@@ -114,7 +137,42 @@ void QgsRelationReferenceWidget::setEnabled( bool enabled )
 
 void QgsRelationReferenceWidget::referenceChanged( int index )
 {
-  QgsFeatureId fid = mComboBox->itemData( index ).toInt();
+  QgsFeatureId fid = mComboBox->itemData( index ).value<QgsFeatureId>();
+
+  emit valueChanged( mFidFkMap.value( fid ) );
+
+  // Check if we're running with an embedded frame we need to update
+  if ( mAttributeEditorFrame )
+  {
+    QgsFeature feat;
+
+    mReferencedLayer->getFeatures( QgsFeatureRequest().setFilterFid( fid ) ).nextFeature( feat );
+
+    if ( feat.isValid() )
+    {
+      // Backup old dialog and delete only after creating the new dialog, so we can "hot-swap" the contained QgsFeature
+      QgsAttributeDialog* oldDialog = mAttributeDialog;
+
+      if ( mAttributeDialog && mAttributeDialog->dialog() )
+      {
+        mAttributeEditorLayout->removeWidget( mAttributeDialog->dialog() );
+      }
+
+      // TODO: Get a proper QgsDistanceArea thingie
+      mAttributeDialog = new QgsAttributeDialog( mReferencedLayer, new QgsFeature( feat ), true, QgsDistanceArea(), mAttributeEditorFrame, false );
+      QWidget* attrDialog = mAttributeDialog->dialog();
+      attrDialog->setWindowFlags( Qt::Widget ); // Embed instead of opening as window
+      mAttributeEditorLayout->addWidget( attrDialog );
+      attrDialog->show();
+
+      delete oldDialog;
+    }
+  }
+}
+
+void QgsRelationReferenceWidget::openForm()
+{
+  QgsFeatureId fid = mComboBox->itemData( mComboBox->currentIndex() ).value<QgsFeatureId>();
 
   QgsFeature feat;
 
@@ -123,22 +181,10 @@ void QgsRelationReferenceWidget::referenceChanged( int index )
   if ( !feat.isValid() )
     return;
 
-  // Backup old dialog and delete only after creating the new dialog, so we can "hot-swap" the contained QgsFeature
-  QgsAttributeDialog* oldDialog = mAttributeDialog;
-
-  if ( mAttributeDialog && mAttributeDialog->dialog() )
-  {
-    mAttributeEditorLayout->removeWidget( mAttributeDialog->dialog() );
-  }
-
   // TODO: Get a proper QgsDistanceArea thingie
-  mAttributeDialog = new QgsAttributeDialog( mReferencedLayer, new QgsFeature( feat ), true, QgsDistanceArea(), mAttributeEditorFrame, false );
-  QWidget* attrDialog = mAttributeDialog->dialog();
-  attrDialog->setWindowFlags( Qt::Widget );
-  mAttributeEditorLayout->addWidget( attrDialog );
-  attrDialog->show();
-
-  delete oldDialog;
+  mAttributeDialog = new QgsAttributeDialog( mReferencedLayer, new QgsFeature( feat ), true, QgsDistanceArea(), widget() );
+  mAttributeDialog->exec();
+  delete mAttributeDialog;
 }
 
 template <>

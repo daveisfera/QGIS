@@ -49,13 +49,13 @@ void QgsEditorWidgetWrapper::setConfig( QMap<QString, QVariant> config )
   }
 }
 
-QVariant QgsEditorWidgetWrapper::config( QString key )
+QVariant QgsEditorWidgetWrapper::config( QString key, QVariant defaultVal )
 {
   if ( mConfig.contains( key ) )
   {
     return mConfig[key];
   }
-  return QVariant();
+  return defaultVal;
 }
 
 QgsVectorLayer* QgsEditorWidgetWrapper::layer()

@@ -20,6 +20,7 @@
 #include "qgsfeature.h"
 
 #include <QComboBox>
+#include <QPushButton>
 #include <QVBoxLayout>
 
 class QgsAttributeDialog;
@@ -42,11 +43,13 @@ class GUI_EXPORT QgsRelationReferenceWidget : public QgsEditorWidgetWrapper
 
   private slots:
     void referenceChanged( int index );
+    void openForm();
 
   private:
     QComboBox* mComboBox;
     QWidget* mAttributeEditorFrame;
     QVBoxLayout* mAttributeEditorLayout;
+    QPushButton* mAttributeEditorButton;
     QgsVectorLayer* mReferencedLayer;
     QVariant mCurrentValue;
     QgsAttributeDialog* mAttributeDialog;

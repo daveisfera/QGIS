@@ -70,11 +70,12 @@ class GUI_EXPORT QgsEditorWidgetWrapper : public QObject
     /**
      * Use this inside your overriden classes to access the configuration.
      *
-     * @param key The configuration option you want to load
+     * @param key         The configuration option you want to load
+     * @param defaultVal  Default value
      *
      * @return the value assigned to this configuration option
      */
-    QVariant config( QString key );
+    QVariant config( QString key, QVariant defaultVal = QVariant() );
 
     /**
      * Returns the whole config

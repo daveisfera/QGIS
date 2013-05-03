@@ -123,7 +123,7 @@ void QgsEditorWidgetRegistry::readMapLayer( QgsMapLayer* mapLayer, const QDomEle
 
       QString name = editTypeElement.attribute( "name" );
 
-      if ( vectorLayer->fieldNameIndex( name ) < -1 )
+      if ( vectorLayer->fieldNameIndex( name ) != idx )
         continue;
 
       QgsVectorLayer::EditType editType =
@@ -176,6 +176,7 @@ void QgsEditorWidgetRegistry::writeMapLayer( QgsMapLayer* mapLayer, QDomElement&
     const QString& widgetType = vectorLayer->editorWidgetV2( idx );
     if ( !mWidgetFactories.contains( widgetType ) )
     {
+      QgsMessageLog::logMessage( tr( "Could not save unknown editor widget type '%1'." ).arg( widgetType ) );
       continue;
     }
 
@@ -187,7 +188,7 @@ void QgsEditorWidgetRegistry::writeMapLayer( QgsMapLayer* mapLayer, QDomElement&
 
       QString name = editTypeElement.attribute( "name" );
 
-      if ( vectorLayer->fieldNameIndex( name ) < -1 )
+      if ( vectorLayer->fieldNameIndex( name ) != idx )
         continue;
 
       QgsVectorLayer::EditType editType =

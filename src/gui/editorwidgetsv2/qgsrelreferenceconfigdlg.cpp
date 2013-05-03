@@ -17,7 +17,7 @@
 
 #include "qgseditorwidgetfactory.h"
 #include "qgsfield.h"
-#include "qgsrelation.h"
+#include "qgsrelationmanager.h"
 #include "qgsvectorlayer.h"
 
 QgsRelReferenceConfigDlg::QgsRelReferenceConfigDlg( QgsVectorLayer* vl, int fieldIdx, QWidget* parent )
@@ -25,16 +25,14 @@ QgsRelReferenceConfigDlg::QgsRelReferenceConfigDlg( QgsVectorLayer* vl, int fiel
 {
   setupUi( this );
 
-  const QgsFields& fields = vl->pendingFields();
-  for ( int i = 0; i < fields.count(); ++i )
+  foreach ( const QgsRelation& relation, vl->referencingRelations( fieldIdx ) )
   {
-    mComboDisplayField->addItem( fields[i].name(), fields[i].name() );
-  }
-
-  foreach ( QgsRelation* relation, vl->referencingRelations( fieldIdx ) )
-  {
-    QgsField fld = relation->fieldPairs().first().second;
-    mComboRelation->addItem( fld.name() );
+    QgsField fld = relation.fieldPairs().first().second;
+    mComboRelation->addItem( QString( "%1 (%2)" ).arg( relation.name(), relation.referencedLayerId() ), relation.name() );
+    if ( relation.referencedLayer() )
+    {
+      mTxtDisplayExpression->setText( relation.referencedLayer()->displayExpression() );
+    }
   }
 }
 
@@ -50,9 +48,21 @@ void QgsRelReferenceConfigDlg::setConfig( const QMap<QString, QVariant>& config 
     mCbxShowForm->setChecked( config[ "ShowForm" ].toBool() );
   }
 
-  if ( config.contains( "DisplayField" ) )
+  if ( config.contains( "Relation" ) )
   {
-    mComboDisplayField->setCurrentIndex( mComboDisplayField->findData( config["DisplayField"].toString() ) );
+    mComboRelation->setCurrentIndex( mComboRelation->findData( config[ "Relation" ].toString() ) );
+  }
+}
+
+void QgsRelReferenceConfigDlg::on_mComboRelation_indexChanged( int idx )
+{
+  QString relName = mComboRelation->itemData( idx ).toString();
+  QgsRelation rel = QgsRelationManager::instance()->relation( relName );
+
+  QgsVectorLayer* referencedLayer = rel.referencedLayer();
+  if ( referencedLayer )
+  {
+    mTxtDisplayExpression->setText( referencedLayer->displayExpression() );
   }
 }
 
@@ -61,7 +71,7 @@ QgsEditorWidgetConfig QgsRelReferenceConfigDlg::config()
   QgsEditorWidgetConfig myConfig;
   myConfig.insert( "AllowNULL", mCbxAllowNull->isChecked() );
   myConfig.insert( "ShowForm", mCbxShowForm->isChecked() );
-  myConfig.insert( "DisplayField", mComboDisplayField->itemData( mComboDisplayField->currentIndex() ) );
+  myConfig.insert( "Relation", mComboRelation->itemData( mComboRelation->currentIndex() ) );
 
   return myConfig;
 }

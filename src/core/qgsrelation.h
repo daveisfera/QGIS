@@ -29,7 +29,7 @@ class CORE_EXPORT QgsRelation
   public:
     typedef QPair< QgsField, QgsField > FieldPair;
 
-    QgsRelation() {}
+    QgsRelation();
 
     static QgsRelation createFromXML( const QDomNode& node );
     void writeXML( QDomNode& node, QDomDocument& doc ) const;
@@ -40,12 +40,14 @@ class CORE_EXPORT QgsRelation
     void addFieldPair( QString referencingField, QString referencedField );
     void addFieldPair( FieldPair fieldPair );
 
-    QString relationName() const;
+    QString name() const;
     QString referencingLayerId() const;
     QgsVectorLayer* referencingLayer() const;
     QString referencedLayerId() const;
     QgsVectorLayer* referencedLayer() const;
     QList< FieldPair > fieldPairs() const;
+
+    bool isValid() const;
 
   private:
     QString mRelationName;
@@ -60,6 +62,8 @@ class CORE_EXPORT QgsRelation
      *  are supported for composited foreign keys.
      *  The first field is on the referencing layer, the second on the referenced */
     QList< FieldPair > mFieldPairs;
+
+    bool mValid;
 };
 
 #endif // QGSRELATION_H

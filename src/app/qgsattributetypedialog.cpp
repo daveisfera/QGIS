@@ -693,7 +693,7 @@ void QgsAttributeTypeDialog::setStackPage( int index )
         }
         else
         {
-          QgsEditorConfigWidget* cfgWdg = QgsEditorWidgetRegistry::instance()->createConfigWidget( factoryId, mLayer, index, this );
+          QgsEditorConfigWidget* cfgWdg = QgsEditorWidgetRegistry::instance()->createConfigWidget( factoryId, mLayer, mIndex, this );
           QgsEditorConfigWidget* oldWdg = pageEditorWidget->findChild<QgsEditorConfigWidget*>();
 
           if ( oldWdg )

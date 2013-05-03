@@ -39,7 +39,7 @@ void QgsRelationManagerDialog::setLayers( QList< QgsVectorLayer* > layers )
 {
   mLayers = layers;
 
-  const QList<QgsRelation>& relations = mRelationManager->relations();
+  const QList<QgsRelation>& relations = mRelationManager->relations().values();
 
   foreach( const QgsRelation rel, relations )
   {

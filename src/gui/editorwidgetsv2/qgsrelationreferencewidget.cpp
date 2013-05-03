@@ -16,36 +16,72 @@
 #include "qgsrelationreferencewidget.h"
 
 #include <QPushButton>
+#include <QDialog>
 
-#include "qgsrelreferenceconfigdlg.h"
+#include "qgsattributedialog.h"
 #include "qgseditorwidgetfactory.h"
+#include "qgsexpression.h"
+#include "qgsfield.h"
+#include "qgsrelreferenceconfigdlg.h"
+#include "qgsrelationmanager.h"
+#include "qgsvectorlayer.h"
 
 QgsRelationReferenceWidget::QgsRelationReferenceWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent )
     : QgsEditorWidgetWrapper( vl, fieldIdx, editor, parent )
     , mComboBox( NULL )
+    , mAttributeEditorFrame( NULL )
+    , mAttributeEditorLayout( NULL )
+    , mReferencedLayer( NULL )
+    , mAttributeDialog( NULL )
+
 {
 }
 
 QWidget* QgsRelationReferenceWidget::createWidget( QWidget* parent )
 {
-  return new QComboBox( parent );
+  return new QWidget( parent );
 }
 
 void QgsRelationReferenceWidget::initWidget( QWidget* editor )
 {
-  mComboBox = qobject_cast<QComboBox*>( editor );
-  if ( mComboBox )
-  {
-    connect( mComboBox, SIGNAL( currentIndexChanged( QString ) ), this, SIGNAL( valueChanged( QVariant ) ) );
+  QGridLayout* layout = new QGridLayout( editor );
+  editor->setLayout( layout );
 
-    mComboBox->addItem( "A", "A" );
-    mComboBox->addItem( "B", "B" );
-    mComboBox->addItem( "C", "C" );
+  mComboBox = new QComboBox( editor );
+  mAttributeEditorFrame = new QFrame( editor );
+  mAttributeEditorLayout = new QVBoxLayout( mAttributeEditorFrame );
+  mAttributeEditorFrame->setLayout( mAttributeEditorLayout );
+
+  layout->addWidget( mComboBox );
+  layout->addWidget( mAttributeEditorFrame );
+
+  QgsRelation relation = QgsRelationManager::instance()->relation( config( "Relation" ).toString() );
+
+  if ( relation.isValid() )
+  {
+    mReferencedLayer = relation.referencedLayer();
+    int refFieldIdx = mReferencedLayer->fieldNameIndex( relation.fieldPairs().first().second.name() );
+
+    QgsFeatureIterator fit = mReferencedLayer->getFeatures( QgsFeatureRequest() );
+
+    QgsExpression exp ( mReferencedLayer->displayExpression() );
+    exp.prepare( mReferencedLayer->pendingFields() );
+
+    QgsFeature f;
+    while ( fit.nextFeature( f ) )
+    {
+      QString txt = exp.evaluate( &f ).toString();
+
+      mComboBox->addItem( txt, f.id() );
+    }
 
     if ( config( "AllowNULL" ).toBool() )
     {
       mComboBox->addItem( "[NULL]" );
     }
+
+    // Only connect after iterating, because there will be yet another request
+    connect( mComboBox, SIGNAL( currentIndexChanged(int) ), this, SLOT( referenceChanged(int) ) );
   }
 }
 
@@ -59,6 +95,35 @@ void QgsRelationReferenceWidget::setValue( const QVariant& value )
   mComboBox->setCurrentIndex( mComboBox->findData( value ) );
 }
 
+void QgsRelationReferenceWidget::referenceChanged( int index )
+{
+  QgsFeatureId fid = mComboBox->itemData( index ).toInt();
+
+  QgsFeature feat;
+
+  mReferencedLayer->getFeatures( QgsFeatureRequest().setFilterFid( fid ) ).nextFeature( feat );
+
+  if ( !feat.isValid() )
+    return;
+
+  // Backup old dialog and delete only after creating the new dialog, so we can "hot-swap" the contained QgsFeature
+  QgsAttributeDialog* oldDialog = mAttributeDialog;
+
+  if ( mAttributeDialog && mAttributeDialog->dialog() )
+  {
+    mAttributeEditorLayout->removeWidget( mAttributeDialog->dialog() );
+  }
+
+  // TODO: Get a proper QgsDistanceArea thingie
+  mAttributeDialog = new QgsAttributeDialog( mReferencedLayer, new QgsFeature( feat ), true, QgsDistanceArea(), mAttributeEditorFrame, false );
+  QWidget* attrDialog = mAttributeDialog->dialog();
+  attrDialog->setWindowFlags( Qt::Widget );
+  mAttributeEditorLayout->addWidget( attrDialog );
+  attrDialog->show();
+
+  delete oldDialog;
+}
+
 template <>
 QMap<QString, QVariant> QgsEditWidgetFactoryHelper<QgsRelationReferenceWidget, QgsRelReferenceConfigDlg>::readConfig( const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx )
 {
@@ -68,7 +133,7 @@ QMap<QString, QVariant> QgsEditWidgetFactoryHelper<QgsRelationReferenceWidget, Q
 
   cfg.insert( "AllowNULL", configElement.attribute( "AllowNULL" ) == "1" );
   cfg.insert( "ShowForm", configElement.attribute( "ShowForm" ) == "1" );
-  cfg.insert( "DisplayField", configElement.attribute( "DisplayField" ) );
+  cfg.insert( "Relation", configElement.attribute( "Relation" ) );
 
   return cfg;
 }
@@ -82,5 +147,5 @@ void QgsEditWidgetFactoryHelper<QgsRelationReferenceWidget, QgsRelReferenceConfi
 
   configElement.setAttribute( "AllowNULL", config["AllowNULL"].toBool() );
   configElement.setAttribute( "ShowForm", config["ShowForm"].toBool() );
-  configElement.setAttribute( "DisplayField", config["DisplayField"].toString() );
+  configElement.setAttribute( "Relation", config["Relation"].toString() );
 }

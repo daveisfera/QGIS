@@ -20,6 +20,13 @@
 #include "qgsmaplayerregistry.h"
 #include "qgsvectorlayer.h"
 
+QgsRelation::QgsRelation()
+  : mReferencingLayer( NULL )
+  , mReferencedLayer( NULL )
+  , mValid( false )
+{
+}
+
 QgsRelation QgsRelation::createFromXML( const QDomNode &node )
 {
   QDomElement elem = node.toElement();
@@ -77,6 +84,8 @@ QgsRelation QgsRelation::createFromXML( const QDomNode &node )
     relation.addFieldPair( referencingField, referencedField );
   }
 
+  relation.mValid = true;
+
   return relation;
 }
 
@@ -123,7 +132,7 @@ void QgsRelation::addFieldPair( QgsRelation::FieldPair fieldPair )
   mFieldPairs << fieldPair;
 }
 
-QString QgsRelation::relationName() const
+QString QgsRelation::name() const
 {
   return mRelationName;
 }
@@ -151,5 +160,10 @@ QgsVectorLayer* QgsRelation::referencedLayer() const
 QList<QgsRelation::FieldPair> QgsRelation::fieldPairs() const
 {
   return mFieldPairs;
+}
+
+bool QgsRelation::isValid() const
+{
+  return mValid;
 }
 

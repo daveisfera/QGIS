@@ -19,6 +19,9 @@
 #include "qgseditorwidgetwrapper.h"
 
 #include <QComboBox>
+#include <QVBoxLayout>
+
+class QgsAttributeDialog;
 
 class GUI_EXPORT QgsRelationReferenceWidget : public QgsEditorWidgetWrapper
 {
@@ -34,9 +37,15 @@ class GUI_EXPORT QgsRelationReferenceWidget : public QgsEditorWidgetWrapper
 
   public slots:
     virtual void setValue( const QVariant& value );
+    void referenceChanged( int index );
 
   private:
     QComboBox* mComboBox;
+    QFrame* mAttributeEditorFrame;
+    QVBoxLayout* mAttributeEditorLayout;
+    QgsVectorLayer* mReferencedLayer;
+    QVariant mCurrentValue;
+    QgsAttributeDialog* mAttributeDialog;
 };
 
 #endif // QGSRELATIONREFERENCEWIDGET_H

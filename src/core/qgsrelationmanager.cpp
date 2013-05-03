@@ -18,8 +18,9 @@
 #include "qgsapplication.h"
 #include "qgslogger.h"
 #include "qgsproject.h"
+#include "qgsvectorlayer.h"
 
-QgsRelationManager* QgsRelationManager::mInstance = NULL;
+QgsRelationManager* QgsRelationManager::sInstance = NULL;
 
 QgsRelationManager::QgsRelationManager() :
   QObject( QgsApplication::instance() )
@@ -31,30 +32,78 @@ QgsRelationManager::QgsRelationManager() :
 
 QgsRelationManager* QgsRelationManager::instance()
 {
-  if ( !mInstance )
-    mInstance = new QgsRelationManager();
+  if ( !sInstance )
+    sInstance = new QgsRelationManager();
 
-  return mInstance;
+  return sInstance;
 }
 
-void QgsRelationManager::setRelations( const QList<QgsRelation> &relations )
+void QgsRelationManager::setRelations( const QList<QgsRelation>& relations )
 {
-  mRelations = relations;
+  foreach( const QgsRelation& rel, relations )
+  {
+    addRelation( rel );
+  }
 }
 
-const QList<QgsRelation>& QgsRelationManager::relations()
+const QMap<QString, QgsRelation>& QgsRelationManager::relations()
 {
   return mRelations;
 }
 
+void QgsRelationManager::addRelation( const QgsRelation& relation )
+{
+  if ( !relation.isValid() )
+    return;
+
+  mRelations.insert( relation.name(), relation );
+}
+
+QgsRelation QgsRelationManager::relation( const QString& id )
+{
+  if ( mRelations.contains( id ) )
+  {
+    return mRelations[id];
+  }
+
+  return QgsRelation();
+}
+
 QList<QgsRelation> QgsRelationManager::referencingRelations( QgsVectorLayer* layer, int fieldIdx )
 {
+  if ( !layer )
+  {
+    return mRelations.values();
+  }
+
   QList<QgsRelation> relations;
 
   foreach ( const QgsRelation& rel, mRelations )
   {
-    if ( rel.referencedLayerId() )
+    if ( rel.referencingLayer() == layer )
+    {
+      if ( fieldIdx != -2 )
+      {
+        bool containsField = false;
+        foreach( const QgsRelation::FieldPair& fp, rel.fieldPairs() )
+        {
+          if ( fieldIdx == layer->fieldNameIndex( fp.first.name() ) )
+          {
+            containsField = true;
+            break;
+          }
+        }
+
+        if ( !containsField )
+        {
+          continue;
+        }
+      }
+      relations.append( rel );
+    }
   }
+
+  return relations;
 }
 
 void QgsRelationManager::readProject( const QDomDocument & doc )
@@ -69,7 +118,7 @@ void QgsRelationManager::readProject( const QDomDocument & doc )
     int relCount = relationNodes.count();
     for ( int i = 0; i < relCount; ++i )
     {
-      mRelations.append( QgsRelation::createFromXML( relationNodes.at(i) ) );
+      addRelation( QgsRelation::createFromXML( relationNodes.at(i) ) );
     }
   }
   else

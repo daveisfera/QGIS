@@ -40,9 +40,11 @@ class CORE_EXPORT QgsRelationManager : public QObject
   public:
     static QgsRelationManager* instance();
     void setRelations( const QList<QgsRelation>& relations );
-    const QList<QgsRelation>& relations();
+    const QMap<QString, QgsRelation>& relations();
+    void addRelation( const QgsRelation& relation );
+    QgsRelation relation( const QString& id );
 
-    QList<QgsRelation*> referencingRelations( QgsVectorLayer* layer = NULL, int fieldIdx = -2 );
+    QList<QgsRelation> referencingRelations( QgsVectorLayer* layer = NULL, int fieldIdx = -2 );
 
   signals:
 
@@ -54,8 +56,8 @@ class CORE_EXPORT QgsRelationManager : public QObject
     
   private:
     /** The references */
-    QList<QgsRelation> mRelations;
-    static QgsRelationManager* mInstance;
+    QMap<QString, QgsRelation> mRelations;
+    static QgsRelationManager* sInstance;
 };
 
 #endif // QGSRELATIONMANAGER_H

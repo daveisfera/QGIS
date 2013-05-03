@@ -27,6 +27,9 @@ class GUI_EXPORT QgsRelReferenceConfigDlg : public QgsEditorConfigWidget, privat
     explicit QgsRelReferenceConfigDlg( QgsVectorLayer* vl, int fieldIdx, QWidget* parent );
     virtual QgsEditorWidgetConfig config();
     virtual void setConfig( const QgsEditorWidgetConfig& config );
+
+  private slots:
+    void on_mComboRelation_indexChanged( int idx );
 };
 
 #endif // QGSRELREFERENCECONFIGDLGBASE_H

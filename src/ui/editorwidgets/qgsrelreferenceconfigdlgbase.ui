@@ -17,12 +17,9 @@
    <item row="0" column="0">
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>Display value or expression</string>
+      <string>Display expression</string>
      </property>
     </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QComboBox" name="mComboDisplayField"/>
    </item>
    <item row="2" column="0" colspan="2">
     <widget class="QCheckBox" name="mCbxAllowNull">
@@ -47,6 +44,9 @@
    </item>
    <item row="1" column="1">
     <widget class="QComboBox" name="mComboRelation"/>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLineEdit" name="mTxtDisplayExpression"/>
    </item>
   </layout>
  </widget>

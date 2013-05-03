@@ -1171,17 +1171,19 @@ class CORE_EXPORT QgsVectorLayer : public QgsMapLayer
 
     /**
      * Get relations, where the foreign key is on this layer
+     *
      * @param Only get relations, where idx forms part of the foreign key
      * @return A list of relations
      */
-    QList<QgsRelation*> referencingRelations( int idx );
+    QList<QgsRelation> referencingRelations( int idx );
 
     /**
      * Get relations, where the foreign key is on another layer, referencing this layer
+     *
      * @param Only get relations, where idx forms part of the referenced key
      * @return A list of relations
      */
-    QList<QgsRelation*> referencedRelations( int idx );
+    QList<QgsRelation> referencedRelations( int idx );
 
     /**access date format
      * @note added in 1.9

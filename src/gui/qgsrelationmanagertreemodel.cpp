@@ -40,6 +40,7 @@ QList< QgsRelation > QgsRelationManagerTreeModel::relations()
 
 int QgsRelationManagerTreeModel::columnCount( const QModelIndex& parent ) const
 {
+  Q_UNUSED( parent )
   return 2;
 }
 
@@ -226,7 +227,7 @@ void QgsRelationManagerTreeModel::RelationTreeItemLayer::addRelation( const QgsR
 {
   int itemId = model()->getId();
   QgsRelationManagerTreeModel::RelationTreeItemRelation* relationItem = new QgsRelationManagerTreeModel::RelationTreeItemRelation( itemId, model(), this );
-  relationItem->mRelationName = relation.relationName();
+  relationItem->mRelationName = relation.name();
   relationItem->mReferencedLayerId = relation.referencedLayerId();
   relationItem->setFieldPairs( relation.fieldPairs() );
   model()->beginInsertRows( model()->indexFromItem( this ), mRelations.count(), mRelations.count() );
@@ -242,6 +243,21 @@ void QgsRelationManagerTreeModel::RelationTreeItemLayer::removeRelation( Relatio
   mRelations.removeOne( relItem );
   model()->endRemoveRows();
   delete ( relItem );
+}
+
+QVariant QgsRelationManagerTreeModel::RelationTreeItemLayer::data( const QModelIndex& index, int role ) const
+{
+  Q_UNUSED( index )
+  Q_UNUSED( role )
+
+  if( role == Qt::DisplayRole )
+  {
+    return mLayerId;
+  }
+  else
+  {
+    return QVariant();
+  }
 }
 
 QList< QgsRelation > QgsRelationManagerTreeModel::RelationTreeItemLayer::relations()
@@ -267,8 +283,10 @@ QgsRelationManagerTreeModel::RelationTreeItemRelation::~RelationTreeItemRelation
   }
 }
 
-QVariant QgsRelationManagerTreeModel::RelationTreeItemRelation::data(const QModelIndex &index, int role) const
+QVariant QgsRelationManagerTreeModel::RelationTreeItemRelation::data( const QModelIndex& index, int role ) const
 {
+  Q_UNUSED( index )
+
   if ( role == Qt::DisplayRole )
   {
     return mRelationName + " ( " + mReferencedLayerId + " )";
@@ -312,4 +330,32 @@ QgsRelation QgsRelationManagerTreeModel::RelationTreeItemRelation::relation()
 QgsRelationManagerTreeModel::RelationTreeItemReference::~RelationTreeItemReference()
 {
   model()->unregisterItem( this->id() );
+}
+
+int QgsRelationManagerTreeModel::RelationTreeItemReference::itemToRow( QgsRelationManagerTreeModel::RelationTreeItem* item )
+{
+  Q_UNUSED( item )
+  return -1;
+}
+
+QVariant QgsRelationManagerTreeModel::RelationTreeItemReference::data( const QModelIndex& index, int role ) const
+{
+  if ( role == Qt::DisplayRole )
+  {
+    if ( index.column() == 0 )
+    {
+      return mFieldPair.first.name();
+    }
+    else if ( index.column() == 1 )
+    {
+      return mFieldPair.second.name();
+    }
+  }
+  return QVariant();
+}
+
+int QgsRelationManagerTreeModel::RelationTreeItem::rowId( int row )
+{
+  Q_UNUSED( row )
+  return -1;
 }

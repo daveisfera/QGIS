@@ -1977,6 +1977,7 @@ bool QgsVectorLayer::readSymbology( const QDomNode& node, QString& errorMessage 
         case UniqueValuesEditable:
         case UuidGenerator:
         case Color:
+        case EditorWidgetV2: // Will get a signal and read there
           break;
 
         case EditorWidgetV2:
@@ -2300,6 +2301,7 @@ bool QgsVectorLayer::writeSymbology( QDomNode& node, QDomDocument& doc, QString&
         case Immutable:
         case UuidGenerator:
         case Color:
+        case EditorWidgetV2: // Will get a signal and save there
           break;
       }
 
@@ -3852,7 +3854,7 @@ QgsVectorLayer::ValueRelationData &QgsVectorLayer::valueRelation( int idx )
   return mValueRelations[fieldName];
 }
 
-QList<QgsRelation*> QgsVectorLayer::referencingRelations( int idx )
+QList<QgsRelation> QgsVectorLayer::referencingRelations( int idx )
 {
   return QgsRelationManager::instance()->referencingRelations( this, idx );
 }

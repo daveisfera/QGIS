@@ -49,6 +49,9 @@ class CORE_EXPORT QgsRelation
 
     bool isValid() const;
 
+  protected:
+    void updateRelationStatus();
+
   private:
     QString mRelationName;
     QString mReferencingLayerId;

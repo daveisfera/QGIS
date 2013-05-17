@@ -21,9 +21,9 @@
 #include "qgsvectorlayer.h"
 
 QgsRelation::QgsRelation()
-  : mReferencingLayer( NULL )
-  , mReferencedLayer( NULL )
-  , mValid( false )
+    : mReferencingLayer( NULL )
+    , mReferencedLayer( NULL )
+    , mValid( false )
 {
 }
 
@@ -42,7 +42,7 @@ QgsRelation QgsRelation::createFromXML( const QDomNode &node )
   QString referencedLayerId = elem.attribute( "referencedLayer" );
   QString name = elem.attribute( "name" );
 
-  QMap<QString, QgsMapLayer*> mapLayers = QgsMapLayerRegistry::instance()->mapLayers();
+  const QMap<QString, QgsMapLayer*>& mapLayers = QgsMapLayerRegistry::instance()->mapLayers();
 
   QgsMapLayer* referencingLayer = mapLayers[referencingLayerId];
   QgsMapLayer* referencedLayer = mapLayers[referencedLayerId];;
@@ -96,7 +96,7 @@ void QgsRelation::writeXML( QDomNode &node, QDomDocument &doc ) const
   elem.setAttribute( "referencingLayer", mReferencingLayerId );
   elem.setAttribute( "referencedLayer", mReferencedLayerId );
 
-  foreach( FieldPair fields, mFieldPairs )
+  foreach ( FieldPair fields, mFieldPairs )
   {
     QDomElement referenceElem = doc.createElement( "fieldRef" );
     referenceElem.setAttribute( "referencingField", fields.first.name() );
@@ -115,21 +115,27 @@ void QgsRelation::setRelationName( QString name )
 void QgsRelation::setReferencingLayer( QString id )
 {
   mReferencingLayerId = id;
+
+  updateRelationStatus();
 }
 
 void QgsRelation::setReferencedLayer( QString id )
 {
   mReferencedLayerId = id;
+
+  updateRelationStatus();
 }
 
-void QgsRelation::addFieldPair(QString referencingField, QString referencedField)
+void QgsRelation::addFieldPair( QString referencingField, QString referencedField )
 {
   mFieldPairs << FieldPair( referencingField, referencedField );
+  updateRelationStatus();
 }
 
 void QgsRelation::addFieldPair( QgsRelation::FieldPair fieldPair )
 {
   mFieldPairs << fieldPair;
+  updateRelationStatus();
 }
 
 QString QgsRelation::name() const
@@ -167,3 +173,33 @@ bool QgsRelation::isValid() const
   return mValid;
 }
 
+void QgsRelation::updateRelationStatus()
+{
+  const QMap<QString, QgsMapLayer*>& mapLayers = QgsMapLayerRegistry::instance()->mapLayers();
+
+  mReferencingLayer = qobject_cast<QgsVectorLayer*>( mapLayers[mReferencingLayerId] );
+  mReferencedLayer = qobject_cast<QgsVectorLayer*>( mapLayers[mReferencedLayerId] );
+
+  mValid = true;
+
+  if ( !mReferencedLayer || !mReferencingLayer )
+  {
+    mValid = false;
+  }
+  else
+  {
+    if ( mFieldPairs.count() < 1 )
+    {
+      mValid = false;
+    }
+
+    foreach ( const FieldPair& fieldPair, mFieldPairs )
+    {
+      if ( -1 == mReferencingLayer->fieldNameIndex( fieldPair.first.name() )
+           || -1 == mReferencedLayer->fieldNameIndex( fieldPair.second.name() ) )
+      {
+        mValid = false;
+      }
+    }
+  }
+}

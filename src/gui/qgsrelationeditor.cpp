@@ -15,20 +15,24 @@
 
 #include "qgsrelationeditor.h"
 
+#include "attributetable/qgsdualview.h"
 #include "qgsrelation.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
 
-QgsRelationEditor::QgsRelationEditor( QWidget* parent )
+QgsRelationEditorWidget::QgsRelationEditorWidget( QWidget* parent )
     : QWidget( parent )
 {
+  setupUi( this );
 }
 
-QgsRelationEditor* QgsRelationEditor::createRelationEditor( QgsVectorLayer* vl, const QgsRelation& relation, QWidget* parent )
+QgsRelationEditorWidget* QgsRelationEditorWidget::createRelationEditor( QgsVectorLayer* vl, const QgsRelation& relation, QWidget* parent )
 {
-  QgsRelationEditor* ed = new QgsRelationEditor( parent );
-  ed->setLayout( new QHBoxLayout( ed ) );
-  ed->layout()->addWidget( new QLabel( relation.name(), ed ) );
-  return ed;
+  QgsRelationEditorWidget* editor = new QgsRelationEditorWidget( parent );
+
+  QgsDualView* dualView = new QgsDualView( editor );
+
+  editor->mBrowserWidget->layout()->addWidget( dualView );
+  return editor;
 }

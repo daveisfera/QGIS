@@ -18,15 +18,17 @@
 
 #include <QWidget>
 
+#include "ui_qgsrelationeditorwidgetbase.h"
+
 class QgsVectorLayer;
 class QgsRelation;
 
-class QgsRelationEditor : public QWidget
+class QgsRelationEditorWidget : public QWidget, private Ui::QgsRelationEditorWidgetBase
 {
   public:
-    QgsRelationEditor( QWidget* parent = NULL );
+    QgsRelationEditorWidget( QWidget* parent = NULL );
 
-    static QgsRelationEditor* createRelationEditor( QgsVectorLayer* vl, const QgsRelation &relation, QWidget* parent = NULL );
+    static QgsRelationEditorWidget* createRelationEditor( QgsVectorLayer* vl, const QgsRelation &relation, QWidget* parent = NULL );
 };
 
 #endif // QGSRELATIONEDITOR_H

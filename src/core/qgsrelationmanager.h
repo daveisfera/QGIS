@@ -45,6 +45,7 @@ class CORE_EXPORT QgsRelationManager : public QObject
     QgsRelation relation( const QString& id );
 
     QList<QgsRelation> referencingRelations( QgsVectorLayer* layer = NULL, int fieldIdx = -2 );
+    QList<QgsRelation> referencedRelations( QgsVectorLayer* layer = NULL );
 
   signals:
 
@@ -53,7 +54,7 @@ class CORE_EXPORT QgsRelationManager : public QObject
   private slots:
     void readProject( const QDomDocument &doc );
     void writeProject( QDomDocument &doc );
-    
+
   private:
     /** The references */
     QMap<QString, QgsRelation> mRelations;

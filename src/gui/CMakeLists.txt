@@ -59,6 +59,7 @@ qgisgui.cpp
 qgisinterface.cpp
 qgsannotationitem.cpp
 qgsattributeeditor.cpp
+qgsrelationeditor.cpp
 qgsattributedialog.cpp
 qgsbusyindicatordialog.cpp
 qgslegendinterface.cpp
@@ -195,6 +196,7 @@ editorwidgetsv2/qgsrelreferenceconfigdlg.h
 
 qgsattributedialog.h
 qgsattributeeditor.h
+qgsrelationeditor.h
 qgsblendmodecombobox.h
 qgsbusyindicatordialog.h
 qgscharacterselectdialog.h
@@ -288,6 +290,7 @@ qgsscalecombobox.h
 qgsblendmodecombobox.h
 qgssearchquerybuilder.h
 qgsattributeeditor.h
+qgsrelationeditor.h
 qgsattributedialog.h
 qgsfieldvalidator.h
 qgsexpressionbuilderwidget.h

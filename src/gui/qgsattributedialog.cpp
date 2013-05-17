@@ -15,6 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 #include "qgsattributedialog.h"
+#include "qgsrelationeditor.h"
 #include "editorwidgetsv2/qgseditorwidgetwrapper.h"
 #include "qgsfield.h"
 #include "qgslogger.h"
@@ -240,6 +241,23 @@ QgsAttributeDialog::QgsAttributeDialog( QgsVectorLayer *vl, QgsFeature *thepFeat
         mypInnerLayout->addWidget( myWidget, index, 1 );
         ++index;
       }
+    }
+
+    QList<QgsRelation> relations = QgsRelationManager::instance()->referencedRelations( vl );
+
+    foreach ( const QgsRelation& relation, relations )
+    {
+      relation.name();
+
+      QWidget *myWidget = QgsRelationEditorWidget::createRelationEditor( vl, relation );
+      if ( !myWidget )
+        continue;
+
+      QLabel * mypLabel = new QLabel( QString( "<i>%1</i>" ).arg( relation.name() ), mypInnerFrame );
+      mypInnerLayout->addWidget( mypLabel, index, 0 );
+
+      mypInnerLayout->addWidget( myWidget, index, 1 );
+      ++index;
     }
 
     // Set focus to first widget in list, to help entering data without moving the mouse.

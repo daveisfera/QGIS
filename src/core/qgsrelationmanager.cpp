@@ -23,11 +23,11 @@
 QgsRelationManager* QgsRelationManager::sInstance = NULL;
 
 QgsRelationManager::QgsRelationManager() :
-  QObject( QgsApplication::instance() )
+    QObject( QgsApplication::instance() )
 {
   QgsProject* project = QgsProject::instance();
-  connect( project, SIGNAL( readProject( const QDomDocument& ) ), SLOT ( readProject( const QDomDocument& ) ) );
-  connect( project, SIGNAL( writeProject( QDomDocument& ) ), SLOT ( writeProject( QDomDocument& ) ) );
+  connect( project, SIGNAL( readProject( const QDomDocument& ) ), SLOT( readProject( const QDomDocument& ) ) );
+  connect( project, SIGNAL( writeProject( QDomDocument& ) ), SLOT( writeProject( QDomDocument& ) ) );
 }
 
 QgsRelationManager* QgsRelationManager::instance()
@@ -40,7 +40,7 @@ QgsRelationManager* QgsRelationManager::instance()
 
 void QgsRelationManager::setRelations( const QList<QgsRelation>& relations )
 {
-  foreach( const QgsRelation& rel, relations )
+  foreach ( const QgsRelation& rel, relations )
   {
     addRelation( rel );
   }
@@ -85,7 +85,7 @@ QList<QgsRelation> QgsRelationManager::referencingRelations( QgsVectorLayer* lay
       if ( fieldIdx != -2 )
       {
         bool containsField = false;
-        foreach( const QgsRelation::FieldPair& fp, rel.fieldPairs() )
+        foreach ( const QgsRelation::FieldPair& fp, rel.fieldPairs() )
         {
           if ( fieldIdx == layer->fieldNameIndex( fp.first.name() ) )
           {
@@ -106,6 +106,26 @@ QList<QgsRelation> QgsRelationManager::referencingRelations( QgsVectorLayer* lay
   return relations;
 }
 
+QList<QgsRelation> QgsRelationManager::referencedRelations( QgsVectorLayer* layer )
+{
+  if ( !layer )
+  {
+    return mRelations.values();
+  }
+
+  QList<QgsRelation> relations;
+
+  foreach ( const QgsRelation& rel, mRelations )
+  {
+    if ( rel.referencedLayer() == layer )
+    {
+      relations.append( rel );
+    }
+  }
+
+  return relations;
+}
+
 void QgsRelationManager::readProject( const QDomDocument & doc )
 {
   mRelations.clear();
@@ -118,7 +138,7 @@ void QgsRelationManager::readProject( const QDomDocument & doc )
     int relCount = relationNodes.count();
     for ( int i = 0; i < relCount; ++i )
     {
-      addRelation( QgsRelation::createFromXML( relationNodes.at(i) ) );
+      addRelation( QgsRelation::createFromXML( relationNodes.at( i ) ) );
     }
   }
   else

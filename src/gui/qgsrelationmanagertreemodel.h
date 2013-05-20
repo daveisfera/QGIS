@@ -30,93 +30,103 @@ class QgsRelationManagerTreeModel : public QAbstractItemModel
 {
     Q_OBJECT
 
-  class RelationTreeItemRelation;
-  class RelationTreeItemReference;
+    class RelationTreeItemRelation;
+    class RelationTreeItemReference;
 
-  class RelationTreeItem
-  {
-    public:
-      RelationTreeItem( int id, QgsRelationManagerTreeModel* model, RelationTreeItem* parent )
-        : mId( id )
-        , mModel( model )
-        , mParent( parent ) {}
-      virtual int rowCount() = 0;
-      virtual int rowId( int row );
-      virtual int itemToRow( RelationTreeItem* item ) = 0;
-      virtual QVariant data( const QModelIndex& index, int role ) const = 0;
-      virtual bool spanColumn() { return false; }
+    class RelationTreeItem
+    {
+      public:
+        RelationTreeItem( int id, QgsRelationManagerTreeModel* model, RelationTreeItem* parent )
+            : mId( id )
+            , mModel( model )
+            , mParent( parent ) {}
+        virtual int rowCount() = 0;
+        virtual int rowId( int row );
+        virtual int itemToRow( RelationTreeItem* item ) = 0;
+        virtual QVariant data( const QModelIndex& index, int role ) const = 0;
+        virtual bool spanColumn() { return false; }
 
-      int id() { return mId; }
-      RelationTreeItem* parent() { return mParent; }
+        int id() { return mId; }
+        RelationTreeItem* parent() { return mParent; }
 
-    protected:
-      QgsRelationManagerTreeModel* model() { return mModel; }
+      protected:
+        QgsRelationManagerTreeModel* model() { return mModel; }
 
-    private:
-      int mId;
-      QgsRelationManagerTreeModel* mModel;
-      RelationTreeItem* mParent;
-  };
+      private:
+        int mId;
+        QgsRelationManagerTreeModel* mModel;
+        RelationTreeItem* mParent;
+    };
 
-  class RelationTreeItemLayer : public RelationTreeItem
-  {
-    public:
-      RelationTreeItemLayer( int id, QgsRelationManagerTreeModel* model )
-        : RelationTreeItem( id, model, NULL ) {}
-      void addRelation( const QgsRelation& relation );
-      void removeRelation( RelationTreeItemRelation* relItem  );
-      virtual int rowCount() { return mRelations.size(); }
-      virtual int rowId( int row ) { RelationTreeItemRelation* relItem = mRelations.at( row ); return relItem ? relItem->id() : -1; }
-      virtual int itemToRow( RelationTreeItem* item ) { return mRelations.indexOf( dynamic_cast< RelationTreeItemRelation* > ( item ) ); }
-      virtual QVariant data( const QModelIndex& index, int role ) const;
-      virtual bool spanColumn() { return true; }
+    class RelationTreeItemLayer : public RelationTreeItem
+    {
+      public:
+        RelationTreeItemLayer( int id, QgsRelationManagerTreeModel* model )
+            : RelationTreeItem( id, model, NULL ) {}
+        void addRelation( const QgsRelation& relation );
+        void removeRelation( RelationTreeItemRelation* relItem );
+        virtual int rowCount() { return mRelations.size(); }
+        virtual int rowId( int row )
+        {
+          if ( row >= 0 && row < mRelations.size() )
+          {
+            return mRelations.at( row )->id();
+          }
+          else
+          {
+            return -1;
+          }
+        }
+        virtual int itemToRow( RelationTreeItem* item ) { return mRelations.indexOf( dynamic_cast< RelationTreeItemRelation* >( item ) ); }
+        virtual QVariant data( const QModelIndex& index, int role ) const;
+        virtual bool spanColumn() { return true; }
 
-      QList < QgsRelation > relations();
+        QList < QgsRelation > relations();
 
-      QString mLayerId;
-      QgsVectorLayer* mLayer;
-      QList< RelationTreeItemRelation* > mRelations;
-  };
+        QString mLayerId;
+        QgsVectorLayer* mLayer;
+        QList< RelationTreeItemRelation* > mRelations;
+    };
 
-  class RelationTreeItemRelation : public RelationTreeItem
-  {
-    public:
-      RelationTreeItemRelation( int id, QgsRelationManagerTreeModel* model, RelationTreeItemLayer* parent )
-        : RelationTreeItem( id, model, parent ) {}
-      virtual ~RelationTreeItemRelation();
-      virtual int rowCount()  { return mReferences.size(); }
-      virtual QVariant data( const QModelIndex& index, int role ) const;
-      virtual bool spanColumn() { return true; }
-      virtual int rowId( int row ) { RelationTreeItemReference* refItem = mReferences.at( row ); return refItem ? refItem->id() : -1; }
-      virtual int itemToRow( RelationTreeItem* item ) { return mReferences.indexOf( dynamic_cast< RelationTreeItemReference* > ( item ) ); }
-      void setFieldPairs( QList< QgsRelation::FieldPair > fieldPairs );
-      QgsRelation relation();
+    class RelationTreeItemRelation : public RelationTreeItem
+    {
+      public:
+        RelationTreeItemRelation( int id, QgsRelationManagerTreeModel* model, RelationTreeItemLayer* parent )
+            : RelationTreeItem( id, model, parent ) {}
+        virtual ~RelationTreeItemRelation();
+        virtual int rowCount()  { return mReferences.size(); }
+        virtual QVariant data( const QModelIndex& index, int role ) const;
+        virtual bool spanColumn() { return true; }
+        virtual int rowId( int row ) { RelationTreeItemReference* refItem = mReferences.at( row ); return refItem ? refItem->id() : -1; }
+        virtual int itemToRow( RelationTreeItem* item ) { return mReferences.indexOf( dynamic_cast< RelationTreeItemReference* >( item ) ); }
+        void setFieldPairs( QList< QgsRelation::FieldPair > fieldPairs );
+        QgsRelation relation();
 
-      QString mRelationName;
-      QString mReferencedLayerId;
-      QList < RelationTreeItemReference* > mReferences;
-  };
+        QString mRelationName;
+        QString mReferencedLayerId;
+        QList < RelationTreeItemReference* > mReferences;
+    };
 
-  class RelationTreeItemReference : public RelationTreeItem
-  {
-    public:
-      RelationTreeItemReference( int id, QgsRelationManagerTreeModel* model, RelationTreeItemRelation* parent )
-        : RelationTreeItem( id, model, parent ) {}
-      virtual ~RelationTreeItemReference();
-      virtual int rowCount()  { return 0; }
-      virtual int itemToRow( RelationTreeItem* item );
-      virtual QVariant data( const QModelIndex& index, int role ) const;
+    class RelationTreeItemReference : public RelationTreeItem
+    {
+      public:
+        RelationTreeItemReference( int id, QgsRelationManagerTreeModel* model, RelationTreeItemRelation* parent )
+            : RelationTreeItem( id, model, parent ) {}
+        virtual ~RelationTreeItemReference();
+        virtual int rowCount()  { return 0; }
+        virtual int itemToRow( RelationTreeItem* item );
+        virtual QVariant data( const QModelIndex& index, int role ) const;
 
-      QgsRelation::FieldPair fieldPair() { return mFieldPair; }
+        QgsRelation::FieldPair fieldPair() { return mFieldPair; }
 
-      QgsRelation::FieldPair mFieldPair;
-      RelationTreeItemRelation* mParentItem;
-  };
+        QgsRelation::FieldPair mFieldPair;
+        RelationTreeItemRelation* mParentItem;
+    };
 
   public:
     explicit QgsRelationManagerTreeModel( QTreeView* parent = 0 );
 
-    QList< QgsRelation > relations ();
+    QList< QgsRelation > relations();
     void addRelation( const QgsRelation& relation );
     void removeRelation( const QModelIndex& index );
     void updateRelation( const QModelIndex& index, const QgsRelation& relation );
@@ -134,7 +144,7 @@ class QgsRelationManagerTreeModel : public QAbstractItemModel
     QModelIndex indexFromItem( RelationTreeItem* item ) const;
 
   signals:
-    
+
   public slots:
 
   private:

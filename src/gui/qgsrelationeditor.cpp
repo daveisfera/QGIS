@@ -17,6 +17,9 @@
 
 #include "attributetable/qgsdualview.h"
 #include "qgsrelation.h"
+#include "qgsdistancearea.h"
+#include "qgsexpression.h"
+#include "qgsfeature.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
@@ -27,12 +30,29 @@ QgsRelationEditorWidget::QgsRelationEditorWidget( QWidget* parent )
   setupUi( this );
 }
 
-QgsRelationEditorWidget* QgsRelationEditorWidget::createRelationEditor( QgsVectorLayer* vl, const QgsRelation& relation, QWidget* parent )
+QgsRelationEditorWidget* QgsRelationEditorWidget::createRelationEditor( const QgsRelation& relation, QgsFeature* feature, QWidget* parent )
 {
   QgsRelationEditorWidget* editor = new QgsRelationEditorWidget( parent );
 
   QgsDualView* dualView = new QgsDualView( editor );
 
   editor->mBrowserWidget->layout()->addWidget( dualView );
+
+  QStringList conditions;
+
+  foreach ( QgsRelation::FieldPair fieldPair, relation.fieldPairs() )
+  {
+    conditions << QString( "\"%1\" = '%2'" ).arg( fieldPair.first.name(), feature->attribute( fieldPair.second.name() ).toString() );
+  }
+
+  QgsFeatureRequest myRequest;
+
+  QgsDebugMsg( QString( "Filter conditions: '%1'" ).arg( conditions.join( " AND " ) ) );
+
+  myRequest.setFilterExpression( conditions.join( " AND " ) );
+
+  // TODO: Proper QgsDistanceArea, proper mapcanvas
+  dualView->init( relation.referencingLayer(), NULL, QgsDistanceArea(), myRequest );
+
   return editor;
 }

@@ -69,6 +69,8 @@ QgsVectorLayerFeatureIterator::QgsVectorLayerFeatureIterator( QgsVectorLayer* la
 
     rewindEditBuffer();
   }
+
+  initializePostFilter( L->pendingFields() );
 }
 
 

@@ -29,6 +29,8 @@ class QgsFeature;
 class QgsGeometry;
 class QgsOgcUtils;
 class QgsVectorLayer;
+class QgsVectorDataProvider;
+class QgsExpressionProviderTranslator;
 
 class QDomElement;
 
@@ -349,6 +351,8 @@ class CORE_EXPORT QgsExpression
         virtual QStringList referencedColumns() const = 0;
         virtual bool needsGeometry() const = 0;
 
+        virtual bool translateToProvider( QString& result, QgsExpressionProviderTranslator* translator );
+
         // support for visitor pattern
         virtual void accept( Visitor& v ) const = 0;
     };
@@ -535,6 +539,9 @@ class CORE_EXPORT QgsExpression
 
         virtual QStringList referencedColumns() const { return QStringList( mName ); }
         virtual bool needsGeometry() const { return false; }
+
+        bool translateToProvider( QString& result, QgsExpressionProviderTranslator* translator );
+
         virtual void accept( Visitor& v ) const { v.visit( *this ); }
 
       protected:

@@ -16,6 +16,7 @@
 #define QGSFEATUREITERATOR_H
 
 #include "qgsfeaturerequest.h"
+#include "qgslogger.h"
 
 
 /** \ingroup core
@@ -39,6 +40,10 @@ class CORE_EXPORT QgsAbstractFeatureIterator
 
   protected:
     QgsFeatureRequest mRequest;
+
+    void initializePostFilter( const QgsFields& fields );
+
+    virtual bool postFilter( const QgsFeature& f );
 
     bool mClosed;
 
@@ -111,7 +116,27 @@ inline QgsFeatureIterator::~QgsFeatureIterator()
 
 inline bool QgsFeatureIterator::nextFeature( QgsFeature& f )
 {
-  return mIter ? mIter->nextFeature( f ) : false;
+  if ( mIter->mRequest.filterType() == QgsFeatureRequest::FilterExpression )
+  {
+    QgsExpression* expr = mIter->mRequest.filterExpression();
+
+    while ( mIter->nextFeature( f ) )
+    {
+      if ( expr->evaluate( &f ).toInt() != 0 )
+      {
+        return true;
+      }
+      if ( expr->hasEvalError() )
+      {
+        QgsDebugMsg( QString( "Eval error: '%1'" ).arg( expr->evalErrorString() ) );
+      }
+    }
+    return false;
+  }
+  else
+  {
+    return mIter ? mIter->nextFeature( f ) : false;
+  }
 }
 
 inline bool QgsFeatureIterator::rewind()

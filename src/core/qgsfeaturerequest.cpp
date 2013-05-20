@@ -20,6 +20,7 @@
 
 QgsFeatureRequest::QgsFeatureRequest()
     : mFilter( FilterNone )
+    , mFilterExpression( 0 )
     , mFlags( 0 )
 {
 }
@@ -27,6 +28,7 @@ QgsFeatureRequest::QgsFeatureRequest()
 QgsFeatureRequest::QgsFeatureRequest( QgsFeatureId fid )
     : mFilter( FilterFid )
     , mFilterFid( fid )
+    , mFilterExpression( 0 )
     , mFlags( 0 )
 {
 }
@@ -34,19 +36,38 @@ QgsFeatureRequest::QgsFeatureRequest( QgsFeatureId fid )
 QgsFeatureRequest::QgsFeatureRequest( const QgsRectangle& rect )
     : mFilter( FilterRect )
     , mFilterRect( rect )
+    , mFilterExpression( 0 )
     , mFlags( 0 )
 {
 }
 
 QgsFeatureRequest::QgsFeatureRequest( const QgsFeatureRequest &rh )
 {
+  operator=( rh );
+}
+
+QgsFeatureRequest& QgsFeatureRequest::operator=( const QgsFeatureRequest & rh )
+{
   mFlags = rh.mFlags;
   mFilter = rh.mFilter;
   mFilterRect = rh.mFilterRect;
   mFilterFid = rh.mFilterFid;
+  if ( rh.mFilterExpression )
+  {
+    mFilterExpression = new QgsExpression( rh.mFilterExpression->expression() );
+  }
+  else
+  {
+    mFilterExpression = 0;
+  }
   mAttrs = rh.mAttrs;
+  return *this;
 }
 
+QgsFeatureRequest::~QgsFeatureRequest()
+{
+  delete mFilterExpression;
+}
 
 QgsFeatureRequest& QgsFeatureRequest::setFilterRect( const QgsRectangle& rect )
 {
@@ -59,6 +80,14 @@ QgsFeatureRequest& QgsFeatureRequest::setFilterFid( QgsFeatureId fid )
 {
   mFilter = FilterFid;
   mFilterFid = fid;
+  return *this;
+}
+
+QgsFeatureRequest& QgsFeatureRequest::setFilterExpression( const QString& expression )
+{
+  mFilter = FilterExpression;
+  delete mFilterExpression;
+  mFilterExpression = new QgsExpression( expression );
   return *this;
 }
 

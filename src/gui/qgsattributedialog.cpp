@@ -249,7 +249,7 @@ QgsAttributeDialog::QgsAttributeDialog( QgsVectorLayer *vl, QgsFeature *thepFeat
     {
       relation.name();
 
-      QWidget *myWidget = QgsRelationEditorWidget::createRelationEditor( vl, relation );
+      QWidget *myWidget = QgsRelationEditorWidget::createRelationEditor( relation, mFeature );
       if ( !myWidget )
         continue;
 

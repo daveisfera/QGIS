@@ -13,7 +13,7 @@
  *                                                                         *
  ***************************************************************************/
 #include "qgsfeatureiterator.h"
-
+#include "qgslogger.h"
 
 QgsAbstractFeatureIterator::QgsAbstractFeatureIterator( const QgsFeatureRequest& request )
     : mRequest( request )
@@ -24,6 +24,24 @@ QgsAbstractFeatureIterator::QgsAbstractFeatureIterator( const QgsFeatureRequest&
 
 QgsAbstractFeatureIterator::~QgsAbstractFeatureIterator()
 {
+}
+
+void QgsAbstractFeatureIterator::initializePostFilter( const QgsFields& fields )
+{
+  if ( mRequest.filterType() == QgsFeatureRequest::FilterExpression )
+  {
+    mRequest.filterExpression()->prepare( fields );
+
+    if ( mRequest.filterExpression()->hasParserError() )
+    {
+      QgsDebugMsg( QString( "Parser error: '%1'" ).arg( mRequest.filterExpression()->parserErrorString() ) );
+    }
+  }
+}
+
+bool QgsAbstractFeatureIterator::postFilter( const QgsFeature& f )
+{
+
 }
 
 void QgsAbstractFeatureIterator::ref()

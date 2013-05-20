@@ -76,6 +76,8 @@ QgsPostgresFeatureIterator::QgsPostgresFeatureIterator( QgsPostgresProvider* p, 
     return;
   }
 
+  initializePostFilter( p->fields() );
+
   mFetched = 0;
 }
 

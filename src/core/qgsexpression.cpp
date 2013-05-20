@@ -26,6 +26,7 @@
 #include <limits>
 
 #include "qgsdistancearea.h"
+#include "qgsexpressionprovidertranslator.h"
 #include "qgsfeature.h"
 #include "qgsgeometry.h"
 #include "qgslogger.h"
@@ -2275,6 +2276,11 @@ QString QgsExpression::NodeColumnRef::dump() const
   return mName;
 }
 
+bool QgsExpression::NodeColumnRef::translateToProvider( QString& result, QgsExpressionProviderTranslator* translator )
+{
+  translator->translateNodeColumnRef( result, this );
+}
+
 //
 
 QVariant QgsExpression::NodeCondition::eval( QgsExpression* parent, const QgsFeature* f )
@@ -2388,4 +2394,13 @@ QString QgsExpression::group( QString name )
   //have a translated name in the gGroups hash, return the name
   //unchanged
   return gGroups.value( name, name );
+}
+
+
+bool QgsExpression::Node::translateToProvider( QString& result, QgsExpressionProviderTranslator* translator )
+{
+  Q_UNUSED( result )
+  Q_UNUSED( translator )
+
+  return false;
 }

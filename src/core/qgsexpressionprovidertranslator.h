@@ -1,7 +1,7 @@
 /***************************************************************************
-    qgsrelationeditor.h
+    qgsproviderexpressiontranslator.h
      --------------------------------------
-    Date                 : 17.5.2013
+    Date                 : 18.5.2013
     Copyright            : (C) 2013 Matthias Kuhn
     Email                : matthias dot kuhn at gmx dot ch
  ***************************************************************************
@@ -13,23 +13,18 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef QGSRELATIONEDITOR_H
-#define QGSRELATIONEDITOR_H
+#ifndef QGSEXPRESSIONPROVIDERTRANSLATOR_H
+#define QGSEXPRESSIONPROVIDERTRANSLATOR_H
 
-#include <QWidget>
+#include "qgsexpression.h"
 
-#include "ui_qgsrelationeditorwidgetbase.h"
-
-class QgsVectorLayer;
-class QgsRelation;
-class QgsFeature;
-
-class QgsRelationEditorWidget : public QWidget, private Ui::QgsRelationEditorWidgetBase
+class CORE_EXPORT QgsExpressionProviderTranslator
 {
   public:
-    QgsRelationEditorWidget( QWidget* parent = NULL );
+    virtual ~QgsExpressionProviderTranslator();
 
-    static QgsRelationEditorWidget* createRelationEditor( const QgsRelation& relation, QgsFeature* feature, QWidget* parent = NULL );
+    virtual bool translateNodeUnaryOperator( QString& result, const QgsExpression::NodeUnaryOperator* op ) = 0;
+    virtual bool translateNodeColumnRef( QString& result, const QgsExpression::NodeColumnRef* op ) = 0;
 };
 
-#endif // QGSRELATIONEDITOR_H
+#endif // QGSPROVIDEREXPRESSIONTRANSLATOR_H

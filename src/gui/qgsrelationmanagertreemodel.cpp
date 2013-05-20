@@ -19,9 +19,9 @@
 #include "qgsrelationmanagertreemodel.h"
 
 QgsRelationManagerTreeModel::QgsRelationManagerTreeModel( QTreeView *parent ) :
-  QAbstractItemModel( parent )
-  , mTreeView( parent)
-  , mIndex( 0 )
+    QAbstractItemModel( parent )
+    , mTreeView( parent )
+    , mIndex( 0 )
 {
 
 }
@@ -30,7 +30,7 @@ QList< QgsRelation > QgsRelationManagerTreeModel::relations()
 {
   QList< QgsRelation > relations;
 
-  foreach( RelationTreeItemLayer* layerIt, mLayerItems )
+  foreach ( RelationTreeItemLayer* layerIt, mLayerItems )
   {
     relations.append( layerIt->relations() );
   }
@@ -58,7 +58,7 @@ QVariant QgsRelationManagerTreeModel::headerData( int section, Qt::Orientation o
     }
   }
 
-  return QAbstractItemModel::headerData(section, orientation, role );
+  return QAbstractItemModel::headerData( section, orientation, role );
 }
 
 int QgsRelationManagerTreeModel::rowCount( const QModelIndex &parent ) const
@@ -76,20 +76,24 @@ int QgsRelationManagerTreeModel::rowCount( const QModelIndex &parent ) const
     {
       return 0;
     }
-    mTreeView->setFirstColumnSpanned( parent.row(), parent.parent(), mItems[ parent.internalId() ]->spanColumn() );
-    return mItems[ parent.internalId() ]->rowCount();
+    mTreeView->setFirstColumnSpanned( parent.row(), parent.parent(), mItems[ parent.internalId()]->spanColumn() );
+    return mItems[ parent.internalId()]->rowCount();
   }
 }
 
 QModelIndex QgsRelationManagerTreeModel::index( int row, int column, const QModelIndex& parent ) const
 {
-  if( !parent.isValid() )
+  if ( !parent.isValid() )
   {
+    if ( row < 0 || row > mLayerItems.size() )
+    {
+      return QModelIndex();
+    }
     return createIndex( row, column, mLayerItems[row]->id() );
   }
   else
   {
-    return createIndex( row, column, mItems[ parent.internalId() ]->rowId( row ) );
+    return createIndex( row, column, mItems[ parent.internalId()]->rowId( row ) );
   }
 }
 
@@ -102,7 +106,7 @@ QModelIndex QgsRelationManagerTreeModel::parent( const QModelIndex& child ) cons
     return QModelIndex();
   }
 
-  RelationTreeItem* parentItem = mItems[ child.internalId() ]->parent();
+  RelationTreeItem* parentItem = mItems[ child.internalId()]->parent();
 
   if ( !parentItem )
   {
@@ -116,7 +120,7 @@ QModelIndex QgsRelationManagerTreeModel::parent( const QModelIndex& child ) cons
 
 QVariant QgsRelationManagerTreeModel::data( const QModelIndex& index, int role ) const
 {
-  switch( role )
+  switch ( role )
   {
     case Qt::DisplayRole:
       qDebug() << "data " << index.internalId();
@@ -124,7 +128,7 @@ QVariant QgsRelationManagerTreeModel::data( const QModelIndex& index, int role )
       {
         return tr( "No data" );
       }
-      return mItems[ index.internalId() ]->data( index, role );
+      return mItems[ index.internalId()]->data( index, role );
       break;
 
     default:
@@ -145,7 +149,7 @@ QModelIndex QgsRelationManagerTreeModel::indexFromItem( QgsRelationManagerTreeMo
 
   if ( !parent )
   {
-    row = mLayerItems.indexOf( dynamic_cast< RelationTreeItemLayer* > ( item ) );
+    row = mLayerItems.indexOf( dynamic_cast< RelationTreeItemLayer* >( item ) );
   }
   else
   {
@@ -159,7 +163,7 @@ void QgsRelationManagerTreeModel::addRelation( const QgsRelation& relation )
 {
   RelationTreeItemLayer* layerItem = NULL;
 
-  foreach( RelationTreeItemLayer* item, mLayerItems )
+  foreach ( RelationTreeItemLayer* item, mLayerItems )
   {
     if ( item->mLayerId == relation.referencingLayerId() )
     {
@@ -185,17 +189,17 @@ void QgsRelationManagerTreeModel::removeRelation( const QModelIndex &index )
 {
   if ( mItems.contains( index.internalId() ) )
   {
-    RelationTreeItem* clickedItem = mItems[ index.internalId() ];
-    RelationTreeItemRelation* relationItem = dynamic_cast< RelationTreeItemRelation* > ( clickedItem );
+    RelationTreeItem* clickedItem = mItems[ index.internalId()];
+    RelationTreeItemRelation* relationItem = dynamic_cast< RelationTreeItemRelation* >( clickedItem );
     if ( !relationItem )
     {
-      RelationTreeItemReference* referenceItem = dynamic_cast< RelationTreeItemReference* > ( clickedItem );
-      relationItem = dynamic_cast< RelationTreeItemRelation* > ( referenceItem->parent() );
+      RelationTreeItemReference* referenceItem = dynamic_cast< RelationTreeItemReference* >( clickedItem );
+      relationItem = dynamic_cast< RelationTreeItemRelation* >( referenceItem->parent() );
     }
 
     if ( relationItem )
     {
-      RelationTreeItemLayer* layerItem = dynamic_cast< RelationTreeItemLayer* > ( relationItem->parent() );
+      RelationTreeItemLayer* layerItem = dynamic_cast< RelationTreeItemLayer* >( relationItem->parent() );
       if ( layerItem )
       {
         layerItem->removeRelation( relationItem );
@@ -242,7 +246,7 @@ void QgsRelationManagerTreeModel::RelationTreeItemLayer::removeRelation( Relatio
   model()->beginRemoveRows( model()->indexFromItem( relItem->parent() ), row, row );
   mRelations.removeOne( relItem );
   model()->endRemoveRows();
-  delete ( relItem );
+  delete( relItem );
 }
 
 QVariant QgsRelationManagerTreeModel::RelationTreeItemLayer::data( const QModelIndex& index, int role ) const
@@ -250,7 +254,7 @@ QVariant QgsRelationManagerTreeModel::RelationTreeItemLayer::data( const QModelI
   Q_UNUSED( index )
   Q_UNUSED( role )
 
-  if( role == Qt::DisplayRole )
+  if ( role == Qt::DisplayRole )
   {
     return mLayerId;
   }
@@ -264,7 +268,7 @@ QList< QgsRelation > QgsRelationManagerTreeModel::RelationTreeItemLayer::relatio
 {
   QList < QgsRelation > relations;
 
-  foreach( RelationTreeItemRelation* relation, mRelations )
+  foreach ( RelationTreeItemRelation* relation, mRelations )
   {
     QgsRelation rel = relation->relation();
     rel.setReferencingLayer( mLayerId );
@@ -277,7 +281,7 @@ QList< QgsRelation > QgsRelationManagerTreeModel::RelationTreeItemLayer::relatio
 QgsRelationManagerTreeModel::RelationTreeItemRelation::~RelationTreeItemRelation()
 {
   model()->unregisterItem( id() );
-  foreach( RelationTreeItemReference* ref, mReferences )
+  foreach ( RelationTreeItemReference* ref, mReferences )
   {
     delete ref;
   }
@@ -297,11 +301,11 @@ QVariant QgsRelationManagerTreeModel::RelationTreeItemRelation::data( const QMod
   }
 }
 
-void QgsRelationManagerTreeModel::RelationTreeItemRelation::setFieldPairs(QList<QgsRelation::FieldPair> fieldPairs)
+void QgsRelationManagerTreeModel::RelationTreeItemRelation::setFieldPairs( QList<QgsRelation::FieldPair> fieldPairs )
 {
   // TODO: Remove old
 
-  foreach( QgsRelation::FieldPair fieldPair, fieldPairs )
+  foreach ( QgsRelation::FieldPair fieldPair, fieldPairs )
   {
     int itemId = model()->getId();
     QgsRelationManagerTreeModel::RelationTreeItemReference* referenceItem = new QgsRelationManagerTreeModel::RelationTreeItemReference( itemId, model(), this );
@@ -318,7 +322,7 @@ QgsRelation QgsRelationManagerTreeModel::RelationTreeItemRelation::relation()
   relation.setRelationName( mRelationName );
   relation.setReferencedLayer( mReferencedLayerId );
 
-  foreach( RelationTreeItemReference* reference, mReferences )
+  foreach ( RelationTreeItemReference* reference, mReferences )
   {
     relation.addFieldPair( reference->fieldPair() );
   }

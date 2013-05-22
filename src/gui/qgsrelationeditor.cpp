@@ -25,9 +25,12 @@
 #include <QLabel>
 
 QgsRelationEditorWidget::QgsRelationEditorWidget( QWidget* parent )
-    : QWidget( parent )
+    : QgsCollapsibleGroupBox( parent )
+    , mDualView( NULL )
 {
   setupUi( this );
+
+  connect( this, SIGNAL( collapsedStateChanged( bool ) ), this, SIGNAL( onCollapsedStateChanged( bool ) ) );
 }
 
 QgsRelationEditorWidget* QgsRelationEditorWidget::createRelationEditor( const QgsRelation& relation, QgsFeature* feature, QWidget* parent )
@@ -54,5 +57,15 @@ QgsRelationEditorWidget* QgsRelationEditorWidget::createRelationEditor( const Qg
   // TODO: Proper QgsDistanceArea, proper mapcanvas
   dualView->init( relation.referencingLayer(), NULL, QgsDistanceArea(), myRequest );
 
+  editor->mDualView = dualView;
+
   return editor;
+}
+
+void QgsRelationEditorWidget::onCollapsedStateChanged( bool state )
+{
+  if ( state && !mDualView->masterModel() )
+  {
+    // TODO: Lazy init dual view if collapsed on init
+  }
 }

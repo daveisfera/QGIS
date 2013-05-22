@@ -20,16 +20,25 @@
 
 #include "ui_qgsrelationeditorwidgetbase.h"
 
+class QgsDualView;
 class QgsVectorLayer;
 class QgsRelation;
 class QgsFeature;
 
-class QgsRelationEditorWidget : public QWidget, private Ui::QgsRelationEditorWidgetBase
+class QgsRelationEditorWidget : public QgsCollapsibleGroupBox, private Ui::QgsRelationEditorWidgetBase
 {
+    Q_OBJECT
+
   public:
     QgsRelationEditorWidget( QWidget* parent = NULL );
 
     static QgsRelationEditorWidget* createRelationEditor( const QgsRelation& relation, QgsFeature* feature, QWidget* parent = NULL );
+
+  private slots:
+    void onCollapsedStateChanged( bool state );
+
+  private:
+    QgsDualView* mDualView;
 };
 
 #endif // QGSRELATIONEDITOR_H

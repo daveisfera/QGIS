@@ -46,6 +46,7 @@ class GUI_EXPORT QgsRelationReferenceWidget : public QgsEditorWidgetWrapper
     void openForm();
 
   private:
+    bool mInitialValueAssigned;
     QComboBox* mComboBox;
     QWidget* mAttributeEditorFrame;
     QVBoxLayout* mAttributeEditorLayout;

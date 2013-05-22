@@ -29,6 +29,7 @@
 
 QgsRelationReferenceWidget::QgsRelationReferenceWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent )
     : QgsEditorWidgetWrapper( vl, fieldIdx, editor, parent )
+    , mInitialValueAssigned( false )
     , mComboBox( NULL )
     , mAttributeEditorFrame( NULL )
     , mAttributeEditorLayout( NULL )
@@ -79,7 +80,7 @@ void QgsRelationReferenceWidget::initWidget( QWidget* editor )
 
     QgsFeatureIterator fit = mReferencedLayer->getFeatures( QgsFeatureRequest() );
 
-    QgsExpression exp ( mReferencedLayer->displayExpression() );
+    QgsExpression exp( mReferencedLayer->displayExpression() );
     exp.prepare( mReferencedLayer->pendingFields() );
 
     QgsFeature f;
@@ -98,7 +99,7 @@ void QgsRelationReferenceWidget::initWidget( QWidget* editor )
     }
 
     // Only connect after iterating, to have only one iterator on the referenced table at once
-    connect( mComboBox, SIGNAL( currentIndexChanged(int) ), this, SLOT( referenceChanged(int) ) );
+    connect( mComboBox, SIGNAL( currentIndexChanged( int ) ), this, SLOT( referenceChanged( int ) ) );
   }
   else
   {
@@ -127,7 +128,18 @@ QVariant QgsRelationReferenceWidget::value()
 void QgsRelationReferenceWidget::setValue( const QVariant& value )
 {
   QgsFeatureId fid = mFidFkMap.key( value );
+  int oldIdx = mComboBox->currentIndex();
   mComboBox->setCurrentIndex( mComboBox->findData( fid ) );
+
+  if ( !mInitialValueAssigned )
+  {
+    // In case the default-selected item (first) is the actual item
+    // then no referenceChanged event was triggered automatically:
+    // Do it!
+    if ( oldIdx == mComboBox->currentIndex() )
+      referenceChanged( mComboBox->currentIndex() );
+    mInitialValueAssigned = true;
+  }
 }
 
 void QgsRelationReferenceWidget::setEnabled( bool enabled )

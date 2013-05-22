@@ -32,9 +32,9 @@
 
 QgsDualView::QgsDualView( QWidget* parent )
     : QStackedWidget( parent )
+    , mMasterModel( NULL )
     , mAttributeDialog( NULL )
     , mProgressDlg( NULL )
-    , mMasterModel( NULL )
 {
   setupUi( this );
 

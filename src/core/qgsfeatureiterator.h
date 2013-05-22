@@ -32,18 +32,21 @@ class CORE_EXPORT QgsAbstractFeatureIterator
     virtual ~QgsAbstractFeatureIterator();
 
     //! fetch next feature, return true on success
-    virtual bool nextFeature( QgsFeature& f ) = 0;
+    virtual bool nextFeature( QgsFeature& f );
+
     //! reset the iterator to the starting position
     virtual bool rewind() = 0;
     //! end of iterating: free the resources / lock
     virtual bool close() = 0;
 
   protected:
+    virtual bool nextFeatureFilterExpression( QgsFeature &f );
+
+    virtual bool nextFeatureFilterFids( QgsFeature & f );
+
+    virtual bool fetchFeature( QgsFeature& f ) = 0;
+
     QgsFeatureRequest mRequest;
-
-    void initializePostFilter( const QgsFields& fields );
-
-    virtual bool postFilter( const QgsFeature& f );
 
     bool mClosed;
 
@@ -116,27 +119,7 @@ inline QgsFeatureIterator::~QgsFeatureIterator()
 
 inline bool QgsFeatureIterator::nextFeature( QgsFeature& f )
 {
-  if ( mIter->mRequest.filterType() == QgsFeatureRequest::FilterExpression )
-  {
-    QgsExpression* expr = mIter->mRequest.filterExpression();
-
-    while ( mIter->nextFeature( f ) )
-    {
-      if ( expr->evaluate( &f ).toInt() != 0 )
-      {
-        return true;
-      }
-      if ( expr->hasEvalError() )
-      {
-        QgsDebugMsg( QString( "Eval error: '%1'" ).arg( expr->evalErrorString() ) );
-      }
-    }
-    return false;
-  }
-  else
-  {
-    return mIter ? mIter->nextFeature( f ) : false;
-  }
+  return mIter ? mIter->nextFeature( f ) : false;
 }
 
 inline bool QgsFeatureIterator::rewind()

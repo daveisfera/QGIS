@@ -83,6 +83,13 @@ QgsFeatureRequest& QgsFeatureRequest::setFilterFid( QgsFeatureId fid )
   return *this;
 }
 
+QgsFeatureRequest&QgsFeatureRequest::setFilterFids( QgsFeatureIds fids )
+{
+  mFilter = FilterFids;
+  mFilterFids = fids;
+  return *this;
+}
+
 QgsFeatureRequest& QgsFeatureRequest::setFilterExpression( const QString& expression )
 {
   mFilter = FilterExpression;

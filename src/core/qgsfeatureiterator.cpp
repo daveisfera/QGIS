@@ -26,22 +26,42 @@ QgsAbstractFeatureIterator::~QgsAbstractFeatureIterator()
 {
 }
 
-void QgsAbstractFeatureIterator::initializePostFilter( const QgsFields& fields )
+bool QgsAbstractFeatureIterator::nextFeature( QgsFeature& f )
 {
-  if ( mRequest.filterType() == QgsFeatureRequest::FilterExpression )
+  switch ( mRequest.filterType() )
   {
-    mRequest.filterExpression()->prepare( fields );
+    case QgsFeatureRequest::FilterExpression:
+      return nextFeatureFilterExpression( f );
+      break;
 
-    if ( mRequest.filterExpression()->hasParserError() )
-    {
-      QgsDebugMsg( QString( "Parser error: '%1'" ).arg( mRequest.filterExpression()->parserErrorString() ) );
-    }
+    case QgsFeatureRequest::FilterFids:
+      return nextFeatureFilterFids( f );
+      break;
+
+    default:
+      return fetchFeature( f );
+      break;
   }
 }
 
-bool QgsAbstractFeatureIterator::postFilter( const QgsFeature& f )
+bool QgsAbstractFeatureIterator::nextFeatureFilterExpression( QgsFeature& f )
 {
+  while ( fetchFeature( f ) )
+  {
+    if ( mRequest.filterExpression()->evaluate( f ).toBool() )
+      return true;
+  }
+  return false;
+}
 
+bool QgsAbstractFeatureIterator::nextFeatureFilterFids( QgsFeature& f )
+{
+  while ( fetchFeature( f ) )
+  {
+    if ( mRequest.filterFids().contains( f.id() ) )
+      return true;
+  }
+  return false;
 }
 
 void QgsAbstractFeatureIterator::ref()

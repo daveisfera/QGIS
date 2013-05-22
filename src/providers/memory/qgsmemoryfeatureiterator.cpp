@@ -66,7 +66,7 @@ QgsMemoryFeatureIterator::~QgsMemoryFeatureIterator()
 }
 
 
-bool QgsMemoryFeatureIterator::nextFeature( QgsFeature& feature )
+bool QgsMemoryFeatureIterator::fetchFeature( QgsFeature& feature )
 {
   feature.setValid( false );
 

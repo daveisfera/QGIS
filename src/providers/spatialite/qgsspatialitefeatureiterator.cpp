@@ -87,7 +87,7 @@ QgsSpatiaLiteFeatureIterator::~QgsSpatiaLiteFeatureIterator()
 }
 
 
-bool QgsSpatiaLiteFeatureIterator::nextFeature( QgsFeature& feature )
+bool QgsSpatiaLiteFeatureIterator::fetchFeature( QgsFeature& feature )
 {
   if ( mClosed )
     return false;

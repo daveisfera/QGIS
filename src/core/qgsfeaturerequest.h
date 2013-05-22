@@ -19,6 +19,7 @@
 
 #include "qgsfeature.h"
 #include "qgsrectangle.h"
+#include "qgsexpression.h"
 
 #include <QList>
 typedef QList<int> QgsAttributeList;
@@ -66,9 +67,11 @@ class CORE_EXPORT QgsFeatureRequest
 
     enum FilterType
     {
-      FilterNone,   //!< No filter is applied
-      FilterRect,   //!< Filter using a rectangle
-      FilterFid     //!< Filter using feature ID
+      FilterNone,       //!< No filter is applied
+      FilterRect,       //!< Filter using a rectangle
+      FilterFid,        //!< Filter using feature ID
+      FilterExpression, //!< Filter using expression
+      FilterFids        //!< Filter using feature ID's
     };
 
     //! construct a default request: for all features get attributes and geometries
@@ -80,6 +83,10 @@ class CORE_EXPORT QgsFeatureRequest
     //! copy constructor
     QgsFeatureRequest( const QgsFeatureRequest& rh );
 
+    QgsFeatureRequest& operator=( const QgsFeatureRequest& rh );
+
+    ~QgsFeatureRequest();
+
     FilterType filterType() const { return mFilter; }
 
     //! Set rectangle from which features will be taken. Empty rectangle removes the filter.
@@ -90,6 +97,14 @@ class CORE_EXPORT QgsFeatureRequest
     //! Set feature ID that should be fetched.
     QgsFeatureRequest& setFilterFid( QgsFeatureId fid );
     const QgsFeatureId& filterFid() const { return mFilterFid; }
+
+    //! Set feature ID that should be fetched.
+    QgsFeatureRequest& setFilterFids( QgsFeatureIds fids );
+    const QgsFeatureIds& filterFids() const { return mFilterFids; }
+
+    //! Set filter expression. Ownership is taken.
+    QgsFeatureRequest& setFilterExpression( const QString& expression );
+    QgsExpression* filterExpression() const { return mFilterExpression; }
 
     //! Set flags that affect how features will be fetched
     QgsFeatureRequest& setFlags( Flags flags );
@@ -112,6 +127,8 @@ class CORE_EXPORT QgsFeatureRequest
     FilterType mFilter;
     QgsRectangle mFilterRect;
     QgsFeatureId mFilterFid;
+    QgsFeatureIds mFilterFids;
+    QgsExpression* mFilterExpression;
     Flags mFlags;
     QgsAttributeList mAttrs;
 };

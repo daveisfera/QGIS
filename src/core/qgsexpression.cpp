@@ -2039,6 +2039,11 @@ QVariant QgsExpression::NodeBinaryOperator::eval( QgsExpression* parent, const Q
   return QVariant();
 }
 
+bool QgsExpression::NodeBinaryOperator::translate( QString& result, const QgsExpressionTranslator* translator )
+{
+  return translator->translateNodeBinaryOperatorRef( result, this );
+}
+
 bool QgsExpression::NodeBinaryOperator::compare( double diff )
 {
   switch ( mOp )
@@ -2276,9 +2281,9 @@ QString QgsExpression::NodeColumnRef::dump() const
   return mName;
 }
 
-bool QgsExpression::NodeColumnRef::translateToProvider( QString& result, QgsExpressionProviderTranslator* translator )
+bool QgsExpression::NodeColumnRef::translate( QString& result, const QgsExpressionTranslator* translator )
 {
-  translator->translateNodeColumnRef( result, this );
+  return translator->translateNodeColumnRef( result, this );
 }
 
 //
@@ -2397,7 +2402,7 @@ QString QgsExpression::group( QString name )
 }
 
 
-bool QgsExpression::Node::translateToProvider( QString& result, QgsExpressionProviderTranslator* translator )
+bool QgsExpression::Node::translate( QString& result, const QgsExpressionTranslator* translator )
 {
   Q_UNUSED( result )
   Q_UNUSED( translator )

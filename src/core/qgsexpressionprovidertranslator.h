@@ -18,13 +18,14 @@
 
 #include "qgsexpression.h"
 
-class CORE_EXPORT QgsExpressionProviderTranslator
+class CORE_EXPORT QgsExpressionTranslator
 {
   public:
-    virtual ~QgsExpressionProviderTranslator();
+    virtual ~QgsExpressionTranslator();
 
-    virtual bool translateNodeUnaryOperator( QString& result, const QgsExpression::NodeUnaryOperator* op ) = 0;
-    virtual bool translateNodeColumnRef( QString& result, const QgsExpression::NodeColumnRef* op ) = 0;
+    virtual bool translateNodeUnaryOperator( QString& result, const QgsExpression::NodeUnaryOperator* op ) const = 0;
+    virtual bool translateNodeBinaryOperatorRef( QString& result, const QgsExpression::NodeBinaryOperator* op ) const = 0;
+    virtual bool translateNodeColumnRef( QString& result, const QgsExpression::NodeColumnRef* op ) const = 0;
 };
 
 #endif // QGSPROVIDEREXPRESSIONTRANSLATOR_H

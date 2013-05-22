@@ -30,7 +30,7 @@ class QgsGeometry;
 class QgsOgcUtils;
 class QgsVectorLayer;
 class QgsVectorDataProvider;
-class QgsExpressionProviderTranslator;
+class QgsExpressionTranslator;
 
 class QDomElement;
 
@@ -351,7 +351,7 @@ class CORE_EXPORT QgsExpression
         virtual QStringList referencedColumns() const = 0;
         virtual bool needsGeometry() const = 0;
 
-        virtual bool translateToProvider( QString& result, QgsExpressionProviderTranslator* translator );
+        virtual bool translate( QString& result, const QgsExpressionTranslator* translator );
 
         // support for visitor pattern
         virtual void accept( Visitor& v ) const = 0;
@@ -438,6 +438,7 @@ class CORE_EXPORT QgsExpression
         virtual NodeType nodeType() const { return ntBinaryOperator; }
         virtual bool prepare( QgsExpression* parent, const QgsFields& fields );
         virtual QVariant eval( QgsExpression* parent, const QgsFeature* f );
+        virtual bool translate( QString &result, const QgsExpressionTranslator *translator );
         virtual QString dump() const;
 
         virtual QStringList referencedColumns() const { return mOpLeft->referencedColumns() + mOpRight->referencedColumns(); }
@@ -540,7 +541,7 @@ class CORE_EXPORT QgsExpression
         virtual QStringList referencedColumns() const { return QStringList( mName ); }
         virtual bool needsGeometry() const { return false; }
 
-        bool translateToProvider( QString& result, QgsExpressionProviderTranslator* translator );
+        bool translate( QString& result, const QgsExpressionTranslator* translator );
 
         virtual void accept( Visitor& v ) const { v.visit( *this ); }
 

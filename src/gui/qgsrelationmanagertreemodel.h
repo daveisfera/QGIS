@@ -17,6 +17,7 @@
 #define QGSRELATIONMANAGERTREEMODEL_H
 
 #include <QAbstractItemModel>
+#include <QItemDelegate>
 #include <QMap>
 #include <QList>
 #include <QString>
@@ -84,6 +85,7 @@ class QgsRelationManagerTreeModel : public QAbstractItemModel
         QList < QgsRelation > relations();
 
         QString mLayerId;
+        QString mLayerName;
         QgsVectorLayer* mLayer;
         QList< RelationTreeItemRelation* > mRelations;
     };
@@ -104,6 +106,7 @@ class QgsRelationManagerTreeModel : public QAbstractItemModel
 
         QString mRelationName;
         QString mReferencedLayerId;
+        QString mReferencedLayerName;
         QList < RelationTreeItemReference* > mReferences;
     };
 
@@ -153,6 +156,14 @@ class QgsRelationManagerTreeModel : public QAbstractItemModel
     QList< RelationTreeItemLayer* > mLayerItems;
     QMap< int, RelationTreeItem* > mItems;
     int mIndex; // The next item id to be delivered from getId
+};
+
+class QgsRelationManagerItemDelegate : public QItemDelegate
+{
+  public:
+    QgsRelationManagerItemDelegate( QObject* parent )
+        : QItemDelegate( parent ) {}
+    void paint( QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index ) const;
 };
 
 #endif // QGSRELATIONMANAGERTREEMODEL_H

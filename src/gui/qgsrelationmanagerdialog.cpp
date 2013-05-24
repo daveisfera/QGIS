@@ -20,12 +20,13 @@
 #include "qgsrelationmanagertreemodel.h"
 
 QgsRelationManagerDialog::QgsRelationManagerDialog( QgsRelationManager* relationMgr, QWidget *parent ) :
-  QWidget( parent ),
-  Ui::QgsRelationManagerDialogBase(),
-  mRelationManager( relationMgr )
+    QWidget( parent ),
+    Ui::QgsRelationManagerDialogBase(),
+    mRelationManager( relationMgr )
 {
-  setupUi(this);
+  setupUi( this );
   mRelationTreeModel = new QgsRelationManagerTreeModel( mRelationsTreeWdg );
+  mRelationsTreeWdg->setItemDelegate( new QgsRelationManagerItemDelegate( mRelationsTreeWdg ) );
   mRelationsTreeWdg->setModel( mRelationTreeModel );
   mRelationsTreeWdg->setSelectionMode( QAbstractItemView::SingleSelection );
   mRelationsTreeWdg->setSelectionBehavior( QAbstractItemView::SelectRows );
@@ -41,7 +42,7 @@ void QgsRelationManagerDialog::setLayers( QList< QgsVectorLayer* > layers )
 
   const QList<QgsRelation>& relations = mRelationManager->relations().values();
 
-  foreach( const QgsRelation rel, relations )
+  foreach ( const QgsRelation rel, relations )
   {
     addRelation( rel );
   }

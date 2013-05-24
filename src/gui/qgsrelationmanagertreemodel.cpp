@@ -17,6 +17,8 @@
 
 #include <QDebug>
 #include "qgsrelationmanagertreemodel.h"
+#include "qgsmaplayerregistry.h"
+#include "qgsmaplayer.h"
 
 QgsRelationManagerTreeModel::QgsRelationManagerTreeModel( QTreeView *parent ) :
     QAbstractItemModel( parent )
@@ -123,6 +125,7 @@ QVariant QgsRelationManagerTreeModel::data( const QModelIndex& index, int role )
   switch ( role )
   {
     case Qt::DisplayRole:
+    case Qt::BackgroundColorRole:
       qDebug() << "data " << index.internalId();
       if ( !mItems.contains( index.internalId() ) )
       {
@@ -176,6 +179,15 @@ void QgsRelationManagerTreeModel::addRelation( const QgsRelation& relation )
     int itemId = getId();
     layerItem = new RelationTreeItemLayer( itemId, this );
     layerItem->mLayerId = relation.referencingLayerId();
+    QgsMapLayer* layer = QgsMapLayerRegistry::instance()->mapLayer( relation.referencingLayerId() );
+    if ( layer )
+    {
+      layerItem->mLayerName = layer->name();
+    }
+    else
+    {
+      layerItem->mLayerName = relation.referencingLayerId();
+    }
     registerItem( itemId, layerItem );
     beginInsertRows( QModelIndex(), mLayerItems.size(), mLayerItems.size() );
     mLayerItems.append( layerItem );
@@ -194,6 +206,9 @@ void QgsRelationManagerTreeModel::removeRelation( const QModelIndex &index )
     if ( !relationItem )
     {
       RelationTreeItemReference* referenceItem = dynamic_cast< RelationTreeItemReference* >( clickedItem );
+      if ( !referenceItem ) // Probably a top level (layer) item
+        return;
+
       relationItem = dynamic_cast< RelationTreeItemRelation* >( referenceItem->parent() );
     }
 
@@ -233,6 +248,15 @@ void QgsRelationManagerTreeModel::RelationTreeItemLayer::addRelation( const QgsR
   QgsRelationManagerTreeModel::RelationTreeItemRelation* relationItem = new QgsRelationManagerTreeModel::RelationTreeItemRelation( itemId, model(), this );
   relationItem->mRelationName = relation.name();
   relationItem->mReferencedLayerId = relation.referencedLayerId();
+  QgsMapLayer* layer = QgsMapLayerRegistry::instance()->mapLayer( relation.referencedLayerId() );
+  if ( layer )
+  {
+    relationItem->mReferencedLayerName = layer->name();
+  }
+  else
+  {
+    relationItem->mReferencedLayerName = relation.referencedLayerId();
+  }
   relationItem->setFieldPairs( relation.fieldPairs() );
   model()->beginInsertRows( model()->indexFromItem( this ), mRelations.count(), mRelations.count() );
   mRelations.append( relationItem );
@@ -256,7 +280,7 @@ QVariant QgsRelationManagerTreeModel::RelationTreeItemLayer::data( const QModelI
 
   if ( role == Qt::DisplayRole )
   {
-    return mLayerId;
+    return mLayerName;
   }
   else
   {
@@ -291,14 +315,21 @@ QVariant QgsRelationManagerTreeModel::RelationTreeItemRelation::data( const QMod
 {
   Q_UNUSED( index )
 
-  if ( role == Qt::DisplayRole )
+  switch ( role )
   {
-    return mRelationName + " ( " + mReferencedLayerId + " )";
+    case Qt::DisplayRole:
+      return mRelationName + " ( " + mReferencedLayerName + " )";
+      break;
+
+    case Qt::BackgroundColorRole:
+      return QColor( 0xDD, 0xDD, 0xDD );
+      break;
+
+    default:
+      break;
   }
-  else
-  {
-    return QVariant();
-  }
+
+  return QVariant();
 }
 
 void QgsRelationManagerTreeModel::RelationTreeItemRelation::setFieldPairs( QList<QgsRelation::FieldPair> fieldPairs )
@@ -344,17 +375,27 @@ int QgsRelationManagerTreeModel::RelationTreeItemReference::itemToRow( QgsRelati
 
 QVariant QgsRelationManagerTreeModel::RelationTreeItemReference::data( const QModelIndex& index, int role ) const
 {
-  if ( role == Qt::DisplayRole )
+  switch ( role )
   {
-    if ( index.column() == 0 )
-    {
-      return mFieldPair.first.name();
-    }
-    else if ( index.column() == 1 )
-    {
-      return mFieldPair.second.name();
-    }
+    case Qt::DisplayRole:
+      if ( index.column() == 0 )
+      {
+        return mFieldPair.first.name();
+      }
+      else if ( index.column() == 1 )
+      {
+        return mFieldPair.second.name();
+      }
+      break;
+
+    case Qt::BackgroundColorRole:
+      return QColor( 0xBB, 0xBB, 0xBB );
+      break;
+
+    default:
+      break;
   }
+
   return QVariant();
 }
 
@@ -363,3 +404,12 @@ int QgsRelationManagerTreeModel::RelationTreeItem::rowId( int row )
   Q_UNUSED( row )
   return -1;
 }
+
+
+void QgsRelationManagerItemDelegate::paint( QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index ) const
+{
+  QStyleOptionViewItem myOption = option;
+  myOption.palette.setBrush( QPalette::Background, index.data( Qt::BackgroundColorRole ).value<QColor>() );
+  QItemDelegate::paint( painter, myOption, index );
+}
+

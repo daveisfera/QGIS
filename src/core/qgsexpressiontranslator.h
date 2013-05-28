@@ -13,12 +13,12 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef QGSEXPRESSIONPROVIDERTRANSLATOR_H
-#define QGSEXPRESSIONPROVIDERTRANSLATOR_H
+#ifndef QGSEXPRESSIONTRANSLATOR_H
+#define QGSEXPRESSIONTRANSLATOR_H
 
 #include "qgsexpression.h"
 
-class CORE_EXPORT QgsExpressionTranslator
+class QgsExpressionTranslator
 {
   public:
     virtual ~QgsExpressionTranslator();
@@ -28,4 +28,4 @@ class CORE_EXPORT QgsExpressionTranslator
     virtual bool translateNodeColumnRef( QString& result, const QgsExpression::NodeColumnRef* op ) const = 0;
 };
 
-#endif // QGSPROVIDEREXPRESSIONTRANSLATOR_H
+#endif // QGSEXPRESSIONTRANSLATOR_H

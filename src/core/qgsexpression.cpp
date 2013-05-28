@@ -26,7 +26,7 @@
 #include <limits>
 
 #include "qgsdistancearea.h"
-#include "qgsexpressionprovidertranslator.h"
+#include "qgsexpressiontranslator.h"
 #include "qgsfeature.h"
 #include "qgsgeometry.h"
 #include "qgslogger.h"

@@ -388,6 +388,7 @@ SET(QGIS_CORE_HDRS
   qgserror.h
   qgsexception.h
   qgsexpression.h
+  qgsexpressiontranslator.h
   qgsfeature.h
   qgsfeatureiterator.h
   qgsfeaturerequest.h

@@ -27,7 +27,7 @@
 #include "qgsrelationmanager.h"
 #include "qgsvectorlayer.h"
 
-QgsRelationReferenceWidget::QgsRelationReferenceWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent )
+QgsRelationReferenceWidget::QgsRelationReferenceWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QgsAbstractFeatureAction* featureAction, QWidget* parent )
     : QgsEditorWidgetWrapper( vl, fieldIdx, editor, parent )
     , mInitialValueAssigned( false )
     , mComboBox( NULL )
@@ -36,6 +36,7 @@ QgsRelationReferenceWidget::QgsRelationReferenceWidget( QgsVectorLayer* vl, int 
     , mAttributeEditorButton( NULL )
     , mReferencedLayer( NULL )
     , mAttributeDialog( NULL )
+    , mFeatureAction( featureAction )
 {
 }
 
@@ -171,7 +172,7 @@ void QgsRelationReferenceWidget::referenceChanged( int index )
       }
 
       // TODO: Get a proper QgsDistanceArea thingie
-      mAttributeDialog = new QgsAttributeDialog( mReferencedLayer, new QgsFeature( feat ), true, QgsDistanceArea(), mAttributeEditorFrame, false );
+      mAttributeDialog = new QgsAttributeDialog( mReferencedLayer, new QgsFeature( feat ), true, QgsDistanceArea(), mFeatureAction, mAttributeEditorFrame, false );
       QWidget* attrDialog = mAttributeDialog->dialog();
       attrDialog->setWindowFlags( Qt::Widget ); // Embed instead of opening as window
       mAttributeEditorLayout->addWidget( attrDialog );
@@ -194,7 +195,7 @@ void QgsRelationReferenceWidget::openForm()
     return;
 
   // TODO: Get a proper QgsDistanceArea thingie
-  mAttributeDialog = new QgsAttributeDialog( mReferencedLayer, new QgsFeature( feat ), true, QgsDistanceArea(), widget() );
+  mAttributeDialog = new QgsAttributeDialog( mReferencedLayer, new QgsFeature( feat ), true, QgsDistanceArea(), mFeatureAction, widget() );
   mAttributeDialog->exec();
   delete mAttributeDialog;
 }

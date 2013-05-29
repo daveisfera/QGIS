@@ -1,7 +1,7 @@
 /***************************************************************************
-    qgsrelationeditor.h
+    QgsAbstractFeatureAction.h
      --------------------------------------
-    Date                 : 17.5.2013
+    Date                 : 29.5.2013
     Copyright            : (C) 2013 Matthias Kuhn
     Email                : matthias dot kuhn at gmx dot ch
  ***************************************************************************
@@ -13,37 +13,17 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef QGSRELATIONEDITOR_H
-#define QGSRELATIONEDITOR_H
+#ifndef QGSABSTRACTFEATUREACTION_H
+#define QGSABSTRACTFEATUREACTION_H
 
-#include <QWidget>
+#include "qgsfeature.h"
 
-#include "ui_qgsrelationeditorwidgetbase.h"
-
-class QgsAbstractFeatureAction;
-class QgsDualView;
-class QgsFeature;
-class QgsRelation;
 class QgsVectorLayer;
 
-
-class QgsRelationEditorWidget : public QgsCollapsibleGroupBox, private Ui::QgsRelationEditorWidgetBase
+class QgsAbstractFeatureAction
 {
-    Q_OBJECT
-
   public:
-    QgsRelationEditorWidget( QgsAbstractFeatureAction* featureAction, QWidget* parent = NULL );
-
-    static QgsRelationEditorWidget* createRelationEditor( const QgsRelation& relation, QgsFeature* feature, QgsAbstractFeatureAction* featureAction, QWidget* parent = NULL );
-
-  private slots:
-    void onCollapsedStateChanged( bool state );
-
-    void on_mPbnNew_clicked();
-
-  private:
-    QgsDualView* mDualView;
-    QgsAbstractFeatureAction* mFeatureAction;
+    virtual bool addFeature( QgsVectorLayer* layer, QgsAttributeMap defaultValues = QgsAttributeMap() ) = 0;
 };
 
-#endif // QGSRELATIONEDITOR_H
+#endif // QGSABSTRACTFEATUREACTION_H

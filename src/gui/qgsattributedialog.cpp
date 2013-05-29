@@ -46,7 +46,7 @@
 
 int QgsAttributeDialog::smFormCounter = 0;
 
-QgsAttributeDialog::QgsAttributeDialog( QgsVectorLayer *vl, QgsFeature *thepFeature, bool featureOwner, QgsDistanceArea myDa, QWidget* parent, bool showDialogButtons )
+QgsAttributeDialog::QgsAttributeDialog( QgsVectorLayer *vl, QgsFeature *thepFeature, bool featureOwner, QgsDistanceArea myDa, QgsAbstractFeatureAction* featureAction, QWidget* parent, bool showDialogButtons )
     : QObject( parent )
     , mDialog( 0 )
     , mSettingsPath( "/Windows/AttributeDialog/" )
@@ -249,7 +249,7 @@ QgsAttributeDialog::QgsAttributeDialog( QgsVectorLayer *vl, QgsFeature *thepFeat
     {
       relation.name();
 
-      QWidget *myWidget = QgsRelationEditorWidget::createRelationEditor( relation, mFeature );
+      QWidget *myWidget = QgsRelationEditorWidget::createRelationEditor( relation, mFeature, featureAction );
       if ( !myWidget )
         continue;
 

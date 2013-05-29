@@ -30,8 +30,9 @@
 #include <QProgressDialog>
 #include <QMessageBox>
 
-QgsDualView::QgsDualView( QWidget* parent )
+QgsDualView::QgsDualView( QgsAbstractFeatureAction* featureAction, QWidget* parent )
     : QStackedWidget( parent )
+    , mFeatureAction( featureAction )
     , mMasterModel( NULL )
     , mAttributeDialog( NULL )
     , mProgressDlg( NULL )
@@ -70,7 +71,7 @@ void QgsDualView::init( QgsVectorLayer* layer, QgsMapCanvas* mapCanvas, QgsDista
   mTableView->setModel( mFilterModel );
   mFeatureList->setModel( mFeatureListModel );
 
-  mAttributeDialog = new QgsAttributeDialog( layer, 0, false, myDa );
+  mAttributeDialog = new QgsAttributeDialog( layer, 0, false, myDa, mFeatureAction );
   if ( mAttributeDialog->dialog() )
     mAttributeEditorLayout->addWidget( mAttributeDialog->dialog() );
 
@@ -265,7 +266,7 @@ void QgsDualView::on_mFeatureList_currentEditSelectionChanged( const QgsFeature 
     mAttributeEditorLayout->removeWidget( mAttributeDialog->dialog() );
   }
 
-  mAttributeDialog = new QgsAttributeDialog( mLayerCache->layer(), new QgsFeature( feat ), true, mDistanceArea, this, false );
+  mAttributeDialog = new QgsAttributeDialog( mLayerCache->layer(), new QgsFeature( feat ), true, mDistanceArea, mFeatureAction, this, false );
   mAttributeEditorLayout->addWidget( mAttributeDialog->dialog() );
   mAttributeDialog->dialog()->setVisible( true );
 

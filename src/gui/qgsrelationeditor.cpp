@@ -20,24 +20,26 @@
 #include "qgsdistancearea.h"
 #include "qgsexpression.h"
 #include "qgsfeature.h"
+#include "qgsabstractfeatureaction.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
 
-QgsRelationEditorWidget::QgsRelationEditorWidget( QWidget* parent )
+QgsRelationEditorWidget::QgsRelationEditorWidget( QgsAbstractFeatureAction* featureAction, QWidget* parent )
     : QgsCollapsibleGroupBox( parent )
     , mDualView( NULL )
+    , mFeatureAction( featureAction )
 {
   setupUi( this );
 
   connect( this, SIGNAL( collapsedStateChanged( bool ) ), this, SIGNAL( onCollapsedStateChanged( bool ) ) );
 }
 
-QgsRelationEditorWidget* QgsRelationEditorWidget::createRelationEditor( const QgsRelation& relation, QgsFeature* feature, QWidget* parent )
+QgsRelationEditorWidget* QgsRelationEditorWidget::createRelationEditor( const QgsRelation& relation, QgsFeature* feature, QgsAbstractFeatureAction* featureAction, QWidget* parent )
 {
-  QgsRelationEditorWidget* editor = new QgsRelationEditorWidget( parent );
+  QgsRelationEditorWidget* editor = new QgsRelationEditorWidget( featureAction, parent );
 
-  QgsDualView* dualView = new QgsDualView( editor );
+  QgsDualView* dualView = new QgsDualView( featureAction, editor );
 
   editor->mBrowserWidget->layout()->addWidget( dualView );
 
@@ -68,4 +70,9 @@ void QgsRelationEditorWidget::onCollapsedStateChanged( bool state )
   {
     // TODO: Lazy init dual view if collapsed on init
   }
+}
+
+void QgsRelationEditorWidget::on_mPbnNew_clicked()
+{
+  mFeatureAction->addFeature( mDualView->masterModel()->layer() );
 }

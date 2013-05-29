@@ -109,37 +109,42 @@ bool QgsVectorLayerFeatureIterator::fetchFeature( QgsFeature& f )
     return res;
   }
 
-  if ( mRequest.filterType() == QgsFeatureRequest::FilterRect )
+  if ( mEditBuffer )
   {
-    if ( fetchNextChangedGeomFeature( f ) )
-      return true;
-  }
-  if ( mRequest.filterType() == QgsFeatureRequest::FilterExpression )
-  {
-    if ( fetchNextChangedAttributeFeature( f ) )
-    return true;
+    if ( mRequest.filterType() == QgsFeatureRequest::FilterRect )
+    {
+      if ( fetchNextChangedGeomFeature( f ) )
+        return true;
 
-    // no more changed features
-  }
+      // no more changed geometries
+    }
 
-  while ( fetchNextAddedFeature( f ) )
-  {
     if ( mRequest.filterType() == QgsFeatureRequest::FilterExpression )
     {
-      if ( mRequest.filterExpression()->evaluate( &f ).toBool() )
+      if ( fetchNextChangedAttributeFeature( f ) )
+        return true;
+
+      // no more changed features
+    }
+
+    while ( fetchNextAddedFeature( f ) )
+    {
+      if ( mRequest.filterType() == QgsFeatureRequest::FilterExpression )
+      {
+        if ( mRequest.filterExpression()->evaluate( &f ).toBool() )
+        {
+          return true;
+        }
+      }
+      else
       {
         return true;
       }
     }
-    else
-    {
-      return true;
-    }
-  }
-  // no more added features
+    // no more added features
 
-  mChangedFeaturesIterator.close();
-  mProviderIterator = L->dataProvider()->getFeatures( mProviderRequest );
+    mChangedFeaturesIterator.close();
+    mProviderIterator = L->dataProvider()->getFeatures( mProviderRequest );
 
   while ( mProviderIterator.nextFeature( f ) )
   {
@@ -187,8 +192,8 @@ bool QgsVectorLayerFeatureIterator::rewind()
   else
   {
     mProviderIterator.rewind();
-    rewindEditBuffer();
-  }
+      rewindEditBuffer();
+    }
 
   return true;
 }
@@ -550,8 +555,8 @@ bool QgsVectorLayerFeatureIterator::nextFeatureFid( QgsFeature& f )
       {
         useAddedFeature( *iter, f );
         return true;
+      }
     }
-  }
 
   // regular features
   QgsFeatureIterator fi = L->dataProvider()->getFeatures( mProviderRequest );

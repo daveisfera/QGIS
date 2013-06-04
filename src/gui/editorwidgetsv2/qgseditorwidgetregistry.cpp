@@ -35,7 +35,6 @@ QgsEditorWidgetRegistry* QgsEditorWidgetRegistry::instance()
 
 QgsEditorWidgetRegistry::QgsEditorWidgetRegistry()
 {
-  initKnownTypes();
   connect( QgsProject::instance(), SIGNAL( readMapLayer( QgsMapLayer*, const QDomElement& ) ), this, SLOT( readMapLayer( QgsMapLayer*, const QDomElement& ) ) );
   connect( QgsProject::instance(), SIGNAL( writeMapLayer( QgsMapLayer*, QDomElement&, QDomDocument& ) ), this, SLOT( writeMapLayer( QgsMapLayer*, QDomElement&, QDomDocument& ) ) );
 }
@@ -43,15 +42,6 @@ QgsEditorWidgetRegistry::QgsEditorWidgetRegistry()
 QgsEditorWidgetRegistry::~QgsEditorWidgetRegistry()
 {
   qDeleteAll( mWidgetFactories.values() );
-}
-
-void QgsEditorWidgetRegistry::initKnownTypes()
-{
-  // The widget for related features with FK on the current feature
-
-  registerWidget<QgsRelationReferenceWidget, QgsRelReferenceConfigDlg >(
-    "RelationReference",
-    tr( "Relation Reference" ) );
 }
 
 QgsEditorWidgetWrapper* QgsEditorWidgetRegistry::create( const QString& widgetType, QgsVectorLayer* vl, int fieldIdx, const QgsEditorWidgetConfig& config, QWidget* editor, QWidget* parent )

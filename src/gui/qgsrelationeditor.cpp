@@ -20,26 +20,28 @@
 #include "qgsdistancearea.h"
 #include "qgsexpression.h"
 #include "qgsfeature.h"
-#include "qgsabstractfeatureaction.h"
+#include "qgsvectorlayertools.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
 
-QgsRelationEditorWidget::QgsRelationEditorWidget( QgsAbstractFeatureAction* featureAction, QWidget* parent )
+QgsRelationEditorWidget::QgsRelationEditorWidget( QgsVectorLayerTools* vlTools, const QgsRelation& relation, QgsFeature* feature, QWidget* parent )
     : QgsCollapsibleGroupBox( parent )
     , mDualView( NULL )
-    , mFeatureAction( featureAction )
+    , mVlTools( vlTools )
+    , mRelation( relation )
+    , mFeature( feature )
 {
   setupUi( this );
 
   connect( this, SIGNAL( collapsedStateChanged( bool ) ), this, SIGNAL( onCollapsedStateChanged( bool ) ) );
 }
 
-QgsRelationEditorWidget* QgsRelationEditorWidget::createRelationEditor( const QgsRelation& relation, QgsFeature* feature, QgsAbstractFeatureAction* featureAction, QWidget* parent )
+QgsRelationEditorWidget* QgsRelationEditorWidget::createRelationEditor( const QgsRelation& relation, QgsFeature* feature, QgsVectorLayerTools* vlTools, QWidget* parent )
 {
-  QgsRelationEditorWidget* editor = new QgsRelationEditorWidget( featureAction, parent );
+  QgsRelationEditorWidget* editor = new QgsRelationEditorWidget( vlTools, relation, feature, parent );
 
-  QgsDualView* dualView = new QgsDualView( featureAction, editor );
+  QgsDualView* dualView = new QgsDualView( editor );
 
   editor->mBrowserWidget->layout()->addWidget( dualView );
 
@@ -74,5 +76,14 @@ void QgsRelationEditorWidget::onCollapsedStateChanged( bool state )
 
 void QgsRelationEditorWidget::on_mPbnNew_clicked()
 {
-  mFeatureAction->addFeature( mDualView->masterModel()->layer() );
+  QgsAttributeMap keyAttrs;
+
+  QgsFields fields = mRelation.referencingLayer()->pendingFields();
+
+  foreach ( QgsRelation::FieldPair fieldPair, mRelation.fieldPairs() )
+  {
+    keyAttrs.insert( fields.indexFromName( fieldPair.first.name() ), mFeature->attribute( fieldPair.second.name() ) );
+  }
+
+  mVlTools->addFeature( mDualView->masterModel()->layer(), keyAttrs );
 }

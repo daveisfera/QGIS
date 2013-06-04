@@ -15,16 +15,17 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "qgsfeatureaction.h"
-#include "qgsvectorlayer.h"
-#include "qgsvectordataprovider.h"
-#include "qgsidentifyresultsdialog.h"
-#include "qgsattributedialog.h"
-#include "qgslogger.h"
-#include "qgsdistancearea.h"
 #include "qgisapp.h"
-#include "qgsproject.h"
+#include "qgsattributedialog.h"
+#include "qgsdistancearea.h"
+#include "qgsfeatureaction.h"
+#include "qgsguivectorlayertools.h"
+#include "qgsidentifyresultsdialog.h"
+#include "qgslogger.h"
 #include "qgsmapcanvas.h"
+#include "qgsproject.h"
+#include "qgsvectordataprovider.h"
+#include "qgsvectorlayer.h"
 
 #include <QPushButton>
 #include <QSettings>
@@ -53,7 +54,7 @@ QgsAttributeDialog *QgsFeatureAction::newDialog( bool cloneFeature )
   myDa.setEllipsoidalMode( QgisApp::instance()->mapCanvas()->mapRenderer()->hasCrsTransformEnabled() );
   myDa.setEllipsoid( QgsProject::instance()->readEntry( "Measure", "/Ellipsoid", GEO_NONE ) );
 
-  QgsAttributeDialog *dialog = new QgsAttributeDialog( mLayer, f, cloneFeature, myDa );
+  QgsAttributeDialog *dialog = new QgsAttributeDialog( mLayer, f, cloneFeature, myDa, NULL, true, QgsGuiVectorLayerTools::instance() );
 
   if ( mLayer->actions()->size() > 0 )
   {
@@ -138,7 +139,7 @@ bool QgsFeatureAction::editFeature()
   return res;
 }
 
-bool QgsFeatureAction::addFeature()
+bool QgsFeatureAction::addFeature( const QgsAttributeMap& defaultAttributes )
 {
   if ( !mLayer || !mLayer->isEditable() )
     return false;

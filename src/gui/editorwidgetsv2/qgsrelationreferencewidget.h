@@ -24,13 +24,13 @@
 #include <QVBoxLayout>
 
 class QgsAttributeDialog;
-class QgsAbstractFeatureAction;
+class QgsVectorLayerTools;
 
 class GUI_EXPORT QgsRelationReferenceWidget : public QgsEditorWidgetWrapper
 {
     Q_OBJECT
   public:
-    explicit QgsRelationReferenceWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QgsAbstractFeatureAction* featureAction, QWidget* parent = 0 );
+    explicit QgsRelationReferenceWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QgsVectorLayerTools* featureAction, QWidget* parent = 0 );
     virtual QWidget* createWidget( QWidget* parent );
     virtual void initWidget( QWidget* editor );
     virtual QVariant value();
@@ -56,7 +56,7 @@ class GUI_EXPORT QgsRelationReferenceWidget : public QgsEditorWidgetWrapper
     QVariant mCurrentValue;
     QgsAttributeDialog* mAttributeDialog;
     QHash<QgsFeatureId, QVariant> mFidFkMap; // Mapping from feature id => foreign key
-    QgsAbstractFeatureAction* mFeatureAction;
+    QgsVectorLayerTools* mVlTools;
 };
 
 #endif // QGSRELATIONREFERENCEWIDGET_H

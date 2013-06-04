@@ -617,8 +617,13 @@ QDialog* QgisAppInterface::getFeatureForm( QgsVectorLayer *l, QgsFeature &f )
   myDa.setEllipsoidalMode( QgisApp::instance()->mapCanvas()->mapRenderer()->hasCrsTransformEnabled() );
   myDa.setEllipsoid( QgsProject::instance()->readEntry( "Measure", "/Ellipsoid", GEO_NONE ) );
 
-  QgsAttributeDialog *dialog = new QgsAttributeDialog( l, &f, false, myDa );
+  QgsAttributeDialog *dialog = new QgsAttributeDialog( l, &f, false, myDa, NULL, true, featureAction() );
   return dialog->dialog();
+}
+
+QgsVectorLayerTools* QgisAppInterface::featureAction()
+{
+  return qgis->featureAction();
 }
 
 QList<QgsMapLayer *> QgisAppInterface::editableLayers( bool modified ) const

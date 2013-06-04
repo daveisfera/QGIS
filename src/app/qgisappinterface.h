@@ -433,6 +433,8 @@ class APP_EXPORT QgisAppInterface : public QgisInterface
 
     virtual QDialog* getFeatureForm( QgsVectorLayer *l, QgsFeature &f );
 
+    virtual QgsVectorLayerTools* featureAction();
+
     /** This method is only needed when using a UI form with a custom widget plugin and calling
      * openFeatureForm or getFeatureForm from Python (PyQt4) and you havn't used the info tool first.
      * Python will crash bringing QGIS wtih it

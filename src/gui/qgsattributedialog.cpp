@@ -46,7 +46,7 @@
 
 int QgsAttributeDialog::smFormCounter = 0;
 
-QgsAttributeDialog::QgsAttributeDialog( QgsVectorLayer *vl, QgsFeature *thepFeature, bool featureOwner, QgsDistanceArea myDa, QgsAbstractFeatureAction* featureAction, QWidget* parent, bool showDialogButtons )
+QgsAttributeDialog::QgsAttributeDialog( QgsVectorLayer *vl, QgsFeature *thepFeature, bool featureOwner, QgsDistanceArea myDa, QWidget* parent, bool showDialogButtons, QgsVectorLayerTools* featureAction )
     : QObject( parent )
     , mDialog( 0 )
     , mSettingsPath( "/Windows/AttributeDialog/" )

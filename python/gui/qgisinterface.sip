@@ -484,7 +484,9 @@ class QgisInterface : QObject
 
     virtual QDialog* getFeatureForm( QgsVectorLayer *l, QgsFeature &f ) = 0;
 
-    virtual void preloadForm( QString uifile ) = 0;
+    virtual QgsVectorLayerTools* featureAction() = 0;
+
+    virtual void preloadForm(QString uifile) = 0;
 
     /** Return vector layers in edit mode
      * @param modified whether to return only layers that have been modified

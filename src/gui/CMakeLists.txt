@@ -50,6 +50,7 @@ attributetable/qgsdualview.cpp
 
 editorwidgetsv2/qgseditorwidgetwrapper.cpp
 editorwidgetsv2/qgsrelationreferencewidget.cpp
+editorwidgetsv2/qgsrelationreferencefactory.cpp
 editorwidgetsv2/qgseditorwidgetfactory.cpp
 editorwidgetsv2/qgseditorwidgetregistry.cpp
 editorwidgetsv2/qgseditorconfigwidget.cpp
@@ -190,6 +191,7 @@ attributetable/qgsdualview.h
 
 editorwidgetsv2/qgseditorwidgetwrapper.h
 editorwidgetsv2/qgsrelationreferencewidget.h
+editorwidgetsv2/qgsrelationreferencefactory.h
 editorwidgetsv2/qgseditorwidgetregistry.h
 editorwidgetsv2/qgseditorconfigwidget.h
 editorwidgetsv2/qgsrelreferenceconfigdlg.h
@@ -299,6 +301,7 @@ qgsexpressionselectiondialog.h
 qgsexpressionhighlighter.h
 qgscollapsiblegroupbox.h
 qgsfilterlineedit.h
+qgsvectorlayertools.h
 qgssublayersdialog.h
 qgsnumericsortlistviewitem.h
 qgsannotationitem.h

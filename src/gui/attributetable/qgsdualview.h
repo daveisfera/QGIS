@@ -23,7 +23,7 @@
 #include "qgscachedfeatureiterator.h"
 #include "ui_qgsdualviewbase.h"
 
-class QgsAbstractFeatureAction;
+class QgsVectorLayerTools;
 class QgsAttributeDialog;
 class QgsFeatureRequest;
 class QSignalMapper;
@@ -66,7 +66,7 @@ class GUI_EXPORT QgsDualView : public QStackedWidget, private Ui::QgsDualViewBas
      * @brief Constructor
      * @param parent  The parent widget
      */
-    explicit QgsDualView( QgsAbstractFeatureAction* featureAction, QWidget* parent = 0 );
+    explicit QgsDualView( QWidget* parent = 0 );
     virtual ~QgsDualView();
 
     /**
@@ -78,7 +78,7 @@ class GUI_EXPORT QgsDualView : public QStackedWidget, private Ui::QgsDualViewBas
      * @param myDa       Used for attribute dialog creation
      * @param request    Use a modified request to limit the shown features
      */
-    void init( QgsVectorLayer* layer, QgsMapCanvas* mapCanvas, QgsDistanceArea myDa, const QgsFeatureRequest& request = QgsFeatureRequest() );
+    void init( QgsVectorLayer* layer, QgsMapCanvas* mapCanvas, QgsDistanceArea myDa, const QgsFeatureRequest& request = QgsFeatureRequest(), QgsVectorLayerTools* featureAction = NULL );
 
     /**
      * Change the current view mode.
@@ -236,7 +236,7 @@ class GUI_EXPORT QgsDualView : public QStackedWidget, private Ui::QgsDualViewBas
     void initLayerCache( QgsVectorLayer *layer );
     void initModels( QgsMapCanvas* mapCanvas, const QgsFeatureRequest& request );
 
-    QgsAbstractFeatureAction* mFeatureAction;
+    QgsVectorLayerTools* mFeatureAction;
     QgsAttributeTableModel* mMasterModel;
     QgsAttributeTableFilterModel* mFilterModel;
     QgsFeatureListModel* mFeatureListModel;

@@ -123,6 +123,7 @@
 #include "qgsdecorationscalebar.h"
 #include "qgsdecorationgrid.h"
 #include "editorwidgetsv2/qgseditorwidgetregistry.h"
+#include "editorwidgetsv2/qgsrelationreferencefactory.h"
 #include "qgsencodingfiledialog.h"
 #include "qgserror.h"
 #include "qgserrordialog.h"
@@ -581,7 +582,9 @@ QgisApp::QgisApp( QSplashScreen *splash, bool restorePlugins, QWidget * parent, 
   mLogDock->hide();
 
   // Init the editor widget types
-  QgsEditorWidgetRegistry::instance();
+  QgsEditorWidgetRegistry* editorWidgetRegistry = QgsEditorWidgetRegistry::instance();
+  editorWidgetRegistry->registerWidget( "RelationReference", new QgsRelationReferenceFactory( featureAction(), tr( "Relation Reference" ) ) );
+
 
   mInternalClipboard = new QgsClipboard; // create clipboard
   connect( mInternalClipboard, SIGNAL( changed() ), this, SLOT( clipboardChanged() ) );

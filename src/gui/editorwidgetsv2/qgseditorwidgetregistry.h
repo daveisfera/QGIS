@@ -64,12 +64,6 @@ class GUI_EXPORT QgsEditorWidgetRegistry : public QObject
   protected:
     QgsEditorWidgetRegistry();
 
-    /**
-     * Any widget types which are compiled with this library can be registered within
-     * this method.
-     */
-    void initKnownTypes();
-
   private slots:
     void readMapLayer( QgsMapLayer* mapLayer , const QDomElement& layerElem );
     void writeMapLayer( QgsMapLayer* mapLayer , QDomElement& layerElem, QDomDocument& doc );

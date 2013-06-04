@@ -43,6 +43,7 @@ SET(QGIS_APP_SRCS
   qgslabelpreview.cpp
   qgsloadstylefromdbdialog.cpp
   qgssavestyletodbdialog.cpp
+  qgsguivectorlayertools.cpp
 
   qgsmaptooladdfeature.cpp
   qgsmaptooladdpart.cpp
@@ -200,6 +201,7 @@ SET (QGIS_APP_MOC_HDRS
   qgsloadstylefromdbdialog.h
   qgssavestyletodbdialog.h
   qgsshortcutsmanager.h
+  qgsguivectorlayertools.h
 
   qgsmaptooladdfeature.h
   qgsmaptoolcapture.h

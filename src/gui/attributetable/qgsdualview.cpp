@@ -30,9 +30,9 @@
 #include <QProgressDialog>
 #include <QMessageBox>
 
-QgsDualView::QgsDualView( QgsAbstractFeatureAction* featureAction, QWidget* parent )
+QgsDualView::QgsDualView( QWidget* parent )
     : QStackedWidget( parent )
-    , mFeatureAction( featureAction )
+    , mFeatureAction( NULL )
     , mMasterModel( NULL )
     , mAttributeDialog( NULL )
     , mProgressDlg( NULL )
@@ -59,8 +59,9 @@ QgsDualView::~QgsDualView()
   delete mAttributeDialog;
 }
 
-void QgsDualView::init( QgsVectorLayer* layer, QgsMapCanvas* mapCanvas, QgsDistanceArea myDa, const QgsFeatureRequest &request )
+void QgsDualView::init( QgsVectorLayer* layer, QgsMapCanvas* mapCanvas, QgsDistanceArea myDa, const QgsFeatureRequest &request, QgsVectorLayerTools* featureAction )
 {
+  mFeatureAction = featureAction;
   mDistanceArea = myDa;
 
   connect( mTableView, SIGNAL( willShowContextMenu( QMenu*, QModelIndex ) ), this, SLOT( viewWillShowContextMenu( QMenu*, QModelIndex ) ) );
@@ -71,7 +72,7 @@ void QgsDualView::init( QgsVectorLayer* layer, QgsMapCanvas* mapCanvas, QgsDista
   mTableView->setModel( mFilterModel );
   mFeatureList->setModel( mFeatureListModel );
 
-  mAttributeDialog = new QgsAttributeDialog( layer, 0, false, myDa, mFeatureAction );
+  mAttributeDialog = new QgsAttributeDialog( layer, 0, false, myDa, NULL, true, mFeatureAction );
   if ( mAttributeDialog->dialog() )
     mAttributeEditorLayout->addWidget( mAttributeDialog->dialog() );
 
@@ -266,7 +267,7 @@ void QgsDualView::on_mFeatureList_currentEditSelectionChanged( const QgsFeature 
     mAttributeEditorLayout->removeWidget( mAttributeDialog->dialog() );
   }
 
-  mAttributeDialog = new QgsAttributeDialog( mLayerCache->layer(), new QgsFeature( feat ), true, mDistanceArea, mFeatureAction, this, false );
+  mAttributeDialog = new QgsAttributeDialog( mLayerCache->layer(), new QgsFeature( feat ), true, mDistanceArea, this, false, mFeatureAction );
   mAttributeEditorLayout->addWidget( mAttributeDialog->dialog() );
   mAttributeDialog->dialog()->setVisible( true );
 

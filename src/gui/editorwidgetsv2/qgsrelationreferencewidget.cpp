@@ -27,7 +27,7 @@
 #include "qgsrelationmanager.h"
 #include "qgsvectorlayer.h"
 
-QgsRelationReferenceWidget::QgsRelationReferenceWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QgsAbstractFeatureAction* featureAction, QWidget* parent )
+QgsRelationReferenceWidget::QgsRelationReferenceWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QgsVectorLayerTools* vlTools, QWidget* parent )
     : QgsEditorWidgetWrapper( vl, fieldIdx, editor, parent )
     , mInitialValueAssigned( false )
     , mComboBox( NULL )
@@ -36,7 +36,7 @@ QgsRelationReferenceWidget::QgsRelationReferenceWidget( QgsVectorLayer* vl, int 
     , mAttributeEditorButton( NULL )
     , mReferencedLayer( NULL )
     , mAttributeDialog( NULL )
-    , mFeatureAction( featureAction )
+    , mVlTools( vlTools )
 {
 }
 
@@ -172,7 +172,7 @@ void QgsRelationReferenceWidget::referenceChanged( int index )
       }
 
       // TODO: Get a proper QgsDistanceArea thingie
-      mAttributeDialog = new QgsAttributeDialog( mReferencedLayer, new QgsFeature( feat ), true, QgsDistanceArea(), mFeatureAction, mAttributeEditorFrame, false );
+      mAttributeDialog = new QgsAttributeDialog( mReferencedLayer, new QgsFeature( feat ), true, QgsDistanceArea(), mAttributeEditorFrame, false, mVlTools );
       QWidget* attrDialog = mAttributeDialog->dialog();
       attrDialog->setWindowFlags( Qt::Widget ); // Embed instead of opening as window
       mAttributeEditorLayout->addWidget( attrDialog );
@@ -195,33 +195,7 @@ void QgsRelationReferenceWidget::openForm()
     return;
 
   // TODO: Get a proper QgsDistanceArea thingie
-  mAttributeDialog = new QgsAttributeDialog( mReferencedLayer, new QgsFeature( feat ), true, QgsDistanceArea(), mFeatureAction, widget() );
+  mAttributeDialog = new QgsAttributeDialog( mReferencedLayer, new QgsFeature( feat ), true, QgsDistanceArea(), widget(), true, mVlTools );
   mAttributeDialog->exec();
   delete mAttributeDialog;
-}
-
-template <>
-QMap<QString, QVariant> QgsEditWidgetFactoryHelper<QgsRelationReferenceWidget, QgsRelReferenceConfigDlg>::readConfig( const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx )
-{
-  Q_UNUSED( layer );
-  Q_UNUSED( fieldIdx );
-  QMap<QString, QVariant> cfg;
-
-  cfg.insert( "AllowNULL", configElement.attribute( "AllowNULL" ) == "1" );
-  cfg.insert( "ShowForm", configElement.attribute( "ShowForm" ) == "1" );
-  cfg.insert( "Relation", configElement.attribute( "Relation" ) );
-
-  return cfg;
-}
-
-template <>
-void QgsEditWidgetFactoryHelper<QgsRelationReferenceWidget, QgsRelReferenceConfigDlg>::writeConfig( const QgsEditorWidgetConfig& config, QDomElement& configElement, const QDomDocument& doc, const QgsVectorLayer* layer, int fieldIdx )
-{
-  Q_UNUSED( doc );
-  Q_UNUSED( layer );
-  Q_UNUSED( fieldIdx );
-
-  configElement.setAttribute( "AllowNULL", config["AllowNULL"].toBool() );
-  configElement.setAttribute( "ShowForm", config["ShowForm"].toBool() );
-  configElement.setAttribute( "Relation", config["Relation"].toString() );
 }

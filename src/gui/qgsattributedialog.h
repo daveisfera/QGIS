@@ -22,7 +22,7 @@
 class QDialog;
 class QLayout;
 
-class QgsAbstractFeatureAction;
+class QgsVectorLayerTools;
 class QgsDistanceArea;
 class QgsFeature;
 class QgsField;
@@ -35,7 +35,7 @@ class GUI_EXPORT QgsAttributeDialog : public QObject
     Q_OBJECT
 
   public:
-    QgsAttributeDialog( QgsVectorLayer *vl, QgsFeature *thepFeature, bool featureOwner, QgsDistanceArea myDa, QgsAbstractFeatureAction* featureAction, QWidget* parent = 0, bool showDialogButtons = true );
+    QgsAttributeDialog( QgsVectorLayer *vl, QgsFeature *thepFeature, bool featureOwner, QgsDistanceArea myDa, QWidget* parent = 0, bool showDialogButtons = true, QgsVectorLayerTools* featureAction = NULL );
     ~QgsAttributeDialog();
 
     /** Saves the size and position for the next time

@@ -34,6 +34,7 @@ class QgsLegendInterface;
 class QgsPluginManagerInterface;
 class QgsFeature;
 class QgsMessageBar;
+class QgsVectorLayerTools;
 
 #include <QObject>
 #include <QFont>
@@ -536,6 +537,8 @@ class GUI_EXPORT QgisInterface : public QObject
     virtual bool openFeatureForm( QgsVectorLayer *l, QgsFeature &f, bool updateFeatureOnly = false ) = 0;
 
     virtual QDialog* getFeatureForm( QgsVectorLayer *l, QgsFeature &f ) = 0;
+
+    virtual QgsVectorLayerTools* featureAction() = 0;
 
     virtual void preloadForm( QString uifile ) = 0;
 

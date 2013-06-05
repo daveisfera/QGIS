@@ -100,6 +100,7 @@ SET(QGIS_APP_SRCS
   qgsrasterlayerproperties.cpp
   qgstextannotationdialog.cpp
   qgsshortcutsmanager.cpp
+  qgsguivectorlayertools.h
   qgssnappingdialog.cpp
   qgssvgannotationdialog.cpp
   qgsundowidget.cpp
@@ -201,7 +202,6 @@ SET (QGIS_APP_MOC_HDRS
   qgsloadstylefromdbdialog.h
   qgssavestyletodbdialog.h
   qgsshortcutsmanager.h
-  qgsguivectorlayertools.h
 
   qgsmaptooladdfeature.h
   qgsmaptoolcapture.h

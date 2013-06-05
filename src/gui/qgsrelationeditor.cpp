@@ -34,6 +34,7 @@ QgsRelationEditorWidget::QgsRelationEditorWidget( QgsVectorLayerTools* vlTools, 
 {
   setupUi( this );
 
+  connect( relation.referencingLayer(), SIGNAL( editingStarted() ), this, SLOT( referencingLayerEditingToggled() ) );
   connect( this, SIGNAL( collapsedStateChanged( bool ) ), this, SIGNAL( onCollapsedStateChanged( bool ) ) );
 }
 
@@ -72,6 +73,14 @@ void QgsRelationEditorWidget::onCollapsedStateChanged( bool state )
   {
     // TODO: Lazy init dual view if collapsed on init
   }
+}
+
+void QgsRelationEditorWidget::referencingLayerEditingToggled()
+{
+  bool editable = mRelation.referencingLayer()->isEditable();
+
+  mPbnNew->setEnabled( editable );
+  mPbnLink->setEnabled( editable );
 }
 
 void QgsRelationEditorWidget::on_mPbnNew_clicked()

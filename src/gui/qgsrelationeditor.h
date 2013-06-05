@@ -39,6 +39,7 @@ class QgsRelationEditorWidget : public QgsCollapsibleGroupBox, private Ui::QgsRe
 
   private slots:
     void onCollapsedStateChanged( bool state );
+    void referencingLayerEditingToggled();
 
     void on_mPbnNew_clicked();
 

@@ -191,7 +191,6 @@ attributetable/qgsdualview.h
 
 editorwidgetsv2/qgseditorwidgetwrapper.h
 editorwidgetsv2/qgsrelationreferencewidget.h
-editorwidgetsv2/qgsrelationreferencefactory.h
 editorwidgetsv2/qgseditorwidgetregistry.h
 editorwidgetsv2/qgseditorconfigwidget.h
 editorwidgetsv2/qgsrelreferenceconfigdlg.h
@@ -323,6 +322,7 @@ attributetable/qgsdualview.h
 
 editorwidgetsv2/qgseditorwidgetwrapper.h
 editorwidgetsv2/qgsrelationreferencewidget.h
+editorwidgetsv2/qgsrelationreferencefactory.h
 editorwidgetsv2/qgseditorwidgetfactory.h
 editorwidgetsv2/qgseditorwidgetregistry.h
 editorwidgetsv2/qgseditorconfigwidget.h

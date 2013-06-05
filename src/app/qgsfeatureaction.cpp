@@ -155,7 +155,12 @@ bool QgsFeatureAction::addFeature( const QgsAttributeMap& defaultAttributes )
   mFeature.initAttributes( fields.count() );
   for ( int idx = 0; idx < fields.count(); ++idx )
   {
-    if ( reuseLastValues && mLastUsedValues.contains( mLayer ) && mLastUsedValues[ mLayer ].contains( idx ) )
+    if ( defaultAttributes.contains( idx ) )
+    {
+      QgsDebugMsg( QString( "Using specified default %1 for %2" ).arg( defaultAttributes.value( idx ).toString() ).arg( idx ) );
+      mFeature.setAttribute( idx, defaultAttributes.value( idx ) );
+    }
+    else if ( reuseLastValues && mLastUsedValues.contains( mLayer ) && mLastUsedValues[ mLayer ].contains( idx ) )
     {
       QgsDebugMsg( QString( "reusing %1 for %2" ).arg( mLastUsedValues[ mLayer ][idx].toString() ).arg( idx ) );
       mFeature.setAttribute( idx, mLastUsedValues[ mLayer ][idx] );

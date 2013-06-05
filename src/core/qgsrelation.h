@@ -27,7 +27,21 @@ class QgsVectorLayer;
 class CORE_EXPORT QgsRelation
 {
   public:
-    typedef QPair< QgsField, QgsField > FieldPair;
+    class FieldPair : public QPair< QString, QString >
+    {
+      public:
+        // Default constructor: Empty strings
+        FieldPair()
+            : QPair< QString, QString >() {}
+
+        // Constructor which takes two fields
+        FieldPair( QString referencingField, QString referencedField )
+            : QPair< QString, QString >( referencingField, referencedField ) {}
+
+        // Aliases
+        QString referencingField() const { return first; }
+        QString referencedField() const { return second; }
+    };
 
     QgsRelation();
 

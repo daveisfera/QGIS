@@ -24,6 +24,7 @@
 #include "qgsattributeaction.h"
 #include "qgsvectordataprovider.h"
 #include "qgsmessagelog.h"
+#include "qgsifeatureselection.h"
 
 #include <QDialog>
 #include <QMenu>
@@ -36,6 +37,7 @@ QgsDualView::QgsDualView( QWidget* parent )
     , mMasterModel( NULL )
     , mAttributeDialog( NULL )
     , mProgressDlg( NULL )
+    , mFeatureSelectionManager( NULL )
 {
   setupUi( this );
 
@@ -521,6 +523,17 @@ void QgsDualView::setFilteredFeatures( QgsFeatureIds filteredFeatures )
 void QgsDualView::setRequest( const QgsFeatureRequest& request )
 {
   mMasterModel->setRequest( request );
+}
+
+void QgsDualView::setFeatureSelectionManager( QgsIFeatureSelection* featureSelectionManager )
+{
+  mTableView->setFeatureSelectionManager( featureSelectionManager );
+  // mFeatureList->setFeatureSelectionManager( featureSelectionManager );
+
+  if ( mFeatureSelectionManager && mFeatureSelectionManager->parent() == this )
+    delete mFeatureSelectionManager;
+
+  mFeatureSelectionManager = featureSelectionManager;
 }
 
 void QgsDualView::progress( int i, bool& cancel )

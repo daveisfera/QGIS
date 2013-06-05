@@ -22,10 +22,11 @@
 
 #include "qgsrelation.h"
 
-class QgsVectorLayerTools;
 class QgsDualView;
 class QgsFeature;
+class QgsGenericFeatureSelectionMgr;
 class QgsVectorLayer;
+class QgsVectorLayerTools;
 
 
 class QgsRelationEditorWidget : public QgsCollapsibleGroupBox, private Ui::QgsRelationEditorWidgetBase
@@ -42,12 +43,17 @@ class QgsRelationEditorWidget : public QgsCollapsibleGroupBox, private Ui::QgsRe
     void referencingLayerEditingToggled();
 
     void on_mPbnNew_clicked();
+    void on_mPbnLink_clicked();
+    void on_mPbnDelete_clicked();
+    void on_mPbnUnlink_clicked();
 
   private:
     QgsDualView* mDualView;
+    QgsGenericFeatureSelectionMgr* mFeatureSelectionMgr;
     QgsVectorLayerTools* mVlTools;
     QgsRelation mRelation;
     QgsFeature* mFeature;
+
 };
 
 #endif // QGSRELATIONEDITOR_H

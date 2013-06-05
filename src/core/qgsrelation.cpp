@@ -51,18 +51,16 @@ QgsRelation QgsRelation::createFromXML( const QDomNode &node )
   {
     QgsLogger::warning( QApplication::translate( "QgsRelation", "Relation defined for layer '%1' which does not exist." ).arg( referencingLayerId ) );
   }
+  else if ( QgsMapLayer::VectorLayer  != referencingLayer->type() )
+  {
+    QgsLogger::warning( QApplication::translate( "QgsRelation", "Relation defined for layer '%1' which is not of type VectorLayer." ).arg( referencingLayerId ) );
+  }
 
   if ( NULL == referencedLayer )
   {
     QgsLogger::warning( QApplication::translate( "QgsRelation", "Relation defined for layer '%1' which does not exist." ).arg( referencedLayerId ) );
   }
-
-  if ( QgsMapLayer::VectorLayer  != referencingLayer->type() )
-  {
-    QgsLogger::warning( QApplication::translate( "QgsRelation", "Relation defined for layer '%1' which is not of type VectorLayer." ).arg( referencingLayerId ) );
-  }
-
-  if ( QgsMapLayer::VectorLayer  != referencedLayer->type() )
+  else if ( QgsMapLayer::VectorLayer  != referencedLayer->type() )
   {
     QgsLogger::warning( QApplication::translate( "QgsRelation", "Relation defined for layer '%1' which is not of type VectorLayer." ).arg( referencedLayerId ) );
   }
@@ -99,8 +97,8 @@ void QgsRelation::writeXML( QDomNode &node, QDomDocument &doc ) const
   foreach ( FieldPair fields, mFieldPairs )
   {
     QDomElement referenceElem = doc.createElement( "fieldRef" );
-    referenceElem.setAttribute( "referencingField", fields.first.name() );
-    referenceElem.setAttribute( "referencedField", fields.second.name() );
+    referenceElem.setAttribute( "referencingField", fields.first );
+    referenceElem.setAttribute( "referencedField", fields.second );
     elem.appendChild( referenceElem );
   }
 
@@ -195,8 +193,8 @@ void QgsRelation::updateRelationStatus()
 
     foreach ( const FieldPair& fieldPair, mFieldPairs )
     {
-      if ( -1 == mReferencingLayer->fieldNameIndex( fieldPair.first.name() )
-           || -1 == mReferencedLayer->fieldNameIndex( fieldPair.second.name() ) )
+      if ( -1 == mReferencingLayer->fieldNameIndex( fieldPair.first )
+           || -1 == mReferencedLayer->fieldNameIndex( fieldPair.second ) )
       {
         mValid = false;
       }

@@ -134,6 +134,8 @@ class GUI_EXPORT QgsDualView : public QStackedWidget, private Ui::QgsDualViewBas
 
     void setRequest( const QgsFeatureRequest& request );
 
+    void setFeatureSelectionManager( QgsIFeatureSelection* featureSelectionManager );
+
   protected:
     /**
      * Initializes widgets which depend on the attributes of this layer
@@ -246,7 +248,7 @@ class GUI_EXPORT QgsDualView : public QStackedWidget, private Ui::QgsDualViewBas
     QMenu* mPreviewColumnsMenu;
     QgsVectorLayerCache* mLayerCache;
     QProgressDialog* mProgressDlg;
-
+    QgsIFeatureSelection* mFeatureSelectionManager;
     QgsDistanceArea mDistanceArea;
 
     friend class TestQgsDualView;

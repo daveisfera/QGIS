@@ -87,7 +87,7 @@ QList<QgsRelation> QgsRelationManager::referencingRelations( QgsVectorLayer* lay
         bool containsField = false;
         foreach ( const QgsRelation::FieldPair& fp, rel.fieldPairs() )
         {
-          if ( fieldIdx == layer->fieldNameIndex( fp.first.name() ) )
+          if ( fieldIdx == layer->fieldNameIndex( fp.referencingField() ) )
           {
             containsField = true;
             break;

@@ -77,7 +77,7 @@ void QgsRelationReferenceWidget::initWidget( QWidget* editor )
   if ( relation.isValid() )
   {
     mReferencedLayer = relation.referencedLayer();
-    int refFieldIdx = mReferencedLayer->fieldNameIndex( relation.fieldPairs().first().second.name() );
+    int refFieldIdx = mReferencedLayer->fieldNameIndex( relation.fieldPairs().first().second );
 
     QgsFeatureIterator fit = mReferencedLayer->getFeatures( QgsFeatureRequest() );
 

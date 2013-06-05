@@ -16,11 +16,13 @@
 #include "qgsrelationeditor.h"
 
 #include "attributetable/qgsdualview.h"
-#include "qgsrelation.h"
 #include "qgsdistancearea.h"
 #include "qgsexpression.h"
 #include "qgsfeature.h"
+#include "qgsgenericfeatureselectionmgr.h"
+#include "qgsrelation.h"
 #include "qgsvectorlayertools.h"
+#include "qgsfeatureselectiondlg.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
@@ -36,6 +38,9 @@ QgsRelationEditorWidget::QgsRelationEditorWidget( QgsVectorLayerTools* vlTools, 
 
   connect( relation.referencingLayer(), SIGNAL( editingStarted() ), this, SLOT( referencingLayerEditingToggled() ) );
   connect( this, SIGNAL( collapsedStateChanged( bool ) ), this, SIGNAL( onCollapsedStateChanged( bool ) ) );
+
+  // Set initial state for add/remove etc. buttons
+  referencingLayerEditingToggled();
 }
 
 QgsRelationEditorWidget* QgsRelationEditorWidget::createRelationEditor( const QgsRelation& relation, QgsFeature* feature, QgsVectorLayerTools* vlTools, QWidget* parent )
@@ -43,6 +48,8 @@ QgsRelationEditorWidget* QgsRelationEditorWidget::createRelationEditor( const Qg
   QgsRelationEditorWidget* editor = new QgsRelationEditorWidget( vlTools, relation, feature, parent );
 
   QgsDualView* dualView = new QgsDualView( editor );
+  editor->mFeatureSelectionMgr = new QgsGenericFeatureSelectionMgr( dualView );
+  dualView->setFeatureSelectionManager( editor->mFeatureSelectionMgr );
 
   editor->mBrowserWidget->layout()->addWidget( dualView );
 
@@ -50,7 +57,7 @@ QgsRelationEditorWidget* QgsRelationEditorWidget::createRelationEditor( const Qg
 
   foreach ( QgsRelation::FieldPair fieldPair, relation.fieldPairs() )
   {
-    conditions << QString( "\"%1\" = '%2'" ).arg( fieldPair.first.name(), feature->attribute( fieldPair.second.name() ).toString() );
+    conditions << QString( "\"%1\" = '%2'" ).arg( fieldPair.referencingField(), feature->attribute( fieldPair.referencedField() ).toString() );
   }
 
   QgsFeatureRequest myRequest;
@@ -81,6 +88,8 @@ void QgsRelationEditorWidget::referencingLayerEditingToggled()
 
   mPbnNew->setEnabled( editable );
   mPbnLink->setEnabled( editable );
+  mPbnDelete->setEnabled( editable );
+  mPbnUnlink->setEnabled( editable );
 }
 
 void QgsRelationEditorWidget::on_mPbnNew_clicked()
@@ -91,8 +100,62 @@ void QgsRelationEditorWidget::on_mPbnNew_clicked()
 
   foreach ( QgsRelation::FieldPair fieldPair, mRelation.fieldPairs() )
   {
-    keyAttrs.insert( fields.indexFromName( fieldPair.first.name() ), mFeature->attribute( fieldPair.second.name() ) );
+    keyAttrs.insert( fields.indexFromName( fieldPair.referencingField() ), mFeature->attribute( fieldPair.referencedField() ) );
   }
 
   mVlTools->addFeature( mDualView->masterModel()->layer(), keyAttrs );
+}
+
+void QgsRelationEditorWidget::on_mPbnLink_clicked()
+{
+  QgsFeatureSelectionDlg selectionDlg( mRelation.referencingLayer(), this );
+
+  if ( selectionDlg.exec() )
+  {
+    QMap<int, QVariant> keys;
+    foreach ( const QgsRelation::FieldPair fieldPair, mRelation.fieldPairs() )
+    {
+      int idx = mRelation.referencingLayer()->fieldNameIndex( fieldPair.referencingField() );
+      keys.insert( idx, mFeature->attribute( idx ) );
+    }
+
+    foreach ( QgsFeatureId fid, selectionDlg.selectedFeatures() )
+    {
+      QMapIterator<int, QVariant> it( keys );
+      while ( it.hasNext() )
+      {
+        it.next();
+        mRelation.referencingLayer()->changeAttributeValue( fid, it.key(), it.value() );
+      }
+    }
+  }
+}
+
+void QgsRelationEditorWidget::on_mPbnDelete_clicked()
+{
+  foreach ( QgsFeatureId fid, mFeatureSelectionMgr->selectedFeaturesIds() )
+  {
+    mRelation.referencingLayer()->deleteFeature( fid );
+  }
+}
+
+void QgsRelationEditorWidget::on_mPbnUnlink_clicked()
+{
+  QMap<int, QgsField> keyFields;
+  foreach ( const QgsRelation::FieldPair fieldPair, mRelation.fieldPairs() )
+  {
+    int idx = mRelation.referencingLayer()->fieldNameIndex( fieldPair.referencingField() );
+    QgsField fld = mRelation.referencingLayer()->pendingFields().at( idx );
+    keyFields.insert( idx, fld );
+  }
+
+  foreach ( QgsFeatureId fid, mFeatureSelectionMgr->selectedFeaturesIds() )
+  {
+    QMapIterator<int, QgsField> it( keyFields );
+    while ( it.hasNext() )
+    {
+      it.next();
+      mRelation.referencingLayer()->changeAttributeValue( fid, it.key(), QVariant( it.value().type() ) );
+    }
+  }
 }

@@ -380,11 +380,11 @@ QVariant QgsRelationManagerTreeModel::RelationTreeItemReference::data( const QMo
     case Qt::DisplayRole:
       if ( index.column() == 0 )
       {
-        return mFieldPair.first.name();
+        return mFieldPair.referencingField();
       }
       else if ( index.column() == 1 )
       {
-        return mFieldPair.second.name();
+        return mFieldPair.referencedField();
       }
       break;
 

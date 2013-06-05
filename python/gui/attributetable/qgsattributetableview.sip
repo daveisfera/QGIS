@@ -12,8 +12,8 @@ class QgsAttributeTableView : QTableView
 
     /**
      * Autocreates the models
-     * @param layerCache The @link QgsVectorLayerCache @endlink to use ( as backend )
-     * @param canvas     The @link QgsMapCanvas @endlink to use ( for the currently visible features filter )
+     * @param layerCache The {@link QgsVectorLayerCache} to use ( as backend )
+     * @param canvas     The {@link QgsMapCanvas} to use ( for the currently visible features filter )
      *
      * @deprecated
      */
@@ -66,6 +66,8 @@ class QgsAttributeTableView : QTableView
      * @param event not used
      */
     void closeEvent( QCloseEvent *event );
+
+    void contextMenuEvent( QContextMenuEvent* );
 
   signals:
     /**

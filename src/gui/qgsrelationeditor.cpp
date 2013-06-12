@@ -159,3 +159,15 @@ void QgsRelationEditorWidget::on_mPbnUnlink_clicked()
     }
   }
 }
+
+void QgsRelationEditorWidget::on_mToggleEditingButton_clicked()
+{
+  if ( mRelation.referencingLayer()->isEditable() )
+  {
+    mRelation.referencingLayer()->startEditing();
+  }
+  else
+  {
+    mRelation.referencingLayer()->startEditing();
+  }
+}

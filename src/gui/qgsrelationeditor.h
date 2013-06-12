@@ -46,6 +46,7 @@ class QgsRelationEditorWidget : public QgsCollapsibleGroupBox, private Ui::QgsRe
     void on_mPbnLink_clicked();
     void on_mPbnDelete_clicked();
     void on_mPbnUnlink_clicked();
+    void on_mToggleEditingButton_clicked();
 
   private:
     QgsDualView* mDualView;

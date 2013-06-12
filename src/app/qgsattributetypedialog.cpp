@@ -685,7 +685,7 @@ void QgsAttributeTypeDialog::setStackPage( int index )
         QString factoryId = selectionListWidget->item( index )->data( Qt::UserRole ).toString();
 
         // Set to (empty) editor widget page
-        stackedWidget->setCurrentIndex( 17 );
+        stackedWidget->setCurrentIndex( 16 );
 
         if ( mEditorConfigWidgets.contains( factoryId ) )
         {

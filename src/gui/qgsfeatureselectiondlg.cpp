@@ -16,6 +16,7 @@
 #include "qgsfeatureselectiondlg.h"
 
 #include "qgsgenericfeatureselectionmgr.h"
+#include "qgsdistancearea.h"
 
 QgsFeatureSelectionDlg::QgsFeatureSelectionDlg( QgsVectorLayer* vl, QWidget *parent )
     : QDialog( parent )
@@ -26,6 +27,9 @@ QgsFeatureSelectionDlg::QgsFeatureSelectionDlg( QgsVectorLayer* vl, QWidget *par
   mFeatureSelection = new QgsGenericFeatureSelectionMgr( mDualView );
 
   mDualView->setFeatureSelectionManager( mFeatureSelection );
+
+  // TODO: Proper QgsDistanceArea, proper mapcanvas
+  mDualView->init( mVectorLayer, NULL, QgsDistanceArea() );
 }
 
 const QgsFeatureIds& QgsFeatureSelectionDlg::selectedFeatures()

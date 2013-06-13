@@ -116,7 +116,8 @@ void QgsRelationEditorWidget::on_mPbnLink_clicked()
     foreach ( const QgsRelation::FieldPair fieldPair, mRelation.fieldPairs() )
     {
       int idx = mRelation.referencingLayer()->fieldNameIndex( fieldPair.referencingField() );
-      keys.insert( idx, mFeature->attribute( idx ) );
+      QVariant val = mFeature->attribute( fieldPair.referencedField() );
+      keys.insert( idx, val  );
     }
 
     foreach ( QgsFeatureId fid, selectionDlg.selectedFeatures() )

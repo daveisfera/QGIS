@@ -37,6 +37,7 @@ QgsRelationEditorWidget::QgsRelationEditorWidget( QgsVectorLayerTools* vlTools, 
   setupUi( this );
 
   connect( relation.referencingLayer(), SIGNAL( editingStarted() ), this, SLOT( referencingLayerEditingToggled() ) );
+  connect( relation.referencingLayer(), SIGNAL( editingStopped() ), this, SLOT( referencingLayerEditingToggled() ) );
   connect( this, SIGNAL( collapsedStateChanged( bool ) ), this, SIGNAL( onCollapsedStateChanged( bool ) ) );
 
   // Set initial state for add/remove etc. buttons
@@ -90,6 +91,7 @@ void QgsRelationEditorWidget::referencingLayerEditingToggled()
   mPbnLink->setEnabled( editable );
   mPbnDelete->setEnabled( editable );
   mPbnUnlink->setEnabled( editable );
+  mToggleEditingButton->setChecked( editable );
 }
 
 void QgsRelationEditorWidget::on_mPbnNew_clicked()
@@ -129,6 +131,8 @@ void QgsRelationEditorWidget::on_mPbnLink_clicked()
         mRelation.referencingLayer()->changeAttributeValue( fid, it.key(), it.value() );
       }
     }
+
+    mDualView->masterModel()->loadLayer();
   }
 }
 
@@ -159,16 +163,18 @@ void QgsRelationEditorWidget::on_mPbnUnlink_clicked()
       mRelation.referencingLayer()->changeAttributeValue( fid, it.key(), QVariant( it.value().type() ) );
     }
   }
+
+  mDualView->masterModel()->loadLayer();
 }
 
-void QgsRelationEditorWidget::on_mToggleEditingButton_clicked()
+void QgsRelationEditorWidget::on_mToggleEditingButton_toggled( bool state )
 {
-  if ( mRelation.referencingLayer()->isEditable() )
+  if ( state )
   {
     mRelation.referencingLayer()->startEditing();
   }
   else
   {
-    mRelation.referencingLayer()->startEditing();
+    mRelation.referencingLayer()->commitChanges();
   }
 }

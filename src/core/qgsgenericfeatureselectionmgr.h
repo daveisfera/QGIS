@@ -19,7 +19,7 @@
 #include "qgsfeature.h"
 #include "qgsifeatureselection.h"
 
-class QgsGenericFeatureSelectionMgr : public QgsIFeatureSelection
+class CORE_EXPORT QgsGenericFeatureSelectionMgr : public QgsIFeatureSelection
 {
     Q_OBJECT
 

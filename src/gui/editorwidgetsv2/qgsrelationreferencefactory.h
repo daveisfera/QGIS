@@ -19,7 +19,7 @@
 #include "qgsvectorlayertools.h"
 #include "qgseditorwidgetfactory.h"
 
-class QgsRelationReferenceFactory : public QgsEditorWidgetFactory
+class GUI_EXPORT QgsRelationReferenceFactory : public QgsEditorWidgetFactory
 {
   public:
     QgsRelationReferenceFactory( QgsVectorLayerTools* featureAction, QString name );

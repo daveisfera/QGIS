@@ -26,7 +26,7 @@
  * e.g. @link{QgsVectorLayer} implements this interface to manage its selections.
  */
 
-class QgsIFeatureSelection : public QObject
+class CORE_EXPORT QgsIFeatureSelection : public QObject
 {
     Q_OBJECT
 

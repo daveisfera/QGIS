@@ -52,7 +52,6 @@ class CORE_EXPORT QgsVectorLayerFeatureIterator : public QgsAbstractFeatureItera
     QgsFeatureIterator mProviderIterator;
     QgsFeatureRequest mChangedFeaturesRequest;
     QgsFeatureIterator mChangedFeaturesIterator;
-    QgsVectorLayerEditBuffer* mEditBuffer;
 
 #if 0
     // general stuff

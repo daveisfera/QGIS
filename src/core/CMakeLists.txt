@@ -71,6 +71,7 @@ SET(QGIS_CORE_SRCS
   qgsfeaturestore.cpp
   qgsfield.cpp
   qgsfontutils.cpp
+  qgsgenericfeatureselectionmgr.cpp
   qgsgeometry.cpp
   qgsgeometrycache.cpp
   qgsgeometryvalidator.cpp
@@ -126,6 +127,7 @@ SET(QGIS_CORE_SRCS
   qgsvectorlayerfeatureiterator.cpp
   qgsvectorlayerimport.cpp
   qgsvectorlayerjoinbuffer.cpp
+  qgsvectorlayerselectionmanager.cpp
   qgsvectorlayerundocommand.cpp
 
   qgsnetworkaccessmanager.cpp
@@ -298,9 +300,11 @@ SET(QGIS_CORE_MOC_HDRS
   qgscoordinatetransform.h
   qgsdataitem.h
   qgsdataprovider.h
+  qgsgenericfeatureselectionmgr.h
   qgsgml.h
   qgsgmlschema.h
   qgshttptransaction.h
+  qgsifeatureselection.h
   qgsmaplayer.h
   qgsmaplayerregistry.h
   qgsmaprenderer.h
@@ -318,6 +322,7 @@ SET(QGIS_CORE_MOC_HDRS
   qgsnetworkaccessmanager.h
   qgsvectordataprovider.h
   qgsvectorlayercache.h
+  qgsvectorlayerselectionmanager.h
   qgsgeometryvalidator.h
 
   composer/qgsaddremoveitemcommand.h
@@ -395,11 +400,13 @@ SET(QGIS_CORE_HDRS
   qgsfeaturestore.h
   qgsfield.h
   qgsfontutils.h
+  qgsgenericfeatureselectionmgr.h
   qgsgeometry.h
   qgsgml.h
   qgsgmlschema.h
   qgsgeometrycache.h
   qgshttptransaction.h
+  qgsifeatureselection.h
   qgslabel.h
   qgslabelattributes.h
   qgslogger.h
@@ -445,6 +452,7 @@ SET(QGIS_CORE_HDRS
   qgsvectorlayereditutils.h
   qgsvectorlayerfeatureiterator.h
   qgsvectorlayerimport.h
+  qgsvectorlayerselectionmanager.h
   qgsvectorlayerundocommand.h
   qgstolerance.h
   qgscrscache.h

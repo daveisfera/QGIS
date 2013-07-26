@@ -37,7 +37,7 @@ QgsVectorLayerFeatureIterator::QgsVectorLayerFeatureIterator( QgsVectorLayer* la
     mChangedAttributeValues = QgsChangedAttributesMap( L->editBuffer()->changedAttributeValues() );
     mAddedAttributes = QList<QgsField>( L->editBuffer()->addedAttributes() );
     mDeletedAttributeIds = QgsAttributeList( L->editBuffer()->deletedAttributeIds() );
-    mChangedFeaturesRequest.setFilterFids( mEditBuffer->changedAttributeValues().keys().toSet() );
+    mChangedFeaturesRequest.setFilterFids( L->editBuffer()->changedAttributeValues().keys().toSet() );
   }
 
   // prepare joins: may add more attributes to fetch (in order to allow join)
@@ -109,42 +109,43 @@ bool QgsVectorLayerFeatureIterator::fetchFeature( QgsFeature& f )
     return res;
   }
 
-  if ( mEditBuffer )
+  if ( mRequest.filterType() == QgsFeatureRequest::FilterRect )
   {
-    if ( mRequest.filterType() == QgsFeatureRequest::FilterRect )
-    {
-      if ( fetchNextChangedGeomFeature( f ) )
-        return true;
+    if ( fetchNextChangedGeomFeature( f ) )
+      return true;
 
-      // no more changed geometries
-    }
+    // no more changed geometries
+  }
 
+  if ( mRequest.filterType() == QgsFeatureRequest::FilterExpression )
+  {
+    if ( fetchNextChangedAttributeFeature( f ) )
+      return true;
+
+    // no more changed features
+  }
+
+  while ( fetchNextAddedFeature( f ) )
+  {
     if ( mRequest.filterType() == QgsFeatureRequest::FilterExpression )
     {
-      if ( fetchNextChangedAttributeFeature( f ) )
+      if ( mRequest.filterExpression()->evaluate( &f ).toBool() )
+      {
         return true;
-
-      // no more changed features
+      }
     }
-
-    while ( fetchNextAddedFeature( f ) )
+    else
     {
-      if ( mRequest.filterType() == QgsFeatureRequest::FilterExpression )
-      {
-        if ( mRequest.filterExpression()->evaluate( &f ).toBool() )
-        {
-          return true;
-        }
-      }
-      else
-      {
-        return true;
-      }
+      return true;
     }
-    // no more added features
+  }
+  // no more added features
 
+  if ( mProviderIterator.isClosed() )
+  {
     mChangedFeaturesIterator.close();
     mProviderIterator = L->dataProvider()->getFeatures( mProviderRequest );
+  }
 
   while ( mProviderIterator.nextFeature( f ) )
   {
@@ -192,8 +193,8 @@ bool QgsVectorLayerFeatureIterator::rewind()
   else
   {
     mProviderIterator.rewind();
-      rewindEditBuffer();
-    }
+    rewindEditBuffer();
+  }
 
   return true;
 }
@@ -537,26 +538,26 @@ bool QgsVectorLayerFeatureIterator::nextFeatureFid( QgsFeature& f )
 {
   QgsFeatureId featureId = mRequest.filterFid();
 
-    // deleted already?
+  // deleted already?
   if ( mDeletedFeatureIds.contains( featureId ) )
-      return false;
+    return false;
 
-    // has changed geometry?
+  // has changed geometry?
   if ( !( mRequest.flags() & QgsFeatureRequest::NoGeometry ) && mChangedGeometries.contains( featureId ) )
-    {
+  {
     useChangedAttributeFeature( featureId, mChangedGeometries[featureId], f );
+    return true;
+  }
+
+  // added features
+  for ( QgsFeatureMap::ConstIterator iter = mAddedFeatures.constBegin(); iter != mAddedFeatures.constEnd(); ++iter )
+  {
+    if ( iter->id() == featureId )
+    {
+      useAddedFeature( *iter, f );
       return true;
     }
-
-    // added features
-  for ( QgsFeatureMap::ConstIterator iter = mAddedFeatures.constBegin(); iter != mAddedFeatures.constEnd(); ++iter )
-    {
-      if ( iter->id() == featureId )
-      {
-        useAddedFeature( *iter, f );
-        return true;
-      }
-    }
+  }
 
   // regular features
   QgsFeatureIterator fi = L->dataProvider()->getFeatures( mProviderRequest );

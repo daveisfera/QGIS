@@ -1275,8 +1275,6 @@ bool QgsVectorLayer::updateFeature( QgsFeature &f )
     }
   }
 
-  emit saveLayerToProject( mapLayerNode, doc );
-
   return true;
 }
 
@@ -1978,10 +1976,6 @@ bool QgsVectorLayer::readSymbology( const QDomNode& node, QString& errorMessage 
         case UuidGenerator:
         case Color:
         case EditorWidgetV2: // Will get a signal and read there
-          break;
-
-        case EditorWidgetV2:
-          QgsEditorWidgetRegistry::instance()->writeConfig( mEditorWidgetV2Types[ name ], mEditorWidgetV2Configs[ name ] );
           break;
       }
     }

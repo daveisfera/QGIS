@@ -68,6 +68,7 @@ class CORE_EXPORT QgsAttributeEditorElement : public QObject
     {
       AeTypeContainer,
       AeTypeField,
+      AeTypeRelation,
       AeTypeInvalid
     };
 

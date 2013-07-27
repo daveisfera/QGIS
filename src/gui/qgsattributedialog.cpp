@@ -123,6 +123,7 @@ QgsAttributeDialog::QgsAttributeDialog( QgsVectorLayer *vl, QgsFeature *thepFeat
     gridLayout->addWidget( buttonBox );
   }
 
+  // Still no dialog: create the default generated dialog
   if ( !mDialog )
   {
     mDialog = new QDialog( parent );

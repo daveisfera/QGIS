@@ -1124,6 +1124,10 @@ class CORE_EXPORT QgsVectorLayer : public QgsMapLayer
     /** set the active layout for the attribute editor for this layer (added in 1.9) */
     void setEditorLayout( EditorLayout editorLayout );
 
+    void setEditorWidgetV2( int attrIdx, const QString& widgetType );
+
+    void setEditorWidgetV2Config( int attrIdx, const QMap<QString, QVariant>& config );
+
     /** set string representing 'true' for a checkbox (added in 1.4) */
     void setCheckedState( int idx, QString checked, QString notChecked );
 
@@ -1588,8 +1592,8 @@ class CORE_EXPORT QgsVectorLayer : public QgsMapLayer
     QMap< QString, QString> mDateFormats;
     QMap< QString, QSize> mWidgetSize;
 
-    QMap<int, QString> mWidgetTypes;
-    QMap<int, QMap<QString, QVariant> > mWidgetConfigs;
+    QMap<int, QString> mEditorWidgetV2Types;
+    QMap<int, QMap<QString, QVariant> > mEditorWidgetV2Configs;
 
     /** Defines the default layout to use for the attribute editor (Drag and drop, UI File, Generated) */
     EditorLayout mEditorLayout;

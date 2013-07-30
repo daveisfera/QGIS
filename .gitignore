@@ -54,3 +54,4 @@ scripts/qgisstyle
 qgis.kdev4
 src/core/qgscontexthelp_texts.cpp
 src/core/qgsexpression_texts.cpp
+qgis.supp

@@ -77,8 +77,9 @@ class GUI_EXPORT QgsDualView : public QStackedWidget, private Ui::QgsDualViewBas
      *                   {@link QgsAttributeTableFilterModel::ShowVisible}
      * @param myDa       Used for attribute dialog creation
      * @param request    Use a modified request to limit the shown features
+     * @param vlTools    A toolset to handle vector layer actions
      */
-    void init( QgsVectorLayer* layer, QgsMapCanvas* mapCanvas, QgsDistanceArea myDa, const QgsFeatureRequest& request = QgsFeatureRequest(), QgsVectorLayerTools* featureAction = NULL );
+    void init( QgsVectorLayer* layer, QgsMapCanvas* mapCanvas, QgsDistanceArea myDa, const QgsFeatureRequest& request = QgsFeatureRequest(), QgsVectorLayerTools* vlTools = NULL );
 
     /**
      * Change the current view mode.
@@ -238,7 +239,7 @@ class GUI_EXPORT QgsDualView : public QStackedWidget, private Ui::QgsDualViewBas
     void initLayerCache( QgsVectorLayer *layer );
     void initModels( QgsMapCanvas* mapCanvas, const QgsFeatureRequest& request );
 
-    QgsVectorLayerTools* mFeatureAction;
+    QgsVectorLayerTools* mVlTools;
     QgsAttributeTableModel* mMasterModel;
     QgsAttributeTableFilterModel* mFilterModel;
     QgsFeatureListModel* mFeatureListModel;

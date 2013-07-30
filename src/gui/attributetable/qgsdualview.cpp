@@ -33,7 +33,7 @@
 
 QgsDualView::QgsDualView( QWidget* parent )
     : QStackedWidget( parent )
-    , mFeatureAction( NULL )
+    , mVlTools( NULL )
     , mMasterModel( NULL )
     , mAttributeDialog( NULL )
     , mProgressDlg( NULL )
@@ -61,9 +61,9 @@ QgsDualView::~QgsDualView()
   delete mAttributeDialog;
 }
 
-void QgsDualView::init( QgsVectorLayer* layer, QgsMapCanvas* mapCanvas, QgsDistanceArea myDa, const QgsFeatureRequest &request, QgsVectorLayerTools* featureAction )
+void QgsDualView::init( QgsVectorLayer* layer, QgsMapCanvas* mapCanvas, QgsDistanceArea myDa, const QgsFeatureRequest &request, QgsVectorLayerTools* vlTools )
 {
-  mFeatureAction = featureAction;
+  mVlTools = vlTools;
   mDistanceArea = myDa;
 
   connect( mTableView, SIGNAL( willShowContextMenu( QMenu*, QModelIndex ) ), this, SLOT( viewWillShowContextMenu( QMenu*, QModelIndex ) ) );
@@ -74,7 +74,7 @@ void QgsDualView::init( QgsVectorLayer* layer, QgsMapCanvas* mapCanvas, QgsDista
   mTableView->setModel( mFilterModel );
   mFeatureList->setModel( mFeatureListModel );
 
-  mAttributeDialog = new QgsAttributeDialog( layer, 0, false, myDa, NULL, true, mFeatureAction );
+  mAttributeDialog = new QgsAttributeDialog( layer, 0, false, myDa, NULL, true, mVlTools );
   if ( mAttributeDialog->dialog() )
     mAttributeEditorLayout->addWidget( mAttributeDialog->dialog() );
 
@@ -269,7 +269,7 @@ void QgsDualView::on_mFeatureList_currentEditSelectionChanged( const QgsFeature 
     mAttributeEditorLayout->removeWidget( mAttributeDialog->dialog() );
   }
 
-  mAttributeDialog = new QgsAttributeDialog( mLayerCache->layer(), new QgsFeature( feat ), true, mDistanceArea, this, false, mFeatureAction );
+  mAttributeDialog = new QgsAttributeDialog( mLayerCache->layer(), new QgsFeature( feat ), true, mDistanceArea, this, false, mVlTools );
   mAttributeEditorLayout->addWidget( mAttributeDialog->dialog() );
   mAttributeDialog->dialog()->setVisible( true );
 

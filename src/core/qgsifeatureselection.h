@@ -23,7 +23,7 @@
 /**
  * Is an interface class to abstract feature selection handling.
  *
- * e.g. @link{QgsVectorLayer} implements this interface to manage its selections.
+ * e.g. { @link QgsVectorLayer } implements this interface to manage its selections.
  */
 
 class CORE_EXPORT QgsIFeatureSelection : public QObject

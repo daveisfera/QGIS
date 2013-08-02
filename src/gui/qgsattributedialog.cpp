@@ -196,7 +196,7 @@ QgsAttributeDialog::QgsAttributeDialog( QgsVectorLayer* vl, QgsFeature* thepFeat
         myFieldName += " (" + vl->dateFormat( fldIdx ) + ")";
       }
 
-      QWidget *myWidget = QgsAttributeEditor::createAttributeEditor( 0, 0, vl, fldIdx, mFeature->attribute( fldIdx ), mProxyWidgets );
+      QWidget *myWidget = QgsAttributeEditor::createAttributeEditor( 0, 0, vl, fldIdx, mFeature->attribute( fldIdx ), mEditorContext );
       if ( !myWidget )
         continue;
 
@@ -299,7 +299,7 @@ QgsAttributeDialog::QgsAttributeDialog( QgsVectorLayer* vl, QgsFeature* thepFeat
 
       foreach ( QWidget *myWidget, myWidgets )
       {
-        QgsAttributeEditor::createAttributeEditor( mDialog, myWidget, vl, fldIdx, mFeature->attribute( fldIdx ), mProxyWidgets );
+        QgsAttributeEditor::createAttributeEditor( mDialog, myWidget, vl, fldIdx, mFeature->attribute( fldIdx ), mEditorContext );
 
         if ( vl->editType( fldIdx ) != QgsVectorLayer::Immutable )
         {
@@ -526,7 +526,7 @@ void QgsAttributeDialog::accept()
   {
     QVariant value;
 
-    if ( QgsAttributeEditor::retrieveValue( mProxyWidgets.value( idx ), mLayer, idx, value ) )
+    if ( QgsAttributeEditor::retrieveValue( mEditorContext.proxyWidget( mLayer, idx ), mLayer, idx, value ) )
       mFeature->setAttribute( idx, value );
   }
 }

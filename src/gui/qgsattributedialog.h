@@ -71,7 +71,7 @@ class GUI_EXPORT QgsAttributeDialog : public QObject
     QDialog *mDialog;
     QString mSettingsPath;
     // Used to sync multiple widgets for the same field
-    QMap<int, QWidget*> mProxyWidgets;
+    QgsAttributeEditorContext mEditorContext;
     QgsVectorLayer *mLayer;
     QgsFeature* mFeature;
     bool mFeatureOwner;

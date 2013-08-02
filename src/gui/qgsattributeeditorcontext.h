@@ -48,10 +48,10 @@ class GUI_EXPORT QgsAttributeEditorContext
 
 
   private:
+    QgsVectorLayerTools* mVectorLayerTools;
+
     //! vectorlayer => ( fieldIdx, proxyWidget )
     QMap<QgsVectorLayer*, QMap<int, QWidget*> > mProxyWidgets;
-
-    QgsVectorLayerTools* mVectorLayerTools;
 
     QgsDistanceArea mDistanceArea;
 };

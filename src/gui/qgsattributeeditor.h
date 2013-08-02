@@ -80,7 +80,7 @@ class GUI_EXPORT QgsAttributeEditor : public QObject
      * @param context the context used for the created attribute editor
      *
      */
-    static QWidget* createAttributeEditor( QWidget* parent, QWidget* editor, QgsVectorLayer* vl, int idx, const QVariant& value, QgsAttributeEditorContext context );
+    static QWidget* createAttributeEditor( QWidget* parent, QWidget* editor, QgsVectorLayer* vl, int idx, const QVariant& value, QgsAttributeEditorContext& context );
 
     /**
      * Creates a widget form a QgsAttributeEditorElement definition. Will recursively generate containers and widgets.
@@ -95,7 +95,7 @@ class GUI_EXPORT QgsAttributeEditor : public QObject
      *        If set to false, the label should be shown left or right of the field
      *
      */
-    static QWidget *createWidgetFromDef( const QgsAttributeEditorElement* widgetDef, QWidget* parent, QgsVectorLayer* vl, const QgsFeature &feat, QgsAttributeEditorContext context, QString& labelText, bool& labelOnTop );
+    static QWidget *createWidgetFromDef( const QgsAttributeEditorElement* widgetDef, QWidget* parent, QgsVectorLayer* vl, const QgsFeature &feat, QgsAttributeEditorContext& context, QString& labelText, bool& labelOnTop );
 
     static QWidget *createRelationsWidget( QWidget* parent, QWidget* editor, const QgsRelation& relation );
 

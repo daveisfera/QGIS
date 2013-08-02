@@ -50,6 +50,7 @@ QgsRelationEditorWidget* QgsRelationEditorWidget::createRelationEditor( const Qg
   QgsRelationEditorWidget* editor = new QgsRelationEditorWidget( relation, feature, context, parent );
 
   QgsDualView* dualView = new QgsDualView( editor );
+  editor->mToggleEditingButton->setEnabled( !relation.referencingLayer()->isReadOnly() );
   editor->mFeatureSelectionMgr = new QgsGenericFeatureSelectionMgr( dualView );
   dualView->setFeatureSelectionManager( editor->mFeatureSelectionMgr );
 

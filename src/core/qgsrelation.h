@@ -86,6 +86,7 @@ class CORE_EXPORT QgsRelation
 
   protected:
     void updateRelationStatus();
+    void runChecks();
 
   private:
     QString mRelationName;

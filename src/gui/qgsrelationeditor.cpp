@@ -18,6 +18,7 @@
 #include "attributetable/qgsdualview.h"
 
 #include "qgsdistancearea.h"
+#include "qgsvectordataprovider.h"
 #include "qgsexpression.h"
 #include "qgsfeature.h"
 #include "qgsfeatureselectiondlg.h"
@@ -50,7 +51,12 @@ QgsRelationEditorWidget* QgsRelationEditorWidget::createRelationEditor( const Qg
   QgsRelationEditorWidget* editor = new QgsRelationEditorWidget( relation, feature, context, parent );
 
   QgsDualView* dualView = new QgsDualView( editor );
-  editor->mToggleEditingButton->setEnabled( !relation.referencingLayer()->isReadOnly() );
+  QgsVectorLayer* lyr = relation.referencingLayer();
+
+  bool canChangeAttributes = lyr->dataProvider()->capabilities() & QgsVectorDataProvider::ChangeAttributeValues;
+
+  editor->mToggleEditingButton->setEnabled( canChangeAttributes && !lyr->isReadOnly() );
+
   editor->mFeatureSelectionMgr = new QgsGenericFeatureSelectionMgr( dualView );
   dualView->setFeatureSelectionManager( editor->mFeatureSelectionMgr );
 

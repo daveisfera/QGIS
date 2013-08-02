@@ -18,24 +18,26 @@
 #define QGSATTRIBUTEDIALOG_H
 
 #include "qgsfeature.h"
+#include "qgsattributeeditorcontext.h"
 
 class QDialog;
 class QLayout;
 
-class QgsVectorLayerTools;
 class QgsDistanceArea;
 class QgsFeature;
 class QgsField;
 class QgsHighlight;
 class QgsVectorLayer;
-
+class QgsVectorLayerTools;
 
 class GUI_EXPORT QgsAttributeDialog : public QObject
 {
     Q_OBJECT
 
   public:
-    QgsAttributeDialog( QgsVectorLayer *vl, QgsFeature *thepFeature, bool featureOwner, QgsDistanceArea myDa, QWidget* parent = 0, bool showDialogButtons = true, QgsVectorLayerTools* featureAction = NULL );
+//    QgsAttributeDialog( QgsVectorLayer *vl, QgsFeature *thepFeature, bool featureOwner, QgsDistanceArea myDa, QWidget* parent = 0, bool showDialogButtons = true, QgsVectorLayerTools* vlTools = NULL );
+    QgsAttributeDialog( QgsVectorLayer *vl, QgsFeature *thepFeature, bool featureOwner, QWidget* parent = 0, bool showDialogButtons = true, QgsAttributeEditorContext context = QgsAttributeEditorContext() );
+
     ~QgsAttributeDialog();
 
     /** Saves the size and position for the next time
@@ -52,7 +54,7 @@ class GUI_EXPORT QgsAttributeDialog : public QObject
 
     QDialog *dialog() { return mDialog; }
 
-    QgsFeature* feature() { return mFeature; }
+    const QgsFeature* feature() { return mFeature; }
 
   public slots:
     void accept();
@@ -71,7 +73,7 @@ class GUI_EXPORT QgsAttributeDialog : public QObject
     // Used to sync multiple widgets for the same field
     QMap<int, QWidget*> mProxyWidgets;
     QgsVectorLayer *mLayer;
-    QgsFeature *mFeature;
+    QgsFeature* mFeature;
     bool mFeatureOwner;
     QgsHighlight *mHighlight;
     int mFormNr;

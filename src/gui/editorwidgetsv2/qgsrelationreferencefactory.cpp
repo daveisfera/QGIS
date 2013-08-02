@@ -18,15 +18,15 @@
 #include "qgsrelationreferencewidget.h"
 #include "qgsrelreferenceconfigdlg.h"
 
-QgsRelationReferenceFactory::QgsRelationReferenceFactory( QgsVectorLayerTools* featureAction, QString name )
+QgsRelationReferenceFactory::QgsRelationReferenceFactory( QgsAttributeEditorContext context, QString name )
     : QgsEditorWidgetFactory( name )
-    , mVlTools( featureAction )
+    , mEditorContext( context )
 {
 }
 
 QgsEditorWidgetWrapper* QgsRelationReferenceFactory::create( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent ) const
 {
-  return new QgsRelationReferenceWidget( vl, fieldIdx, editor, mVlTools, parent );
+  return new QgsRelationReferenceWidget( vl, fieldIdx, editor, mEditorContext, parent );
 }
 
 QgsEditorConfigWidget* QgsRelationReferenceFactory::configWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* parent )

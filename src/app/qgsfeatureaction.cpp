@@ -48,13 +48,18 @@ QgsAttributeDialog *QgsFeatureAction::newDialog( bool cloneFeature )
 {
   QgsFeature *f = cloneFeature ? new QgsFeature( mFeature ) : &mFeature;
 
+  QgsAttributeEditorContext context;
+
   QgsDistanceArea myDa;
 
   myDa.setSourceCrs( mLayer->crs() );
   myDa.setEllipsoidalMode( QgisApp::instance()->mapCanvas()->mapRenderer()->hasCrsTransformEnabled() );
   myDa.setEllipsoid( QgsProject::instance()->readEntry( "Measure", "/Ellipsoid", GEO_NONE ) );
 
-  QgsAttributeDialog *dialog = new QgsAttributeDialog( mLayer, f, cloneFeature, myDa, NULL, true, QgsGuiVectorLayerTools::instance() );
+  context.setDistanceArea( myDa );
+  context.setVectorLayerTools( QgsGuiVectorLayerTools::instance() );
+
+  QgsAttributeDialog *dialog = new QgsAttributeDialog( mLayer, f, cloneFeature, NULL, true, context );
 
   if ( mLayer->actions()->size() > 0 )
   {

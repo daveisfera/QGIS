@@ -1667,7 +1667,7 @@ void QgsExpression::initGeomCalculator()
   mCalc->setEllipsoidalMode( false );
 }
 
-void QgsExpression::setGeomCalculator( QgsDistanceArea &calc )
+void QgsExpression::setGeomCalculator( const QgsDistanceArea &calc )
 {
   if ( !mCalc )
     mCalc = new QgsDistanceArea();

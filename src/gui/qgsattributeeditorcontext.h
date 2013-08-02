@@ -1,5 +1,5 @@
 /***************************************************************************
-    qgsattributedialogcontext.h
+    qgsattributeeditorcontext.h
      --------------------------------------
     Date                 : 30.7.2013
     Copyright            : (C) 2013 Matthias Kuhn
@@ -13,13 +13,47 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef QGSATTRIBUTEDIALOGCONTEXT_H
-#define QGSATTRIBUTEDIALOGCONTEXT_H
+#ifndef QGSATTRIBUTEEDITORCONTEXT_H
+#define QGSATTRIBUTEEDITORCONTEXT_H
 
-class QgsAttributeDialogContext
+#include <QMap>
+#include <QWidget>
+
+#include <qgsdistancearea.h>
+#include <qgsvectorlayer.h>
+#include <qgsvectorlayertools.h>
+
+
+/**
+ * This class contains context information for attribute editor widgets.
+ * It will be passed to embedded widgets whenever this occurs (e.g. when
+ * showing an embedded form due to relations)
+ */
+
+class GUI_EXPORT QgsAttributeEditorContext
 {
   public:
-    QgsAttributeDialogContext();
+    QgsAttributeEditorContext();
+
+    QWidget* proxyWidget( QgsVectorLayer* vl, int fieldIdx );
+    void addProxyWidgets( QgsVectorLayer* vl, QMap<int, QWidget*> proxyWidgets );
+    void addProxyWidget( QgsVectorLayer* vl, int idx, QWidget* widget );
+
+
+    void setDistanceArea( const QgsDistanceArea& distanceArea ) { mDistanceArea = distanceArea; }
+    inline const QgsDistanceArea& distanceArea() { return mDistanceArea; }
+
+    void setVectorLayerTools( QgsVectorLayerTools* vlTools ) { mVectorLayerTools = vlTools; }
+    QgsVectorLayerTools* vectorLayerTools() { return mVectorLayerTools; }
+
+
+  private:
+    //! vectorlayer => ( fieldIdx, proxyWidget )
+    QMap<QgsVectorLayer*, QMap<int, QWidget*> > mProxyWidgets;
+
+    QgsVectorLayerTools* mVectorLayerTools;
+
+    QgsDistanceArea mDistanceArea;
 };
 
-#endif // QGSATTRIBUTEDIALOGCONTEXT_H
+#endif // QGSATTRIBUTEEDITORCONTEXT_H

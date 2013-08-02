@@ -797,6 +797,10 @@ void GlobePlugin::help()
 void GlobePlugin::placeNode( osg::Node* node, double lat, double lon, double alt /*= 0.0*/ )
 {
 #ifdef HAVE_OSGEARTH_ELEVATION_QUERY
+  Q_UNUSED( node )
+  Q_UNUSED( lat )
+  Q_UNUSED( lon )
+  Q_UNUSED( alt )
 #else
   // get elevation
   double elevation = 0.0;

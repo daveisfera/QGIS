@@ -61,12 +61,7 @@ void QgsRelationManager::addRelation( const QgsRelation& relation )
 
 QgsRelation QgsRelationManager::relation( const QString& id )
 {
-  if ( mRelations.contains( id ) )
-  {
-    return mRelations[id];
-  }
-
-  return QgsRelation();
+  return mRelations.value( id );
 }
 
 QList<QgsRelation> QgsRelationManager::referencingRelations( QgsVectorLayer* layer, int fieldIdx )
@@ -145,6 +140,8 @@ void QgsRelationManager::readProject( const QDomDocument & doc )
   {
     QgsDebugMsg( "No relations data present in this document" );
   }
+
+  emit( relationsLoaded() );
 }
 
 void QgsRelationManager::writeProject( QDomDocument & doc )

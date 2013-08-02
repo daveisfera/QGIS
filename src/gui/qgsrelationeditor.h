@@ -19,7 +19,7 @@
 #include <QWidget>
 
 #include "ui_qgsrelationeditorwidgetbase.h"
-
+#include "qgsattributeeditorcontext.h"
 #include "qgsrelation.h"
 
 class QgsDualView;
@@ -28,15 +28,14 @@ class QgsGenericFeatureSelectionMgr;
 class QgsVectorLayer;
 class QgsVectorLayerTools;
 
-
 class QgsRelationEditorWidget : public QgsCollapsibleGroupBox, private Ui::QgsRelationEditorWidgetBase
 {
     Q_OBJECT
 
   public:
-    QgsRelationEditorWidget( QgsVectorLayerTools* featureAction, const QgsRelation& relation, QgsFeature* feature, QWidget* parent = NULL );
+    QgsRelationEditorWidget( const QgsRelation& relation, const QgsFeature& feature, QgsAttributeEditorContext context, QWidget* parent = NULL );
 
-    static QgsRelationEditorWidget* createRelationEditor( const QgsRelation& relation, QgsFeature* feature, QgsVectorLayerTools* featureAction, QWidget* parent = NULL );
+    static QgsRelationEditorWidget* createRelationEditor( const QgsRelation& relation, const QgsFeature& feature, QgsAttributeEditorContext context, QWidget* parent = NULL );
 
   private slots:
     void onCollapsedStateChanged( bool state );
@@ -51,9 +50,9 @@ class QgsRelationEditorWidget : public QgsCollapsibleGroupBox, private Ui::QgsRe
   private:
     QgsDualView* mDualView;
     QgsGenericFeatureSelectionMgr* mFeatureSelectionMgr;
-    QgsVectorLayerTools* mVlTools;
+    QgsAttributeEditorContext mEditorContext;
     QgsRelation mRelation;
-    QgsFeature* mFeature;
+    QgsFeature mFeature;
 
 };
 

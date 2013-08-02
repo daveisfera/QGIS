@@ -177,6 +177,8 @@ QgsVectorLayer::QgsVectorLayer( QString vectorLayerPath,
   }
 
   connect( this, SIGNAL( selectionChanged( QgsFeatureIds, QgsFeatureIds, bool ) ), this, SIGNAL( selectionChanged() ) );
+
+  connect( QgsRelationManager::instance(), SIGNAL( relationsLoaded() ), this, SLOT( onRelationsLoaded() ) );
 } // QgsVectorLayer ctor
 
 
@@ -2116,7 +2118,8 @@ QgsAttributeEditorElement* QgsVectorLayer::attributeEditorElementFromDomElement(
     {
       QDomElement childElem = childNodeList.at( i ).toElement();
       QgsAttributeEditorElement* myElem = attributeEditorElementFromDomElement( childElem, container );
-      container->addChildElement( myElem );
+      if ( myElem )
+        container->addChildElement( myElem );
     }
 
     newElement = container;
@@ -2127,7 +2130,13 @@ QgsAttributeEditorElement* QgsVectorLayer::attributeEditorElementFromDomElement(
     int idx = *( dataProvider()->fieldNameMap() ).find( name );
     newElement = new QgsAttributeEditorField( name, idx, parent );
   }
-
+  else if ( elem.tagName() == "attributeEditorRelation" )
+  {
+    // At this time, the relations are not loaded
+    // So we only grab the id and delegate the rest to onRelationsLoaded()
+    QString name = elem.attribute( "name" );
+    newElement = new QgsAttributeEditorRelation( name, elem.attribute( "relation", "[None]" ), parent );
+  }
   return newElement;
 }
 
@@ -3827,6 +3836,23 @@ void QgsVectorLayer::invalidateSymbolCountedFlag()
   mSymbolFeatureCounted = false;
 }
 
+void QgsVectorLayer::onRelationsLoaded()
+{
+  Q_FOREACH( QgsAttributeEditorElement* elem, mAttributeEditorElements )
+  {
+    if ( elem->type() == QgsAttributeEditorElement::AeTypeContainer )
+    {
+      QgsAttributeEditorContainer* cont = dynamic_cast< QgsAttributeEditorContainer* >( elem );
+      QList<QgsAttributeEditorElement*> relations = cont->findElements( QgsAttributeEditorElement::AeTypeRelation );
+      Q_FOREACH( QgsAttributeEditorElement* relElem, relations )
+      {
+        QgsAttributeEditorRelation* rel = dynamic_cast< QgsAttributeEditorRelation* >( relElem );
+        rel->init( QgsRelationManager::instance() );
+      }
+    }
+  }
+}
+
 QgsVectorLayer::ValueRelationData &QgsVectorLayer::valueRelation( int idx )
 {
   const QgsFields &fields = pendingFields();
@@ -3867,17 +3893,38 @@ QDomElement QgsAttributeEditorContainer::toDomElement( QDomDocument& doc ) const
 {
   QDomElement elem = doc.createElement( "attributeEditorContainer" );
   elem.setAttribute( "name", mName );
-  for ( QList< QgsAttributeEditorElement* >::const_iterator it = mChildren.begin(); it != mChildren.end(); ++it )
+
+  Q_FOREACH( QgsAttributeEditorElement* child, mChildren )
   {
-    elem.appendChild(( *it )->toDomElement( doc ) );
+    elem.appendChild( child->toDomElement( doc ) );
   }
   return elem;
 }
 
-
 void QgsAttributeEditorContainer::addChildElement( QgsAttributeEditorElement *widget )
 {
   mChildren.append( widget );
+}
+
+QList<QgsAttributeEditorElement*> QgsAttributeEditorContainer::findElements( QgsAttributeEditorElement::AttributeEditorType type ) const
+{
+  QList<QgsAttributeEditorElement*> results;
+
+  Q_FOREACH( QgsAttributeEditorElement* elem, mChildren )
+  {
+    if ( elem->type() == type )
+    {
+      results.append( elem );
+    }
+
+    if ( elem->type() == AeTypeContainer )
+    {
+      QgsAttributeEditorContainer* cont = dynamic_cast<QgsAttributeEditorContainer*>( elem );
+      results += cont->findElements( type );
+    }
+  }
+
+  return results;
 }
 
 QDomElement QgsAttributeEditorField::toDomElement( QDomDocument& doc ) const
@@ -4033,4 +4080,19 @@ bool QgsVectorLayer::applyNamedStyle( QString namedStyle, QString errorMsg )
 #endif
 
   return readSymbology( myRoot, errorMsg );
+}
+
+
+QDomElement QgsAttributeEditorRelation::toDomElement( QDomDocument& doc ) const
+{
+  QDomElement elem = doc.createElement( "attributeEditorRelation" );
+  elem.setAttribute( "name", mName );
+  elem.setAttribute( "relation", mRelation.name() );
+  return elem;
+}
+
+bool QgsAttributeEditorRelation::init( QgsRelationManager* relationManager )
+{
+  mRelation = relationManager->relation( mRelationId );
+  return mRelation.isValid();
 }

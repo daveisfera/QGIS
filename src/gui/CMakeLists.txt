@@ -201,7 +201,6 @@ editorwidgetsv2/qgsrelreferenceconfigdlg.h
 qgisinterface.h
 qgsattributedialog.h
 qgsattributeeditor.h
-qgsattributeeditorcontext.h
 qgsblendmodecombobox.h
 qgsbusyindicatordialog.h
 qgscharacterselectdialog.h
@@ -265,6 +264,7 @@ qgisgui.h
 qgisinterface.h
 qgsattributedialog.h
 qgsattributeeditor.h
+qgsattributeeditorcontext.h
 qgsblendmodecombobox.h
 qgsbusyindicatordialog.h
 qgscharacterselectdialog.h

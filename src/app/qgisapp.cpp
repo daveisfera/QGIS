@@ -583,7 +583,9 @@ QgisApp::QgisApp( QSplashScreen *splash, bool restorePlugins, QWidget * parent, 
 
   // Init the editor widget types
   QgsEditorWidgetRegistry* editorWidgetRegistry = QgsEditorWidgetRegistry::instance();
-  editorWidgetRegistry->registerWidget( "RelationReference", new QgsRelationReferenceFactory( featureAction(), tr( "Relation Reference" ) ) );
+  QgsAttributeEditorContext context;
+  context.setVectorLayerTools( featureAction() );
+  editorWidgetRegistry->registerWidget( "RelationReference", new QgsRelationReferenceFactory( context, tr( "Relation Reference" ) ) );
 
 
   mInternalClipboard = new QgsClipboard; // create clipboard

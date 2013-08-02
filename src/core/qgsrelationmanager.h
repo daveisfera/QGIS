@@ -48,6 +48,7 @@ class CORE_EXPORT QgsRelationManager : public QObject
     QList<QgsRelation> referencedRelations( QgsVectorLayer* layer = NULL );
 
   signals:
+    void relationsLoaded();
 
   public slots:
 

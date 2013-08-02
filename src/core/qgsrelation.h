@@ -21,6 +21,7 @@
 #include <QPair>
 
 #include "qgsfield.h"
+#include "qgsfeatureiterator.h"
 
 class QgsVectorLayer;
 
@@ -53,6 +54,26 @@ class CORE_EXPORT QgsRelation
     void setReferencedLayer( QString id );
     void addFieldPair( QString referencingField, QString referencedField );
     void addFieldPair( FieldPair fieldPair );
+
+    /**
+     * Creates an iterator which returns all the features on the referencing (child) layer
+     * which have a foreign key pointing to the provided feature.
+     *
+     * @param feat A feature from the referenced (parent) layer
+     *
+     * @return An iterator with all the referenced features
+     */
+    QgsFeatureIterator getRelatedFeatures( const QgsFeature& feature ) const;
+
+    /**
+     * Creates a request to return all the features on the referencing (child) layer
+     * which have a foreign key pointing to the provided feature.
+     *
+     * @param feat A feature from the referenced (parent) layer
+     *
+     * @return An request for all the referenced features
+     */
+    QgsFeatureRequest getRelatedFeaturesRequest( const QgsFeature& feature ) const;
 
     QString name() const;
     QString referencingLayerId() const;

@@ -30,6 +30,7 @@
 #include "qgsfield.h"
 #include "qgssnapper.h"
 #include "qgsfield.h"
+#include "qgsrelation.h"
 
 class QPainter;
 class QImage;
@@ -44,6 +45,7 @@ class QgsLabel;
 class QgsMapToPixel;
 class QgsRectangle;
 class QgsRelation;
+class QgsRelationManager;
 class QgsVectorDataProvider;
 class QgsSingleSymbolRendererV2;
 class QgsRectangle;
@@ -98,7 +100,9 @@ class CORE_EXPORT QgsAttributeEditorContainer : public QgsAttributeEditorElement
 
     virtual QDomElement toDomElement( QDomDocument& doc ) const;
     virtual void addChildElement( QgsAttributeEditorElement *widget );
+    virtual bool isGroupBox() const { return true; }
     QList<QgsAttributeEditorElement*> children() const { return mChildren; }
+    virtual QList<QgsAttributeEditorElement*> findElements( AttributeEditorType type ) const;
 
   private:
     QList<QgsAttributeEditorElement*> mChildren;
@@ -118,6 +122,37 @@ class CORE_EXPORT QgsAttributeEditorField : public QgsAttributeEditorElement
 
   private:
     int mIdx;
+};
+
+/** @note Added in 2.1 */
+class CORE_EXPORT QgsAttributeEditorRelation : public QgsAttributeEditorElement
+{
+  public:
+    QgsAttributeEditorRelation( QString name , const QString relationId, QObject *parent )
+        : QgsAttributeEditorElement( AeTypeRelation, name, parent )
+        , mRelationId( relationId ) {}
+
+    QgsAttributeEditorRelation( QString name , const QgsRelation& relation, QObject *parent )
+        : QgsAttributeEditorElement( AeTypeRelation, name, parent )
+        , mRelationId( relation.name() )
+        , mRelation( relation ) {}
+
+    ~QgsAttributeEditorRelation() {}
+
+    virtual QDomElement toDomElement( QDomDocument& doc ) const;
+    const QgsRelation& relation() const { return mRelation; }
+
+    /**
+     * Initializes the relation from the id
+     *
+     * @param relManager The relation manager to use for the initialization
+     * @return true if the relation was found in the relationmanager
+     */
+    bool init( QgsRelationManager* relManager );
+
+  private:
+    QString mRelationId;
+    QgsRelation mRelation;
 };
 
 /** @note added in 1.7 */
@@ -1294,6 +1329,12 @@ class CORE_EXPORT QgsVectorLayer : public QgsMapLayer
      */
     int layerTransparency() const;
 
+    QString metadata();
+
+    /** @note not available in python bindings */
+    inline QgsGeometryCache* cache() { return mCache; }
+
+
   public slots:
     /**
      * Select feature by its ID
@@ -1348,11 +1389,6 @@ class CORE_EXPORT QgsVectorLayer : public QgsMapLayer
     /** Check if there is a join with a layer that will be removed
       @note added in 1.7 */
     void checkJoinLayerRemove( QString theLayerId );
-
-    QString metadata();
-
-    /** @note not available in python bindings */
-    inline QgsGeometryCache* cache() { return mCache; }
 
     /**
      * @brief Is called when the cache image is being deleted. Overwrite and use to clean up.
@@ -1439,6 +1475,9 @@ class CORE_EXPORT QgsVectorLayer : public QgsMapLayer
      * @note added in 1.9
      */
     void labelingFontNotFound( QgsVectorLayer* layer, const QString& fontfamily );
+
+  private slots:
+    void onRelationsLoaded();
 
   protected:
     /** Set the extent */

@@ -18,12 +18,13 @@
 
 #include <QStackedWidget>
 
-#include "qgsdistancearea.h"
-#include "qgsattributetablefiltermodel.h"
-#include "qgscachedfeatureiterator.h"
 #include "ui_qgsdualviewbase.h"
 
-class QgsVectorLayerTools;
+#include "qgsattributeeditorcontext.h"
+#include "qgsattributetablefiltermodel.h"
+#include "qgscachedfeatureiterator.h"
+#include "qgsdistancearea.h"
+
 class QgsAttributeDialog;
 class QgsFeatureRequest;
 class QSignalMapper;
@@ -75,11 +76,9 @@ class GUI_EXPORT QgsDualView : public QStackedWidget, private Ui::QgsDualViewBas
      * @param layer      The layer which should be used to fetch features
      * @param mapCanvas  The mapCanvas (used for the FilterMode
      *                   {@link QgsAttributeTableFilterModel::ShowVisible}
-     * @param myDa       Used for attribute dialog creation
      * @param request    Use a modified request to limit the shown features
-     * @param vlTools    A toolset to handle vector layer actions
      */
-    void init( QgsVectorLayer* layer, QgsMapCanvas* mapCanvas, QgsDistanceArea myDa, const QgsFeatureRequest& request = QgsFeatureRequest(), QgsVectorLayerTools* vlTools = NULL );
+    void init( QgsVectorLayer* layer, QgsMapCanvas* mapCanvas, const QgsFeatureRequest& request = QgsFeatureRequest(), QgsAttributeEditorContext = QgsAttributeEditorContext() );
 
     /**
      * Change the current view mode.
@@ -239,7 +238,7 @@ class GUI_EXPORT QgsDualView : public QStackedWidget, private Ui::QgsDualViewBas
     void initLayerCache( QgsVectorLayer *layer );
     void initModels( QgsMapCanvas* mapCanvas, const QgsFeatureRequest& request );
 
-    QgsVectorLayerTools* mVlTools;
+    QgsAttributeEditorContext mEditorContext;
     QgsAttributeTableModel* mMasterModel;
     QgsAttributeTableFilterModel* mFilterModel;
     QgsFeatureListModel* mFeatureListModel;

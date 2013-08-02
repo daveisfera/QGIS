@@ -62,9 +62,9 @@ class CORE_EXPORT QgsDistanceArea
     void setSourceAuthId( QString authid );
 
     //! returns source spatial reference system
-    long sourceCrs() { return mSourceRefSys; }
+    long sourceCrs() const { return mSourceRefSys; }
     //! What sort of coordinate system is being used?
-    bool geographic() { return mCoordTransform->sourceCrs().geographicFlag(); }
+    bool geographic() const { return mCoordTransform->sourceCrs().geographicFlag(); }
 
     //! sets ellipsoid by its acronym
     bool setEllipsoid( const QString& ellipsoid );
@@ -74,7 +74,7 @@ class CORE_EXPORT QgsDistanceArea
     bool setEllipsoid( double semiMajor, double semiMinor );
 
     //! returns ellipsoid's acronym
-    const QString& ellipsoid() { return mEllipsoid; }
+    const QString& ellipsoid() const { return mEllipsoid; }
 
     //! returns ellipsoid's semi major axis
     double ellipsoidSemiMajor() { return mSemiMajor; }

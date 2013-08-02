@@ -43,6 +43,7 @@ class APP_EXPORT QgsFieldsProperties : public QWidget, private Ui_QgsFieldsPrope
         enum Type
         {
           Field,
+          Relation,
           Container
         };
 

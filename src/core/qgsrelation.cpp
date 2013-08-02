@@ -136,6 +136,29 @@ void QgsRelation::addFieldPair( QgsRelation::FieldPair fieldPair )
   updateRelationStatus();
 }
 
+QgsFeatureIterator QgsRelation::getRelatedFeatures( const QgsFeature& feature ) const
+{
+  return referencedLayer()->getFeatures( getRelatedFeaturesRequest( feature ) );
+}
+
+QgsFeatureRequest QgsRelation::getRelatedFeaturesRequest( const QgsFeature& feature ) const
+{
+  QStringList conditions;
+
+  foreach ( const QgsRelation::FieldPair& fieldPair, mFieldPairs )
+  {
+    conditions << QString( "\"%1\" = '%2'" ).arg( fieldPair.referencingField(), feature.attribute( fieldPair.referencedField() ).toString() );
+  }
+
+  QgsFeatureRequest myRequest;
+
+  QgsDebugMsg( QString( "Filter conditions: '%1'" ).arg( conditions.join( " AND " ) ) );
+
+  myRequest.setFilterExpression( conditions.join( " AND " ) );
+
+  return myRequest;
+}
+
 QString QgsRelation::name() const
 {
   return mRelationName;

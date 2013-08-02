@@ -16,6 +16,12 @@
  ***************************************************************************/
 
 
+#include <editorwidgetsv2/qgseditorwidgetfactory.h>
+#include <editorwidgetsv2/qgseditorwidgetregistry.h>
+#include <editorwidgetsv2/qgseditorwidgetwrapper.h>
+
+#include <qgsattributedialog.h>
+#include <qgsattributeeditorcontext.h>
 #include "qgsattributeeditor.h"
 #include <qgscategorizedsymbolrendererv2.h>
 #include <qgscolorbutton.h>
@@ -26,13 +32,10 @@
 #include <qgslonglongvalidator.h>
 #include <qgsmaplayerregistry.h>
 #include <qgsnetworkaccessmanager.h>
+#include <qgsrelationeditor.h>
 #include <qgsrelationmanager.h>
-#include <qgsattributedialog.h>
-#include <qgsvectorlayer.h>
 #include <qgsvectordataprovider.h>
-#include <editorwidgetsv2/qgseditorwidgetwrapper.h>
-#include <editorwidgetsv2/qgseditorwidgetfactory.h>
-#include <editorwidgetsv2/qgseditorwidgetregistry.h>
+#include <qgsvectorlayer.h>
 
 #include <QScrollArea>
 #include <QPushButton>
@@ -271,11 +274,21 @@ QListWidget *QgsAttributeEditor::listWidget( QWidget *editor, QWidget *parent )
 
 QWidget *QgsAttributeEditor::createAttributeEditor( QWidget *parent, QWidget *editor, QgsVectorLayer *vl, int idx, const QVariant &value )
 {
-  QMap<int, QWidget*> dummyProxyWidgets;
-  return createAttributeEditor( parent, editor, vl, idx, value, dummyProxyWidgets );
+  QgsAttributeEditorContext context;
+  context.addProxyWidgets( vl, QMap<int, QWidget*>() );
+
+  return createAttributeEditor( parent, editor, vl, idx, value, context );
 }
 
 QWidget *QgsAttributeEditor::createAttributeEditor( QWidget *parent, QWidget *editor, QgsVectorLayer *vl, int idx, const QVariant &value, QMap<int, QWidget*> &proxyWidgets )
+{
+  QgsAttributeEditorContext context;
+  context.addProxyWidgets( vl, proxyWidgets );
+
+  return createAttributeEditor( parent, editor, vl, idx, value, context );
+}
+
+QWidget* QgsAttributeEditor::createAttributeEditor( QWidget* parent, QWidget* editor, QgsVectorLayer* vl, int idx, const QVariant& value, QgsAttributeEditorContext context )
 {
   if ( !vl )
     return 0;
@@ -676,11 +689,10 @@ QWidget *QgsAttributeEditor::createAttributeEditor( QWidget *parent, QWidget *ed
 
         QgsStringRelay* relay = NULL;
 
-        QMap<int, QWidget*>::const_iterator it = proxyWidgets.find( idx );
-        if ( it != proxyWidgets.end() )
+        QWidget* pwdg = context.proxyWidget( vl, idx );
+        if ( pwdg )
         {
-          QObject* obj = qvariant_cast<QObject*>(( *it )->property( "QgisAttrEditProxy" ) );
-          relay = qobject_cast<QgsStringRelay*>( obj );
+          relay = pwdg->property( "QgisAttrEditProxy" ).value<QgsStringRelay*>();
         }
         else
         {
@@ -715,7 +727,7 @@ QWidget *QgsAttributeEditor::createAttributeEditor( QWidget *parent, QWidget *ed
         if ( !cb || cb->isEditable() )
         {
           myWidget->setProperty( "QgisAttrEditSlot", QVariant( QByteArray( wSlot ) ) );
-          myWidget->setProperty( "QgisAttrEditProxy", QVariant( QMetaType::QObjectStar, &relay ) );
+          myWidget->setProperty( "QgisAttrEditProxy", QVariant::fromValue<QgsStringRelay*>( relay ) );
         }
       }
     }
@@ -911,8 +923,7 @@ QWidget *QgsAttributeEditor::createAttributeEditor( QWidget *parent, QWidget *ed
     break;
   }
 
-  QMap<int, QWidget*>::const_iterator it = proxyWidgets.find( idx );
-  if ( it != proxyWidgets.end() )
+  if ( context.proxyWidget( vl, idx ) )
   {
     if ( !synchronized )
     {
@@ -921,7 +932,7 @@ QWidget *QgsAttributeEditor::createAttributeEditor( QWidget *parent, QWidget *ed
   }
   else
   {
-    proxyWidgets.insert( idx, myWidget );
+    context.addProxyWidget( vl, idx, myWidget );
   }
 
   setValue( myWidget, vl, idx, value );
@@ -1371,7 +1382,7 @@ bool QgsAttributeEditor::setValue( QWidget *editor, QgsVectorLayer *vl, int idx,
   return true;
 }
 
-QWidget* QgsAttributeEditor::createWidgetFromDef( const QgsAttributeEditorElement* widgetDef, QWidget* parent, QgsVectorLayer* vl, QgsAttributes &attrs, QMap<int, QWidget*> &proxyWidgets, bool createGroupBox )
+QWidget* QgsAttributeEditor::createWidgetFromDef( const QgsAttributeEditorElement* widgetDef, QWidget* parent, QgsVectorLayer* vl, const QgsFeature& feat, QgsAttributeEditorContext context, QString& labelText, bool& labelOnTop )
 {
   QWidget *newWidget = 0;
 
@@ -1381,7 +1392,7 @@ QWidget* QgsAttributeEditor::createWidgetFromDef( const QgsAttributeEditorElemen
     {
       const QgsAttributeEditorField* fieldDef = dynamic_cast<const QgsAttributeEditorField*>( widgetDef );
       int fldIdx = fieldDef->idx();
-      newWidget = createAttributeEditor( parent, 0, vl, fldIdx, attrs.value( fldIdx, QVariant() ), proxyWidgets );
+      newWidget = createAttributeEditor( parent, 0, vl, fldIdx, feat.attributes().value( fldIdx, QVariant() ), context );
 
       if ( newWidget )
       {
@@ -1416,7 +1427,18 @@ QWidget* QgsAttributeEditor::createWidgetFromDef( const QgsAttributeEditorElemen
           }
         }
       }
+      labelOnTop = vl->labelOnTop( fieldDef->idx() );
+      labelText = vl->attributeDisplayName( fieldDef->idx() );
+      break;
+    }
 
+    case QgsAttributeEditorElement::AeTypeRelation:
+    {
+      const QgsAttributeEditorRelation* relDef = dynamic_cast<const QgsAttributeEditorRelation*>( widgetDef );
+
+      newWidget = QgsRelationEditorWidget::createRelationEditor( relDef->relation(), feat, context );
+      labelText = QString::null;
+      labelOnTop = true;
       break;
     }
 
@@ -1425,7 +1447,7 @@ QWidget* QgsAttributeEditor::createWidgetFromDef( const QgsAttributeEditorElemen
       const QgsAttributeEditorContainer* container = dynamic_cast<const QgsAttributeEditorContainer*>( widgetDef );
       QWidget* myContainer;
 
-      if ( createGroupBox )
+      if ( container->isGroupBox() )
       {
         QGroupBox* groupBox = new QGroupBox( parent );
         groupBox->setTitle( container->name() );
@@ -1452,26 +1474,23 @@ QWidget* QgsAttributeEditor::createWidgetFromDef( const QgsAttributeEditorElemen
 
       QList<QgsAttributeEditorElement*> children = container->children();
 
-      for ( QList<QgsAttributeEditorElement*>::const_iterator it = children.begin(); it != children.end(); ++it )
+      Q_FOREACH( QgsAttributeEditorElement* childDef, children )
       {
-        QgsAttributeEditorElement* childDef = *it;
-        QWidget* editor = createWidgetFromDef( childDef, myContainer, vl, attrs, proxyWidgets, true );
+        QString labelText;
+        bool labelOnTop;
+        QWidget* editor = createWidgetFromDef( childDef, myContainer, vl, feat, context, labelText, labelOnTop );
 
-        if ( childDef->type() == QgsAttributeEditorElement::AeTypeContainer )
+        if ( labelText == QString::null )
         {
           gbLayout->addWidget( editor, index, 0, 1, 2 );
         }
         else
         {
-          const QgsAttributeEditorField* fieldDef = dynamic_cast<const QgsAttributeEditorField*>( childDef );
-
-          //show attribute alias if available
-          QString myFieldName = vl->attributeDisplayName( fieldDef->idx() );
-          QLabel *mypLabel = new QLabel( myFieldName, myContainer );
-
-          if ( vl->labelOnTop( fieldDef->idx() ) )
+          QLabel* mypLabel = new QLabel( labelText );
+          if ( labelOnTop )
           {
-            gbLayout->addWidget( mypLabel, index++, 0, 1, 2 );
+            gbLayout->addWidget( mypLabel, index, 0, 1, 2 );
+            ++index;
             gbLayout->addWidget( editor, index, 0, 1 , 2 );
           }
           else
@@ -1485,6 +1504,8 @@ QWidget* QgsAttributeEditor::createWidgetFromDef( const QgsAttributeEditorElemen
       }
       gbLayout->addItem( new QSpacerItem( 0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding ), index , 0 );
 
+      labelText = QString::null;
+      labelOnTop = true;
       break;
     }
 

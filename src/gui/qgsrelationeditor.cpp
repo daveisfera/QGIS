@@ -16,21 +16,22 @@
 #include "qgsrelationeditor.h"
 
 #include "attributetable/qgsdualview.h"
+
 #include "qgsdistancearea.h"
 #include "qgsexpression.h"
 #include "qgsfeature.h"
+#include "qgsfeatureselectiondlg.h"
 #include "qgsgenericfeatureselectionmgr.h"
 #include "qgsrelation.h"
 #include "qgsvectorlayertools.h"
-#include "qgsfeatureselectiondlg.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
 
-QgsRelationEditorWidget::QgsRelationEditorWidget( QgsVectorLayerTools* vlTools, const QgsRelation& relation, QgsFeature* feature, QWidget* parent )
+QgsRelationEditorWidget::QgsRelationEditorWidget( const QgsRelation& relation, const QgsFeature& feature, QgsAttributeEditorContext context, QWidget* parent )
     : QgsCollapsibleGroupBox( parent )
     , mDualView( NULL )
-    , mVlTools( vlTools )
+    , mEditorContext( context )
     , mRelation( relation )
     , mFeature( feature )
 {
@@ -44,9 +45,9 @@ QgsRelationEditorWidget::QgsRelationEditorWidget( QgsVectorLayerTools* vlTools, 
   referencingLayerEditingToggled();
 }
 
-QgsRelationEditorWidget* QgsRelationEditorWidget::createRelationEditor( const QgsRelation& relation, QgsFeature* feature, QgsVectorLayerTools* vlTools, QWidget* parent )
+QgsRelationEditorWidget* QgsRelationEditorWidget::createRelationEditor( const QgsRelation& relation, const QgsFeature& feature,  QgsAttributeEditorContext context, QWidget* parent )
 {
-  QgsRelationEditorWidget* editor = new QgsRelationEditorWidget( vlTools, relation, feature, parent );
+  QgsRelationEditorWidget* editor = new QgsRelationEditorWidget( relation, feature, context, parent );
 
   QgsDualView* dualView = new QgsDualView( editor );
   editor->mFeatureSelectionMgr = new QgsGenericFeatureSelectionMgr( dualView );
@@ -54,21 +55,9 @@ QgsRelationEditorWidget* QgsRelationEditorWidget::createRelationEditor( const Qg
 
   editor->mBrowserWidget->layout()->addWidget( dualView );
 
-  QStringList conditions;
+  QgsFeatureRequest myRequest = relation.getRelatedFeaturesRequest( feature );
 
-  foreach ( QgsRelation::FieldPair fieldPair, relation.fieldPairs() )
-  {
-    conditions << QString( "\"%1\" = '%2'" ).arg( fieldPair.referencingField(), feature->attribute( fieldPair.referencedField() ).toString() );
-  }
-
-  QgsFeatureRequest myRequest;
-
-  QgsDebugMsg( QString( "Filter conditions: '%1'" ).arg( conditions.join( " AND " ) ) );
-
-  myRequest.setFilterExpression( conditions.join( " AND " ) );
-
-  // TODO: Proper QgsDistanceArea, proper mapcanvas
-  dualView->init( relation.referencingLayer(), NULL, QgsDistanceArea(), myRequest );
+  dualView->init( relation.referencingLayer(), NULL, myRequest, context );
 
   editor->mDualView = dualView;
 
@@ -102,10 +91,10 @@ void QgsRelationEditorWidget::on_mPbnNew_clicked()
 
   foreach ( QgsRelation::FieldPair fieldPair, mRelation.fieldPairs() )
   {
-    keyAttrs.insert( fields.indexFromName( fieldPair.referencingField() ), mFeature->attribute( fieldPair.referencedField() ) );
+    keyAttrs.insert( fields.indexFromName( fieldPair.referencingField() ), mFeature.attribute( fieldPair.referencedField() ) );
   }
 
-  mVlTools->addFeature( mDualView->masterModel()->layer(), keyAttrs );
+  mEditorContext.vectorLayerTools()->addFeature( mDualView->masterModel()->layer(), keyAttrs );
 }
 
 void QgsRelationEditorWidget::on_mPbnLink_clicked()
@@ -118,8 +107,8 @@ void QgsRelationEditorWidget::on_mPbnLink_clicked()
     foreach ( const QgsRelation::FieldPair fieldPair, mRelation.fieldPairs() )
     {
       int idx = mRelation.referencingLayer()->fieldNameIndex( fieldPair.referencingField() );
-      QVariant val = mFeature->attribute( fieldPair.referencedField() );
-      keys.insert( idx, val  );
+      QVariant val = mFeature.attribute( fieldPair.referencedField() );
+      keys.insert( idx, val );
     }
 
     foreach ( QgsFeatureId fid, selectionDlg.selectedFeatures() )

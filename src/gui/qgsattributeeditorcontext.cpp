@@ -1,5 +1,5 @@
 /***************************************************************************
-    qgsattributedialogcontext.cpp
+    qgsattributeeditorcontext.cpp
      --------------------------------------
     Date                 : 30.7.2013
     Copyright            : (C) 2013 Matthias Kuhn
@@ -13,9 +13,25 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "qgsattributedialogcontext.h"
+#include "qgsattributeeditorcontext.h"
 
-QgsAttributeDialogContext::QgsAttributeDialogContext()
+QgsAttributeEditorContext::QgsAttributeEditorContext()
+    : mVectorLayerTools( NULL )
 {
 
+}
+
+QWidget*QgsAttributeEditorContext::proxyWidget( QgsVectorLayer* vl, int fieldIdx )
+{
+  return mProxyWidgets.value( vl ).value( fieldIdx );
+}
+
+void QgsAttributeEditorContext::addProxyWidgets( QgsVectorLayer* vl, QMap<int, QWidget*> proxyWidgets )
+{
+  mProxyWidgets[ vl ].unite( proxyWidgets );
+}
+
+void QgsAttributeEditorContext::addProxyWidget( QgsVectorLayer* vl, int idx, QWidget* widget )
+{
+  mProxyWidgets[ vl ].insert( idx, widget );
 }

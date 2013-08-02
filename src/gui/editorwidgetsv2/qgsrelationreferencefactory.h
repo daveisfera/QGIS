@@ -16,13 +16,13 @@
 #ifndef QGSRELATIONREFERENCEFACTORY_H
 #define QGSRELATIONREFERENCEFACTORY_H
 
-#include "qgsvectorlayertools.h"
+#include "qgsattributeeditorcontext.h"
 #include "qgseditorwidgetfactory.h"
 
 class GUI_EXPORT QgsRelationReferenceFactory : public QgsEditorWidgetFactory
 {
   public:
-    QgsRelationReferenceFactory( QgsVectorLayerTools* featureAction, QString name );
+    QgsRelationReferenceFactory( QgsAttributeEditorContext context, QString name );
 
     /**
      * Override this in your implementation.
@@ -73,7 +73,7 @@ class GUI_EXPORT QgsRelationReferenceFactory : public QgsEditorWidgetFactory
     virtual void writeConfig( const QgsEditorWidgetConfig& config, QDomElement& configElement, const QDomDocument& doc, const QgsVectorLayer* layer, int fieldIdx );
 
   private:
-    QgsVectorLayerTools* mVlTools;
+    QgsAttributeEditorContext mEditorContext;
 };
 
 #endif // QGSRELATIONREFERENCEFACTORY_H

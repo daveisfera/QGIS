@@ -16,6 +16,7 @@
 #ifndef QGSRELATIONREFERENCEWIDGET_H
 #define QGSRELATIONREFERENCEWIDGET_H
 
+#include "qgsattributeeditorcontext.h"
 #include "qgseditorwidgetwrapper.h"
 #include "qgsfeature.h"
 
@@ -30,7 +31,7 @@ class GUI_EXPORT QgsRelationReferenceWidget : public QgsEditorWidgetWrapper
 {
     Q_OBJECT
   public:
-    explicit QgsRelationReferenceWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QgsVectorLayerTools* featureAction, QWidget* parent = 0 );
+    explicit QgsRelationReferenceWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QgsAttributeEditorContext context, QWidget* parent = 0 );
     virtual QWidget* createWidget( QWidget* parent );
     virtual void initWidget( QWidget* editor );
     virtual QVariant value();
@@ -56,7 +57,7 @@ class GUI_EXPORT QgsRelationReferenceWidget : public QgsEditorWidgetWrapper
     QVariant mCurrentValue;
     QgsAttributeDialog* mAttributeDialog;
     QHash<QgsFeatureId, QVariant> mFidFkMap; // Mapping from feature id => foreign key
-    QgsVectorLayerTools* mVlTools;
+    QgsAttributeEditorContext mEditorContext;
 };
 
 #endif // QGSRELATIONREFERENCEWIDGET_H

@@ -264,7 +264,7 @@ void QgsFieldsProperties::loadRelations()
     mRelationsList->insertRow( idx );
 
     QTableWidgetItem* dataItem = new QTableWidgetItem( relation.name() );
-    DesignerTreeItemData itemData( DesignerTreeItemData::Field, QString( "relation.%1" ).arg( relation.name() ) );
+    DesignerTreeItemData itemData( DesignerTreeItemData::Relation, QString( "%1" ).arg( relation.name() ) );
     dataItem->setData( DesignerTreeRole, itemData.asQVariant() );
     mRelationsList->setItem( idx, RelIdCol, dataItem );
     mRelationsList->setItem( idx, RelLayerCol, new QTableWidgetItem( relation.referencingLayer()->name() ) );
@@ -722,21 +722,34 @@ QgsAttributeEditorElement* QgsFieldsProperties::createAttributeEditorWidget( QTr
   QgsAttributeEditorElement* widgetDef;
 
   DesignerTreeItemData itemData = item->data( 0, DesignerTreeRole ).value<DesignerTreeItemData>();
-  if ( itemData.type() == DesignerTreeItemData::Field )
+  switch ( itemData.type() )
   {
-    int idx = mLayer->fieldNameIndex( itemData.name() );
-    widgetDef = new QgsAttributeEditorField( itemData.name(), idx, parent );
-  }
-  else
-  {
-    QgsAttributeEditorContainer* container = new QgsAttributeEditorContainer( itemData.name(), parent );
-
-    for ( int t = 0; t < item->childCount(); t++ )
+    case DesignerTreeItemData::Field:
     {
-      container->addChildElement( createAttributeEditorWidget( item->child( t ), container ) );
+      int idx = mLayer->fieldNameIndex( itemData.name() );
+      widgetDef = new QgsAttributeEditorField( itemData.name(), idx, parent );
+      break;
     }
 
-    widgetDef = container;
+    case DesignerTreeItemData::Relation:
+    {
+      QgsRelation relation = QgsRelationManager::instance()->relation( itemData.name() );
+      widgetDef = new QgsAttributeEditorRelation( itemData.name(), relation, parent );
+      break;
+    }
+
+    case DesignerTreeItemData::Container:
+    {
+      QgsAttributeEditorContainer* container = new QgsAttributeEditorContainer( itemData.name(), parent );
+
+      for ( int t = 0; t < item->childCount(); t++ )
+      {
+        container->addChildElement( createAttributeEditorWidget( item->child( t ), container ) );
+      }
+
+      widgetDef = container;
+      break;
+    }
   }
 
   return widgetDef;
@@ -859,7 +872,7 @@ void QgsFieldsProperties::apply()
     mLayer->addAttributeEditorWidget( createAttributeEditorWidget( tabItem, mLayer ) );
   }
 
-  mLayer->setEditorLayout(( QgsVectorLayer::EditorLayout )mEditorLayoutComboBox->currentIndex() );
+  mLayer->setEditorLayout(( QgsVectorLayer::EditorLayout ) mEditorLayoutComboBox->currentIndex() );
   mLayer->setEditForm( leEditForm->text() );
   mLayer->setEditFormInit( leEditFormInit->text() );
   mLayer->setFeatureFormSuppress(( QgsVectorLayer::FeatureFormSuppress )mFormSuppressCmbBx->currentIndex() );
@@ -956,6 +969,23 @@ QTreeWidgetItem* QgsFieldsProperties::DesignerTree::addItem( QTreeWidgetItem* pa
   {
     newItem->setFlags( Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled );
     newItem->setBackground( 0 , QBrush( Qt::lightGray ) );
+
+#if 0
+    switch ( data.type() )
+    {
+      case DesignerTreeItemData::Field:
+        newItem->setIcon( 0, QgsApplication::getThemeIcon( "/mFieldIcon.svg" ) );
+        break;
+
+      case DesignerTreeItemData::Relation:
+        newItem->setIcon( 0, QgsApplication::getThemeIcon( "/mRelationIcon.svg" ) );
+        break;
+
+      case DesignerTreeItemData::Container:
+        newItem->setIcon( 0, QgsApplication::getThemeIcon( "/mContainerIcon.svg" ) );
+        break;
+    }
+#endif
   }
   newItem->setData( 0 , DesignerTreeRole, data.asQVariant() );
   parent->addChild( newItem );

@@ -27,18 +27,14 @@ class QgsVectorLayer;
 
 /**
  * This class manages a set of relations between layers.
- *
- * @note This class is a singleton. Call QgsRelationManager::instance() to get access to the instance.
  */
 class CORE_EXPORT QgsRelationManager : public QObject
 {
     Q_OBJECT
 
-  private:
+  public:
     explicit QgsRelationManager();
 
-  public:
-    static QgsRelationManager* instance();
     void setRelations( const QList<QgsRelation>& relations );
     const QMap<QString, QgsRelation>& relations();
     void addRelation( const QgsRelation& relation );
@@ -59,7 +55,6 @@ class CORE_EXPORT QgsRelationManager : public QObject
   private:
     /** The references */
     QMap<QString, QgsRelation> mRelations;
-    static QgsRelationManager* sInstance;
 };
 
 #endif // QGSRELATIONMANAGER_H

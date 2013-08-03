@@ -178,7 +178,7 @@ QgsVectorLayer::QgsVectorLayer( QString vectorLayerPath,
 
   connect( this, SIGNAL( selectionChanged( QgsFeatureIds, QgsFeatureIds, bool ) ), this, SIGNAL( selectionChanged() ) );
 
-  connect( QgsRelationManager::instance(), SIGNAL( relationsLoaded() ), this, SLOT( onRelationsLoaded() ) );
+  connect( QgsProject::instance()->relationManager(), SIGNAL( relationsLoaded() ), this, SLOT( onRelationsLoaded() ) );
 } // QgsVectorLayer ctor
 
 
@@ -3847,7 +3847,7 @@ void QgsVectorLayer::onRelationsLoaded()
       Q_FOREACH( QgsAttributeEditorElement* relElem, relations )
       {
         QgsAttributeEditorRelation* rel = dynamic_cast< QgsAttributeEditorRelation* >( relElem );
-        rel->init( QgsRelationManager::instance() );
+        rel->init( QgsProject::instance()->relationManager() );
       }
     }
   }
@@ -3876,7 +3876,7 @@ QgsVectorLayer::ValueRelationData &QgsVectorLayer::valueRelation( int idx )
 
 QList<QgsRelation> QgsVectorLayer::referencingRelations( int idx )
 {
-  return QgsRelationManager::instance()->referencingRelations( this, idx );
+  return QgsProject::instance()->relationManager()->referencingRelations( this, idx );
 }
 
 QList<QgsAttributeEditorElement*> &QgsVectorLayer::attributeEditorElements()

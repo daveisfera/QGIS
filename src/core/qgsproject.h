@@ -41,6 +41,7 @@ class QDomNode;
 
 class QgsMapLayer;
 class QgsProjectBadLayerHandler;
+class QgsRelationManager;
 class QgsVectorLayer;
 
 /** \ingroup core
@@ -315,6 +316,8 @@ class CORE_EXPORT QgsProject : public QObject
       @note added in version 2.0 */
     QString homePath() const;
 
+    QgsRelationManager* relationManager();
+
   protected:
 
     /** Set error message from read/write operation
@@ -397,6 +400,8 @@ class CORE_EXPORT QgsProject : public QObject
 
     void snapSettings( QStringList& layerIdList, QStringList& enabledList, QStringList& snapTypeList, QStringList& snapUnitList, QStringList& toleranceUnitList,
                        QStringList& avoidIntersectionList ) const;
+
+    QgsRelationManager* mRelationManager;
 
 }; // QgsProject
 

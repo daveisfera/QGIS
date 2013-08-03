@@ -20,22 +20,12 @@
 #include "qgsproject.h"
 #include "qgsvectorlayer.h"
 
-QgsRelationManager* QgsRelationManager::sInstance = NULL;
-
 QgsRelationManager::QgsRelationManager() :
     QObject( QgsApplication::instance() )
 {
   QgsProject* project = QgsProject::instance();
   connect( project, SIGNAL( readProject( const QDomDocument& ) ), SLOT( readProject( const QDomDocument& ) ) );
   connect( project, SIGNAL( writeProject( QDomDocument& ) ), SLOT( writeProject( QDomDocument& ) ) );
-}
-
-QgsRelationManager* QgsRelationManager::instance()
-{
-  if ( !sInstance )
-    sInstance = new QgsRelationManager();
-
-  return sInstance;
 }
 
 void QgsRelationManager::setRelations( const QList<QgsRelation>& relations )

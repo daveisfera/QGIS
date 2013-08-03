@@ -517,10 +517,6 @@ QgisApp::QgisApp( QSplashScreen *splash, bool restorePlugins, QWidget * parent, 
 
   mMapLayerOrder = new QgsLayerOrder( mMapLegend, this, "theMapLayerOrder" );
 
-  // Make sure the relation manager gets created and connects itself properly within
-  // the QGIS ecosystem
-  QgsRelationManager::instance();
-
   // create undo widget
   mUndoWidget = new QgsUndoWidget( NULL, mMapCanvas );
   mUndoWidget->setObjectName( "Undo" );
@@ -2140,11 +2136,6 @@ QgsMapCanvas *QgisApp::mapCanvas()
 {
   Q_ASSERT( mMapCanvas );
   return mMapCanvas;
-}
-
-QgsRelationManager *QgisApp::relationManager()
-{
-  return QgsRelationManager::instance();
 }
 
 QgsPalLabeling *QgisApp::palLabeling()

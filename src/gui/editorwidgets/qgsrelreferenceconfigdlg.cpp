@@ -17,11 +17,12 @@
 
 #include "qgseditorwidgetfactory.h"
 #include "qgsfield.h"
+#include "qgsproject.h"
 #include "qgsrelationmanager.h"
 #include "qgsvectorlayer.h"
 
 QgsRelReferenceConfigDlg::QgsRelReferenceConfigDlg( QgsVectorLayer* vl, int fieldIdx, QWidget* parent )
-  : QgsEditorConfigWidget( vl, fieldIdx, parent )
+    : QgsEditorConfigWidget( vl, fieldIdx, parent )
 {
   setupUi( this );
 
@@ -57,7 +58,7 @@ void QgsRelReferenceConfigDlg::setConfig( const QMap<QString, QVariant>& config 
 void QgsRelReferenceConfigDlg::on_mComboRelation_indexChanged( int idx )
 {
   QString relName = mComboRelation->itemData( idx ).toString();
-  QgsRelation rel = QgsRelationManager::instance()->relation( relName );
+  QgsRelation rel = QgsProject::instance()->relationManager()->relation( relName );
 
   QgsVectorLayer* referencedLayer = rel.referencedLayer();
   if ( referencedLayer )

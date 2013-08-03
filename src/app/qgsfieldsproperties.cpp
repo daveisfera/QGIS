@@ -13,19 +13,20 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "qgsfieldsproperties.h"
-#include "qgsvectorlayer.h"
-#include "qgsapplication.h"
-#include "qgslogger.h"
-#include "qgsmaplayerregistry.h"
-#include "qgsattributetypedialog.h"
-#include "qgsaddattrdialog.h"
-#include "qgsfieldcalculator.h"
-#include "qgsvectordataprovider.h"
-#include "qgsaddtaborgroup.h"
-#include "qgsrelationmanager.h"
 #include "editorwidgets/qgseditorwidgetfactory.h"
 #include "editorwidgets/qgseditorwidgetregistry.h"
+#include "qgsaddattrdialog.h"
+#include "qgsaddtaborgroup.h"
+#include "qgsapplication.h"
+#include "qgsattributetypedialog.h"
+#include "qgsfieldcalculator.h"
+#include "qgsfieldsproperties.h"
+#include "qgslogger.h"
+#include "qgsmaplayerregistry.h"
+#include "qgsproject.h"
+#include "qgsrelationmanager.h"
+#include "qgsvectordataprovider.h"
+#include "qgsvectorlayer.h"
 
 #include <QTreeWidgetItem>
 #include <QWidget>
@@ -255,7 +256,7 @@ void QgsFieldsProperties::loadRelations()
 {
   mRelationsList->setRowCount( 0 );
 
-  QList<QgsRelation> relations = QgsRelationManager::instance()->referencedRelations( mLayer );
+  QList<QgsRelation> relations = QgsProject::instance()->relationManager()->referencedRelations( mLayer );
 
   int idx = 0;
 
@@ -733,7 +734,7 @@ QgsAttributeEditorElement* QgsFieldsProperties::createAttributeEditorWidget( QTr
 
     case DesignerTreeItemData::Relation:
     {
-      QgsRelation relation = QgsRelationManager::instance()->relation( itemData.name() );
+      QgsRelation relation = QgsProject::instance()->relationManager()->relation( itemData.name() );
       widgetDef = new QgsAttributeEditorRelation( itemData.name(), relation, parent );
       break;
     }

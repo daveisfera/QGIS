@@ -20,18 +20,19 @@
 #include <deque>
 #include <memory>
 
-#include "qgslogger.h"
-#include "qgsrectangle.h"
-#include "qgsvectorlayer.h"
-#include "qgsrasterlayer.h"
-#include "qgsmaplayerregistry.h"
+#include "qgsdatasourceuri.h"
 #include "qgsexception.h"
-#include "qgsprojectproperty.h"
-#include "qgsprojectfiletransform.h"
-#include "qgsprojectversion.h"
+#include "qgslogger.h"
+#include "qgsmaplayerregistry.h"
 #include "qgspluginlayer.h"
 #include "qgspluginlayerregistry.h"
-#include "qgsdatasourceuri.h"
+#include "qgsprojectfiletransform.h"
+#include "qgsprojectproperty.h"
+#include "qgsprojectversion.h"
+#include "qgsrasterlayer.h"
+#include "qgsrectangle.h"
+#include "qgsrelationmanager.h"
+#include "qgsvectorlayer.h"
 
 #include <QApplication>
 #include <QFileInfo>
@@ -342,6 +343,7 @@ QgsProject::QgsProject()
   // XXX writeEntry() makes the project dirty, but it doesn't make sense
   // for a new project to be dirty, so let's clean it up
   dirty( false );
+  mRelationManager = new QgsRelationManager();
 } // QgsProject ctor
 
 
@@ -349,6 +351,7 @@ QgsProject::QgsProject()
 QgsProject::~QgsProject()
 {
   delete mBadLayerHandler;
+  delete mRelationManager;
 
   // note that std::auto_ptr automatically deletes imp_ when it's destroyed
 } // QgsProject dtor
@@ -1799,4 +1802,9 @@ QString QgsProject::homePath() const
     return QString::null;
 
   return pfi.canonicalPath();
+}
+
+QgsRelationManager*QgsProject::relationManager()
+{
+  return mRelationManager;
 }

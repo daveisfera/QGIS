@@ -446,11 +446,11 @@ QgsProjectProperties::QgsProjectProperties( QgsMapCanvas* mapCanvas, QWidget *pa
   }
 
   // Initialize relation manager
-  mRelationManagerDlg = new QgsRelationManagerDialog( QgisApp::instance()->relationManager(), mTabRelations );
+  mRelationManagerDlg = new QgsRelationManagerDialog( QgsProject::instance()->relationManager(), mTabRelations );
   mTabRelations->layout()->addWidget( mRelationManagerDlg );
 
   QList<QgsVectorLayer*> vectorLayers;
-  foreach( QgsMapLayer* mapLayer, mapLayers.values() )
+  foreach ( QgsMapLayer* mapLayer, mapLayers.values() )
   {
     if ( QgsMapLayer::VectorLayer == mapLayer->type() )
     {
@@ -811,7 +811,7 @@ void QgsProjectProperties::apply()
   }
   QgsProject::instance()->writeEntry( "Macros", "/pythonCode", pythonMacros );
 
-  QgisApp::instance()->relationManager()->setRelations( mRelationManagerDlg->relations() );
+  QgsProject::instance()->relationManager()->setRelations( mRelationManagerDlg->relations() );
 
   //todo XXX set canvas color
   emit refresh();

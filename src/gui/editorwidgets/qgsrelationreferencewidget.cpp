@@ -23,6 +23,7 @@
 #include "qgseditorwidgetfactory.h"
 #include "qgsexpression.h"
 #include "qgsfield.h"
+#include "qgsproject.h"
 #include "qgsrelreferenceconfigdlg.h"
 #include "qgsrelationmanager.h"
 #include "qgsvectorlayer.h"
@@ -72,7 +73,7 @@ void QgsRelationReferenceWidget::initWidget( QWidget* editor )
 
   layout->addItem( new QSpacerItem( 0, 0, QSizePolicy::Expanding ), 0, 2, 1, 1 );
 
-  QgsRelation relation = QgsRelationManager::instance()->relation( config( "Relation" ).toString() );
+  QgsRelation relation = QgsProject::instance()->relationManager()->relation( config( "Relation" ).toString() );
 
   if ( relation.isValid() )
   {

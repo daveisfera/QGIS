@@ -254,7 +254,7 @@ QgsAttributeDialog::QgsAttributeDialog( QgsVectorLayer* vl, QgsFeature* thepFeat
       }
     }
 
-    QList<QgsRelation> relations = QgsRelationManager::instance()->referencedRelations( vl );
+    QList<QgsRelation> relations = QgsProject::instance()->relationManager()->referencedRelations( vl );
 
     foreach ( const QgsRelation& relation, relations )
     {

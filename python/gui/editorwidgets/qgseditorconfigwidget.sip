@@ -1,7 +1,7 @@
 /***************************************************************************
-    qgseditorwidgetregistry.sip
+    qgseditorconfigwidget.sip
      --------------------------------------
-    Date                 : 21.4.2013
+    Date                 : 24.4.2013
     Copyright            : (C) 2013 Matthias Kuhn
     Email                : matthias dot kuhn at gmx dot ch
  ***************************************************************************
@@ -13,20 +13,16 @@
  *                                                                         *
  ***************************************************************************/
 
-/**
- * This class manages all known edit widget factories
- */
-class QgsEditorWidgetRegistry : public QObject {
+class QgsEditorConfigWidget : public QWidget
+{
 %TypeHeaderCode
-#include <editorwidgetsv2/qgseditorwidgetregistry.h>
+#include <editorwidgets/qgseditorconfigwidget.h>
 %End
 
   public:
-    static QgsEditorWidgetRegistry* instance();
-    void registerWidget( const QString& widgetType, QgsEditorWidgetFactory* widgetFactory /Transfer/ );
-    QgsEditorWidgetWrapper* create( const QString& widgetType, QgsVectorLayer* vl, int fieldIdx, const QgsEditorWidgetConfig& config, QWidget* editor = NULL, QWidget* parent = NULL );
-    QgsEditorConfigWidget* createConfigWidget( const QString& widgetId, QgsVectorLayer* vl, int fieldIdx, QWidget* parent );
+    explicit QgsEditorConfigWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* parent );
 
-
-    const QMap<QString, QgsEditorWidgetFactory*> factories();
+    virtual QMap<QString, QVariant> config() = 0;
+    virtual void setConfig( const QMap<QString, QVariant>& config ) = 0;
 };
+

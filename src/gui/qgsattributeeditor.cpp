@@ -16,9 +16,9 @@
  ***************************************************************************/
 
 
-#include <editorwidgetsv2/qgseditorwidgetfactory.h>
-#include <editorwidgetsv2/qgseditorwidgetregistry.h>
-#include <editorwidgetsv2/qgseditorwidgetwrapper.h>
+#include <editorwidgets/qgseditorwidgetfactory.h>
+#include <editorwidgets/qgseditorwidgetregistry.h>
+#include <editorwidgets/qgseditorwidgetwrapper.h>
 
 #include <qgsattributedialog.h>
 #include <qgsattributeeditorcontext.h>

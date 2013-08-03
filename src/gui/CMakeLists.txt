@@ -48,13 +48,13 @@ attributetable/qgsfeaturelistviewdelegate.cpp
 attributetable/qgsfeatureselectionmodel.cpp
 attributetable/qgsdualview.cpp
 
-editorwidgetsv2/qgseditorwidgetwrapper.cpp
-editorwidgetsv2/qgsrelationreferencewidget.cpp
-editorwidgetsv2/qgsrelationreferencefactory.cpp
-editorwidgetsv2/qgseditorwidgetfactory.cpp
-editorwidgetsv2/qgseditorwidgetregistry.cpp
-editorwidgetsv2/qgseditorconfigwidget.cpp
-editorwidgetsv2/qgsrelreferenceconfigdlg.cpp
+editorwidgets/qgseditorwidgetwrapper.cpp
+editorwidgets/qgsrelationreferencewidget.cpp
+editorwidgets/qgsrelationreferencefactory.cpp
+editorwidgets/qgseditorwidgetfactory.cpp
+editorwidgets/qgseditorwidgetregistry.cpp
+editorwidgets/qgseditorconfigwidget.cpp
+editorwidgets/qgsrelreferenceconfigdlg.cpp
 
 qgisgui.cpp
 qgisinterface.cpp
@@ -192,11 +192,11 @@ attributetable/qgsfeatureselectionmodel.h
 attributetable/qgsfeaturelistviewdelegate.h
 attributetable/qgsdualview.h
 
-editorwidgetsv2/qgseditorwidgetwrapper.h
-editorwidgetsv2/qgsrelationreferencewidget.h
-editorwidgetsv2/qgseditorwidgetregistry.h
-editorwidgetsv2/qgseditorconfigwidget.h
-editorwidgetsv2/qgsrelreferenceconfigdlg.h
+editorwidgets/qgseditorwidgetwrapper.h
+editorwidgets/qgsrelationreferencewidget.h
+editorwidgets/qgseditorwidgetregistry.h
+editorwidgets/qgseditorconfigwidget.h
+editorwidgets/qgsrelreferenceconfigdlg.h
 
 qgisinterface.h
 qgsattributedialog.h
@@ -326,13 +326,13 @@ attributetable/qgsfeaturelistviewdelegate.h
 attributetable/qgsfeatureselectionmodel.h
 attributetable/qgsdualview.h
 
-editorwidgetsv2/qgseditorwidgetwrapper.h
-editorwidgetsv2/qgsrelationreferencewidget.h
-editorwidgetsv2/qgsrelationreferencefactory.h
-editorwidgetsv2/qgseditorwidgetfactory.h
-editorwidgetsv2/qgseditorwidgetregistry.h
-editorwidgetsv2/qgseditorconfigwidget.h
-editorwidgetsv2/qgsrelreferenceconfigdlg.h
+editorwidgets/qgseditorwidgetwrapper.h
+editorwidgets/qgsrelationreferencewidget.h
+editorwidgets/qgsrelationreferencefactory.h
+editorwidgets/qgseditorwidgetfactory.h
+editorwidgets/qgseditorwidgetregistry.h
+editorwidgets/qgseditorconfigwidget.h
+editorwidgets/qgsrelreferenceconfigdlg.h
 
 raster/qgsrasterrendererwidget.h
 )

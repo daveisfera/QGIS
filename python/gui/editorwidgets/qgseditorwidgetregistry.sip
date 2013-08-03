@@ -1,7 +1,7 @@
 /***************************************************************************
-    qgseditorwidgetwrapper.sip
+    qgseditorwidgetregistry.sip
      --------------------------------------
-    Date                 : 20.4.2013
+    Date                 : 21.4.2013
     Copyright            : (C) 2013 Matthias Kuhn
     Email                : matthias dot kuhn at gmx dot ch
  ***************************************************************************
@@ -13,32 +13,20 @@
  *                                                                         *
  ***************************************************************************/
 
-typedef QMap<QString, QVariant> QgsEditorWidgetConfig;
-
-class QgsEditorWidgetWrapper : public QObject
-{
+/**
+ * This class manages all known edit widget factories
+ */
+class QgsEditorWidgetRegistry : public QObject {
 %TypeHeaderCode
-#include <editorwidgetsv2/qgseditorwidgetwrapper.h>
+#include <editorwidgets/qgseditorwidgetregistry.h>
 %End
 
   public:
-    explicit QgsEditorWidgetWrapper( QgsVectorLayer* vl, int fieldIdx, QWidget* editor = 0, QWidget* parent = 0 );
-    QWidget* widget();
-    virtual void setConfig( QMap<QString, QVariant> config );
-    virtual QVariant value() = 0;
-    QVariant config( QString key );
-    
-    QgsVectorLayer* layer();
-    int field();
+    static QgsEditorWidgetRegistry* instance();
+    void registerWidget( const QString& widgetType, QgsEditorWidgetFactory* widgetFactory /Transfer/ );
+    QgsEditorWidgetWrapper* create( const QString& widgetType, QgsVectorLayer* vl, int fieldIdx, const QgsEditorWidgetConfig& config, QWidget* editor = NULL, QWidget* parent = NULL );
+    QgsEditorConfigWidget* createConfigWidget( const QString& widgetId, QgsVectorLayer* vl, int fieldIdx, QWidget* parent );
 
-  protected:
-    virtual QWidget* createWidget( QWidget* parent ) = 0;
 
-  signals:
-    void valueChanged( const QVariant& value );
-    
-  public slots:
-    virtual void setValue( const QVariant& value ) = 0;
-    virtual void setEnabled( bool enabled );
-
+    const QMap<QString, QgsEditorWidgetFactory*> factories();
 };

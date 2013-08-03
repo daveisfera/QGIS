@@ -1,7 +1,7 @@
 /***************************************************************************
-    qgseditorconfigwidget.sip
+    qgseditorwidgetwrapper.sip
      --------------------------------------
-    Date                 : 24.4.2013
+    Date                 : 20.4.2013
     Copyright            : (C) 2013 Matthias Kuhn
     Email                : matthias dot kuhn at gmx dot ch
  ***************************************************************************
@@ -13,16 +13,32 @@
  *                                                                         *
  ***************************************************************************/
 
-class QgsEditorConfigWidget : public QWidget
+typedef QMap<QString, QVariant> QgsEditorWidgetConfig;
+
+class QgsEditorWidgetWrapper : public QObject
 {
 %TypeHeaderCode
-#include <editorwidgetsv2/qgseditorconfigwidget.h>
+#include <editorwidgets/qgseditorwidgetwrapper.h>
 %End
 
   public:
-    explicit QgsEditorConfigWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* parent );
+    explicit QgsEditorWidgetWrapper( QgsVectorLayer* vl, int fieldIdx, QWidget* editor = 0, QWidget* parent = 0 );
+    QWidget* widget();
+    virtual void setConfig( QMap<QString, QVariant> config );
+    virtual QVariant value() = 0;
+    QVariant config( QString key );
+    
+    QgsVectorLayer* layer();
+    int field();
 
-    virtual QMap<QString, QVariant> config() = 0;
-    virtual void setConfig( const QMap<QString, QVariant>& config ) = 0;
+  protected:
+    virtual QWidget* createWidget( QWidget* parent ) = 0;
+
+  signals:
+    void valueChanged( const QVariant& value );
+    
+  public slots:
+    virtual void setValue( const QVariant& value ) = 0;
+    virtual void setEnabled( bool enabled );
+
 };
-

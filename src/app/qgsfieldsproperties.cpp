@@ -24,8 +24,8 @@
 #include "qgsvectordataprovider.h"
 #include "qgsaddtaborgroup.h"
 #include "qgsrelationmanager.h"
-#include "editorwidgetsv2/qgseditorwidgetfactory.h"
-#include "editorwidgetsv2/qgseditorwidgetregistry.h"
+#include "editorwidgets/qgseditorwidgetfactory.h"
+#include "editorwidgets/qgseditorwidgetregistry.h"
 
 #include <QTreeWidgetItem>
 #include <QWidget>

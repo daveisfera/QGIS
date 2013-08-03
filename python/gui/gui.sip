@@ -129,7 +129,7 @@
 %Include symbology-ng/qgsstylev2exportimportdialog.sip
 %Include symbology-ng/qgssvgselectorwidget.sip
 
-%Include editorwidgetsv2/qgseditorconfigwidget.sip
-%Include editorwidgetsv2/qgseditorwidgetfactory.sip
-%Include editorwidgetsv2/qgseditorwidgetregistry.sip
-%Include editorwidgetsv2/qgseditorwidgetwrapper.sip
+%Include editorwidgets/qgseditorconfigwidget.sip
+%Include editorwidgets/qgseditorwidgetfactory.sip
+%Include editorwidgets/qgseditorwidgetregistry.sip
+%Include editorwidgets/qgseditorwidgetwrapper.sip

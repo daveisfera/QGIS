@@ -16,7 +16,7 @@
  ***************************************************************************/
 #include "qgsattributedialog.h"
 #include "qgsrelationeditor.h"
-#include "editorwidgetsv2/qgseditorwidgetwrapper.h"
+#include "editorwidgets/qgseditorwidgetwrapper.h"
 #include "qgsfield.h"
 #include "qgslogger.h"
 #include "qgsmapcanvas.h"

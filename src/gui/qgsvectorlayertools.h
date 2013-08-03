@@ -24,7 +24,13 @@ class QgsVectorLayer;
 class GUI_EXPORT QgsVectorLayerTools
 {
   public:
+    QgsVectorLayerTools()
+        : test( 4 )
+    {}
+
     virtual bool addFeature( QgsVectorLayer* layer, QgsAttributeMap defaultValues = QgsAttributeMap(), const QgsGeometry& defaultGeometry = QgsGeometry() ) = 0;
+
+    int test;
 };
 
 #endif // QGSVECTORLAYERTOOLS_H

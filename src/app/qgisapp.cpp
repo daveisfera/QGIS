@@ -135,6 +135,7 @@
 #include "qgshtmlannotationitem.h"
 #include "qgsgenericprojectionselector.h"
 #include "qgsgpsinformationwidget.h"
+#include "qgsguivectorlayertools.h"
 #include "qgslabelinggui.h"
 #include "qgslegend.h"
 #include "qgslayerorder.h"
@@ -581,10 +582,11 @@ QgisApp::QgisApp( QSplashScreen *splash, bool restorePlugins, QWidget * parent, 
   mLogDock->setWidget( mLogViewer );
   mLogDock->hide();
 
+  mVectorLayerTools = new QgsGuiVectorLayerTools();
   // Init the editor widget types
   QgsEditorWidgetRegistry* editorWidgetRegistry = QgsEditorWidgetRegistry::instance();
   QgsAttributeEditorContext context;
-  context.setVectorLayerTools( featureAction() );
+  context.setVectorLayerTools( vectorLayerTools() );
   editorWidgetRegistry->registerWidget( "RelationReference", new QgsRelationReferenceFactory( context, tr( "Relation Reference" ) ) );
 
 

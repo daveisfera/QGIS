@@ -21,15 +21,11 @@
 class QgsGuiVectorLayerTools : public QgsVectorLayerTools, public QObject
 {
   public:
+    QgsGuiVectorLayerTools();
+
     static QgsGuiVectorLayerTools* instance();
 
     bool addFeature( QgsVectorLayer *layer, QgsAttributeMap defaultValues, const QgsGeometry &defaultGeometry );
-
-  protected:
-    QgsGuiVectorLayerTools();
-
-  private:
-    static QgsGuiVectorLayerTools* sInstance;
 };
 
 #endif // QGSGUIVECTORLAYERTOOLS_H

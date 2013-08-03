@@ -623,7 +623,7 @@ QDialog* QgisAppInterface::getFeatureForm( QgsVectorLayer *l, QgsFeature &f )
 
 QgsVectorLayerTools* QgisAppInterface::featureAction()
 {
-  return qgis->featureAction();
+  return qgis->vectorLayerTools();
 }
 
 QList<QgsMapLayer *> QgisAppInterface::editableLayers( bool modified ) const

@@ -16,12 +16,10 @@
 #include "qgsguivectorlayertools.h"
 #include "qgsfeatureaction.h"
 
-QgsGuiVectorLayerTools* QgsGuiVectorLayerTools::sInstance = new QgsGuiVectorLayerTools();
 
-QgsGuiVectorLayerTools*QgsGuiVectorLayerTools::instance()
-{
-  return sInstance;
-}
+QgsGuiVectorLayerTools::QgsGuiVectorLayerTools()
+    : QObject( NULL )
+{}
 
 bool QgsGuiVectorLayerTools::addFeature( QgsVectorLayer* layer, QgsAttributeMap defaultValues, const QgsGeometry& defaultGeometry )
 {
@@ -29,9 +27,4 @@ bool QgsGuiVectorLayerTools::addFeature( QgsVectorLayer* layer, QgsAttributeMap 
   f.setGeometry( defaultGeometry );
   QgsFeatureAction a( tr( "Add feature" ), f, layer );
   return a.addFeature( defaultValues );
-}
-
-QgsGuiVectorLayerTools::QgsGuiVectorLayerTools()
-    : QObject( NULL )
-{
 }

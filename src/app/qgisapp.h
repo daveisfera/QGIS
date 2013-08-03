@@ -246,7 +246,7 @@ class APP_EXPORT QgisApp : public QMainWindow, private Ui::MainWindow
     /** overloaded function used to sort menu entries alphabetically */
     QMenu* createPopupMenu();
 
-    QgsVectorLayerTools* featureAction() { return mFeatureAction; }
+    QgsVectorLayerTools* vectorLayerTools() { return mVectorLayerTools; }
 
     //! Actions to be inserted in menus and toolbars
     QAction *actionNewProject() { return mActionNewProject; }
@@ -1524,7 +1524,7 @@ class APP_EXPORT QgisApp : public QMainWindow, private Ui::MainWindow
     QgsMessageBar *mInfoBar;
     QWidget *mMacrosWarn;
 
-    QgsVectorLayerTools* mFeatureAction;
+    QgsVectorLayerTools* mVectorLayerTools;
 #ifdef HAVE_TOUCH
     bool gestureEvent( QGestureEvent *event );
     void tapAndHoldTriggered( QTapAndHoldGesture *gesture );

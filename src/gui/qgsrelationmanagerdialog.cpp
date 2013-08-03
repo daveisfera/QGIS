@@ -64,7 +64,27 @@ void QgsRelationManagerDialog::on_mBtnAddRelation_clicked()
 
     relation.setReferencingLayer( addDlg.referencingLayerId() );
     relation.setReferencedLayer( addDlg.referencedLayerId() );
-    relation.setRelationName( addDlg.relationName() );
+    QString relationName = addDlg.relationName();
+    if ( addDlg.relationName() == "" )
+      relationName = QString( "%1_%2_%3_%4" )
+                     .arg( addDlg.referencingLayerId() )
+                     .arg( addDlg.references().first().first )
+                     .arg( addDlg.referencedLayerId() )
+                     .arg( addDlg.references().first().second );
+
+    QStringList existingNames;
+
+    Q_FOREACH( const QgsRelation& relation, mRelationTreeModel->relations() )
+    existingNames << relation.name();
+
+    QString tempName = relationName + "_%1";
+    int suffix = 1;
+    while ( existingNames.contains( relationName ) )
+    {
+      relationName = tempName.arg( suffix );
+      ++suffix;
+    }
+    relation.setRelationName( relationName );
     relation.addFieldPair( addDlg.references().first().first, addDlg.references().first().second );
 
     mRelationTreeModel->addRelation( relation );

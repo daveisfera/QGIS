@@ -29,6 +29,8 @@ class GUI_EXPORT QgsVectorLayerTools
     {}
 
     virtual bool addFeature( QgsVectorLayer* layer, QgsAttributeMap defaultValues = QgsAttributeMap(), const QgsGeometry& defaultGeometry = QgsGeometry() ) = 0;
+    virtual bool startEditing( QgsVectorLayer* layer ) = 0;
+    virtual bool stopEditing( QgsVectorLayer* layer, bool allowCancel = true ) = 0;
 
     int test;
 };

@@ -23,6 +23,7 @@
 
 #include "qgsrelation.h"
 
+class QgsProject;
 class QgsVectorLayer;
 
 /**
@@ -33,15 +34,18 @@ class CORE_EXPORT QgsRelationManager : public QObject
     Q_OBJECT
 
   public:
-    explicit QgsRelationManager();
+    explicit QgsRelationManager( QgsProject* project );
 
     void setRelations( const QList<QgsRelation>& relations );
-    const QMap<QString, QgsRelation>& relations();
+    const QMap<QString, QgsRelation>& relations() const;
     void addRelation( const QgsRelation& relation );
-    QgsRelation relation( const QString& id );
+    void removeRelation( const QString& name );
+    void removeRelation( const QgsRelation& relation );
+    QgsRelation relation( const QString& id ) const;
+    void clear();
 
-    QList<QgsRelation> referencingRelations( QgsVectorLayer* layer = NULL, int fieldIdx = -2 );
-    QList<QgsRelation> referencedRelations( QgsVectorLayer* layer = NULL );
+    QList<QgsRelation> referencingRelations( QgsVectorLayer* layer = NULL, int fieldIdx = -2 ) const;
+    QList<QgsRelation> referencedRelations( QgsVectorLayer* layer = NULL ) const;
 
   signals:
     void relationsLoaded();
@@ -55,6 +59,8 @@ class CORE_EXPORT QgsRelationManager : public QObject
   private:
     /** The references */
     QMap<QString, QgsRelation> mRelations;
+
+    QgsProject* mProject;
 };
 
 #endif // QGSRELATIONMANAGER_H

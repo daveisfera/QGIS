@@ -343,7 +343,7 @@ QgsProject::QgsProject()
   // XXX writeEntry() makes the project dirty, but it doesn't make sense
   // for a new project to be dirty, so let's clean it up
   dirty( false );
-  mRelationManager = new QgsRelationManager();
+  mRelationManager = new QgsRelationManager( this );
 } // QgsProject ctor
 
 
@@ -867,6 +867,7 @@ bool QgsProject::read()
 
   imp_->clear();
   mEmbeddedLayers.clear();
+  mRelationManager->clear();
 
   // now get any properties
   _getProperties( *doc, imp_->properties_ );

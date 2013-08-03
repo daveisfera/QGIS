@@ -167,10 +167,10 @@ void QgsRelationEditorWidget::on_mToggleEditingButton_toggled( bool state )
 {
   if ( state )
   {
-    mRelation.referencingLayer()->startEditing();
+    mEditorContext.vectorLayerTools()->startEditing( mRelation.referencingLayer() );
   }
   else
   {
-    mRelation.referencingLayer()->commitChanges();
+    mEditorContext.vectorLayerTools()->stopEditing( mRelation.referencingLayer() );
   }
 }

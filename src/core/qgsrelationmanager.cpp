@@ -20,23 +20,24 @@
 #include "qgsproject.h"
 #include "qgsvectorlayer.h"
 
-QgsRelationManager::QgsRelationManager() :
-    QObject( QgsApplication::instance() )
+QgsRelationManager::QgsRelationManager( QgsProject* project )
+    : QObject( project )
+    , mProject( project )
 {
-  QgsProject* project = QgsProject::instance();
   connect( project, SIGNAL( readProject( const QDomDocument& ) ), SLOT( readProject( const QDomDocument& ) ) );
   connect( project, SIGNAL( writeProject( QDomDocument& ) ), SLOT( writeProject( QDomDocument& ) ) );
 }
 
 void QgsRelationManager::setRelations( const QList<QgsRelation>& relations )
 {
+  mRelations.clear();
   foreach ( const QgsRelation& rel, relations )
   {
     addRelation( rel );
   }
 }
 
-const QMap<QString, QgsRelation>& QgsRelationManager::relations()
+const QMap<QString, QgsRelation>& QgsRelationManager::relations() const
 {
   return mRelations;
 }
@@ -47,14 +48,31 @@ void QgsRelationManager::addRelation( const QgsRelation& relation )
     return;
 
   mRelations.insert( relation.name(), relation );
+
+  mProject->dirty( true );
 }
 
-QgsRelation QgsRelationManager::relation( const QString& id )
+void QgsRelationManager::removeRelation( const QString& name )
+{
+  mRelations.remove( name );
+}
+
+void QgsRelationManager::removeRelation( const QgsRelation& relation )
+{
+  mRelations.remove( relation.name() );
+}
+
+QgsRelation QgsRelationManager::relation( const QString& id ) const
 {
   return mRelations.value( id );
 }
 
-QList<QgsRelation> QgsRelationManager::referencingRelations( QgsVectorLayer* layer, int fieldIdx )
+void QgsRelationManager::clear()
+{
+  mRelations.clear();
+}
+
+QList<QgsRelation> QgsRelationManager::referencingRelations( QgsVectorLayer* layer, int fieldIdx ) const
 {
   if ( !layer )
   {
@@ -91,7 +109,7 @@ QList<QgsRelation> QgsRelationManager::referencingRelations( QgsVectorLayer* lay
   return relations;
 }
 
-QList<QgsRelation> QgsRelationManager::referencedRelations( QgsVectorLayer* layer )
+QList<QgsRelation> QgsRelationManager::referencedRelations( QgsVectorLayer* layer ) const
 {
   if ( !layer )
   {

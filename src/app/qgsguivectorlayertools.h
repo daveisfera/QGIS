@@ -26,6 +26,13 @@ class QgsGuiVectorLayerTools : public QgsVectorLayerTools, public QObject
     static QgsGuiVectorLayerTools* instance();
 
     bool addFeature( QgsVectorLayer *layer, QgsAttributeMap defaultValues, const QgsGeometry &defaultGeometry );
+
+    bool startEditing( QgsVectorLayer* layer );
+
+    bool stopEditing( QgsVectorLayer* layer , bool allowCancel = true );
+
+  private:
+    void commitError( QgsVectorLayer* vlayer );
 };
 
 #endif // QGSGUIVECTORLAYERTOOLS_H

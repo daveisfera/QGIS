@@ -16,7 +16,8 @@
 /**
  * This class manages all known edit widget factories
  */
-class QgsEditorWidgetRegistry : public QObject {
+class QgsEditorWidgetRegistry : QObject
+{
 %TypeHeaderCode
 #include <editorwidgets/qgseditorwidgetregistry.h>
 %End

@@ -13,7 +13,7 @@
  *                                                                         *
  ***************************************************************************/
 
-class QgsEditorConfigWidget : public QWidget
+class QgsEditorConfigWidget : QWidget
 {
 %TypeHeaderCode
 #include <editorwidgets/qgseditorconfigwidget.h>

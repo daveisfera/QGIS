@@ -16,7 +16,8 @@
 /**
  * Every attribute editor widget needs a factory, which inherits this class
  */
-class QgsEditorWidgetFactory {
+class QgsEditorWidgetFactory
+{
 %TypeHeaderCode
 #include <editorwidgets/qgseditorwidgetfactory.h>
 %End

@@ -9,7 +9,7 @@ class QgsAttributeDialog : QObject
       void saveGeometry();
       void restoreGeometry();
       QDialog *dialog();
-      QgsFeature* feature();
+      const QgsFeature* feature();
 
     public slots:
       void accept();

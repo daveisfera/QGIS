@@ -15,7 +15,7 @@
 
 typedef QMap<QString, QVariant> QgsEditorWidgetConfig;
 
-class QgsEditorWidgetWrapper : public QObject
+class QgsEditorWidgetWrapper : QObject
 {
 %TypeHeaderCode
 #include <editorwidgets/qgseditorwidgetwrapper.h>

@@ -30,7 +30,7 @@
 #include <QLabel>
 
 QgsRelationEditorWidget::QgsRelationEditorWidget( const QgsRelation& relation, const QgsFeature& feature, QgsAttributeEditorContext context, QWidget* parent )
-    : QgsCollapsibleGroupBox( parent )
+    : QgsCollapsibleGroupBox( relation.name(), parent )
     , mDualView( NULL )
     , mEditorContext( context )
     , mRelation( relation )

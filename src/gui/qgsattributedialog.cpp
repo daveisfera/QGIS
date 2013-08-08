@@ -264,10 +264,7 @@ QgsAttributeDialog::QgsAttributeDialog( QgsVectorLayer* vl, QgsFeature* thepFeat
       if ( !myWidget )
         continue;
 
-      QLabel * mypLabel = new QLabel( QString( "<i>%1</i>" ).arg( relation.name() ), mypInnerFrame );
-      mypInnerLayout->addWidget( mypLabel, index, 0 );
-
-      mypInnerLayout->addWidget( myWidget, index, 1 );
+      mypInnerLayout->addWidget( myWidget, index, 0, 1, 2 );
       ++index;
     }
 

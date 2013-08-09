@@ -484,7 +484,7 @@ class QgisInterface : QObject
 
     virtual QDialog* getFeatureForm( QgsVectorLayer *l, QgsFeature &f ) = 0;
 
-    virtual QgsVectorLayerTools* featureAction() = 0;
+    virtual QgsVectorLayerTools* vectorLayerTools() = 0;
 
     virtual void preloadForm(QString uifile) = 0;
 

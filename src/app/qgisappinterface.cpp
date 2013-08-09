@@ -621,7 +621,7 @@ QDialog* QgisAppInterface::getFeatureForm( QgsVectorLayer *l, QgsFeature &f )
   return dialog->dialog();
 }
 
-QgsVectorLayerTools* QgisAppInterface::featureAction()
+QgsVectorLayerTools* QgisAppInterface::vectorLayerTools()
 {
   return qgis->vectorLayerTools();
 }

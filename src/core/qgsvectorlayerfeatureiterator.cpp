@@ -171,7 +171,7 @@ bool QgsVectorLayerFeatureIterator::close()
 
 bool QgsVectorLayerFeatureIterator::fetchNextAddedFeature( QgsFeature& f )
 {
-  for ( ; mFetchAddedFeaturesIt != mAddedFeatures.constEnd(); mFetchAddedFeaturesIt++ )
+  while ( mFetchAddedFeaturesIt-- != mAddedFeatures.constBegin() )
   {
     QgsFeatureId fid = mFetchAddedFeaturesIt->id();
 
@@ -187,7 +187,6 @@ bool QgsVectorLayerFeatureIterator::fetchNextAddedFeature( QgsFeature& f )
 
     useAddedFeature( *mFetchAddedFeaturesIt, f );
 
-    mFetchAddedFeaturesIt++;
     return true;
   }
 
@@ -281,7 +280,7 @@ void QgsVectorLayerFeatureIterator::rewindEditBuffer()
 {
   mFetchConsidered = mDeletedFeatureIds;
 
-  mFetchAddedFeaturesIt = mAddedFeatures.constBegin();
+  mFetchAddedFeaturesIt = mAddedFeatures.constEnd();
   mFetchChangedGeomIt = mChangedGeometries.constBegin();
 }
 

@@ -95,19 +95,6 @@ bool QgsVectorLayerFeatureIterator::nextFeature( QgsFeature& f )
     return res;
   }
 
-  if ( mRequest.filterType() == QgsFeatureRequest::FilterRect )
-  {
-    if ( fetchNextChangedGeomFeature( f ) )
-      return true;
-
-    // no more changed geometries
-  }
-
-  if ( fetchNextAddedFeature( f ) )
-    return true;
-
-  // no more added features
-
   while ( mProviderIterator.nextFeature( f ) )
   {
     if ( mFetchConsidered.contains( f.id() ) )
@@ -123,11 +110,26 @@ bool QgsVectorLayerFeatureIterator::nextFeature( QgsFeature& f )
       addJoinedAttributes( f );
 
     // update geometry
+    // TODO[MK]: FilterRect check after updating the geometry
     if ( !( mRequest.flags() & QgsFeatureRequest::NoGeometry ) )
       updateFeatureGeometry( f );
 
     return true;
   }
+  // no more provider features
+
+  if ( mRequest.filterType() == QgsFeatureRequest::FilterRect )
+  {
+    if ( fetchNextChangedGeomFeature( f ) )
+      return true;
+  }
+  // no more changed geometries
+
+
+  if ( fetchNextAddedFeature( f ) )
+    return true;
+  // no more added features
+
 
   close();
   return false;

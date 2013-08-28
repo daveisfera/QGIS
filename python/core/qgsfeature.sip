@@ -16,28 +16,21 @@ typedef QVector<QVariant> QgsAttributes;
     // Create the list.
     PyObject *l;
 
-    if ((l = PyList_New(sipCpp->size())) == NULL)
+    if ( ( l = PyList_New(sipCpp->size() ) ) == NULL )
         return NULL;
 
     // Set the list elements.
-    for (int i = 0; i < sipCpp->size(); ++i)
+    for ( int i = 0; i < sipCpp->size(); ++i )
     {
-      QVariant* v = new QVariant( sipCpp->at(i) );
+      QVariant& v = sipCpp->at( i );
       PyObject *tobj;
 
-      if ( v->isNull() )
+      if ( ( tobj = sipConvertFromType( &v, sipType_QVariant,Py_None ) ) == NULL )
       {
-        Py_INCREF( Py_None );
-        tobj = Py_None;
-        delete v;
-      }
-      else if ((tobj = sipConvertFromNewType(v, sipType_QVariant,Py_None)) == NULL)
-      {
-        delete v;
         return NULL;
       }
 
-      PyList_SET_ITEM(l, i, tobj);
+      PyList_SET_ITEM( l, i, tobj );
     }
 
     return l;
@@ -132,17 +125,8 @@ class QgsFeature
   }
   else
   {
-    QVariant* v = new QVariant(attrs.at(a0));
-    if ( v->isNull() )
-    {
-      delete v;
-      Py_INCREF( Py_None );
-      sipRes = Py_None;
-    }
-    else
-    {
-      sipRes = sipConvertFromNewType( v, sipType_QVariant, Py_None );
-    }
+    QVariant &v = attrs.at(a0);
+    sipRes = sipConvertFromType( &v, sipType_QVariant, Py_None );
   }
 %End
 
@@ -156,14 +140,8 @@ class QgsFeature
   }
   else
   {
-    QVariant v = sipCpp->attribute(fieldIdx);
-    if ( v.isNull() )
-    {
-      Py_INCREF( Py_None );
-      sipRes = Py_None;
-    }
-    else
-      sipRes = sipConvertFromType( &v, sipType_QVariant, Py_None );
+    QVariant &v = sipCpp->attribute(fieldIdx);
+    sipRes = sipConvertFromType( &v, sipType_QVariant, Py_None );
   }
 %End
 
@@ -404,14 +382,8 @@ class QgsFeature
   }
   else
   {
-    QVariant v = sipCpp->attribute(fieldIdx);
-    if ( v.isNull() )
-    {
-      Py_INCREF( Py_None );
-      sipRes = Py_None;
-    }
-    else
-      sipRes = sipConvertFromType( &v, sipType_QVariant, Py_None );
+    QVariant &v = sipCpp->attribute(fieldIdx);
+    sipRes = sipConvertFromType( &v, sipType_QVariant, Py_None );
   }
 %End
     /** Utility method to get attribute index from name. Returns -1 if field does not exist or field map is not associated.

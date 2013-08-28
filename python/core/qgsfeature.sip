@@ -22,11 +22,14 @@ typedef QVector<QVariant> QgsAttributes;
     // Set the list elements.
     for ( int i = 0; i < sipCpp->size(); ++i )
     {
-      QVariant& v = sipCpp->at( i );
+      QVariant* v = new QVariant( sipCpp->at( i ) );
       PyObject *tobj;
 
-      if ( ( tobj = sipConvertFromType( &v, sipType_QVariant,Py_None ) ) == NULL )
+      if ( ( tobj = sipConvertFromNewType( v, sipType_QVariant,Py_None ) ) == NULL )
       {
+        Py_DECREF( l );
+        delete v;
+
         return NULL;
       }
 
@@ -125,8 +128,8 @@ class QgsFeature
   }
   else
   {
-    QVariant &v = attrs.at(a0);
-    sipRes = sipConvertFromType( &v, sipType_QVariant, Py_None );
+    QVariant* v = new QVariant( attrs.at(a0) );
+    sipRes = sipConvertFromNewType( v, sipType_QVariant, Py_None );
   }
 %End
 
@@ -140,8 +143,8 @@ class QgsFeature
   }
   else
   {
-    QVariant &v = sipCpp->attribute(fieldIdx);
-    sipRes = sipConvertFromType( &v, sipType_QVariant, Py_None );
+    QVariant* v = new QVariant( sipCpp->attribute(fieldIdx) );
+    sipRes = sipConvertFromNewType( v, sipType_QVariant, Py_None );
   }
 %End
 
@@ -382,8 +385,8 @@ class QgsFeature
   }
   else
   {
-    QVariant &v = sipCpp->attribute(fieldIdx);
-    sipRes = sipConvertFromType( &v, sipType_QVariant, Py_None );
+    QVariant* v = new QVariant( sipCpp->attribute(fieldIdx) );
+    sipRes = sipConvertFromNewType( v, sipType_QVariant, Py_None );
   }
 %End
     /** Utility method to get attribute index from name. Returns -1 if field does not exist or field map is not associated.

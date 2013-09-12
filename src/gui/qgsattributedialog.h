@@ -54,7 +54,7 @@ class GUI_EXPORT QgsAttributeDialog : public QObject
 
     QDialog *dialog() { return mDialog; }
 
-    const QgsFeature* feature() { return mFeature; }
+    QgsFeature* feature() { return mFeature; }
 
   public slots:
     void accept();

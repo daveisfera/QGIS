@@ -424,7 +424,7 @@ void QgsDualView::attributeDeleted( int attribute )
 
     mAttributeEditorLayout->removeWidget( mAttributeDialog->dialog() );
 
-    mAttributeDialog = new QgsAttributeDialog( mLayerCache->layer(), new QgsFeature( *feat ), true, mDistanceArea, this, false );
+    mAttributeDialog = new QgsAttributeDialog( mLayerCache->layer(), new QgsFeature( *feat ), true, this, false );
     mAttributeEditorLayout->addWidget( mAttributeDialog->dialog() );
 
     delete oldDialog;
@@ -464,7 +464,7 @@ void QgsDualView::attributeAdded( int attribute )
 
     mAttributeEditorLayout->removeWidget( mAttributeDialog->dialog() );
 
-    mAttributeDialog = new QgsAttributeDialog( mLayerCache->layer(), new QgsFeature( *feat ), true, mDistanceArea, this, false );
+    mAttributeDialog = new QgsAttributeDialog( mLayerCache->layer(), new QgsFeature( *feat ), true, this, false );
     mAttributeEditorLayout->addWidget( mAttributeDialog->dialog() );
 
     delete oldDialog;
@@ -508,7 +508,7 @@ void QgsDualView::reloadAttribute( const int& idx )
 
     mAttributeEditorLayout->removeWidget( mAttributeDialog->dialog() );
 
-    mAttributeDialog = new QgsAttributeDialog( mLayerCache->layer(), new QgsFeature( *feat ), true, mDistanceArea, this, false );
+    mAttributeDialog = new QgsAttributeDialog( mLayerCache->layer(), new QgsFeature( *feat ), true, this, false );
     mAttributeEditorLayout->addWidget( mAttributeDialog->dialog() );
 
     delete oldDialog;

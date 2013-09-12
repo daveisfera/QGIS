@@ -363,6 +363,60 @@ MyForms.py must live on PYTHONPATH, .qgis/python, or inside the project folder.<
      </property>
     </widget>
    </item>
+   <item row="3" column="0" colspan="7">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="mFormSuppressLabel">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Maximum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>150</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Suppress attribute form pop-up after feature creation</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="mFormSuppressCmbBx">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <item>
+        <property name="text">
+         <string>Default</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>On</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Off</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
+   </item>
    <item row="1" column="6">
     <widget class="QLineEdit" name="leEditFormInit">
      <property name="toolTip">

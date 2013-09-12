@@ -47,12 +47,25 @@ class APP_EXPORT QgsFieldsProperties : public QWidget, private Ui_QgsFieldsPrope
           Container
         };
 
-    /**
-     * This class overrides mime type handling to be able to work with
-     * the drag and drop attribute editor.
-     *
-     * The mime type is application/x-qgsattributetablefield
-     */
+        DesignerTreeItemData()
+        {}
+
+        DesignerTreeItemData( Type type, const QString& name )
+            : mType( type )
+            , mName( name ) {}
+
+        QString name() const { return mName; }
+        void setName( const QString& name ) { mName = name; }
+
+        Type type() const { return mType; }
+        void setType( const Type& type ) { mType = type; }
+
+        QVariant asQVariant() { return QVariant::fromValue<DesignerTreeItemData>( *this ); }
+
+      protected:
+        Type mType;
+        QString mName;
+    };
 
     /**
      * This class overrides mime type handling to be able to work with

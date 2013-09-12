@@ -36,11 +36,12 @@ class QImage;
 
 class QgsAttributeAction;
 class QgsCoordinateTransform;
+class QgsEditorWidgetWrapper;
 class QgsFeatureRequest;
 class QgsGeometry;
 class QgsGeometryVertexIndex;
-class QgsMapToPixel;
 class QgsLabel;
+class QgsMapToPixel;
 class QgsRectangle;
 class QgsVectorDataProvider;
 class QgsSingleSymbolRendererV2;
@@ -69,7 +70,6 @@ class CORE_EXPORT QgsAttributeEditorElement : public QObject
       AeTypeInvalid
     };
 
-
     QgsAttributeEditorElement( AttributeEditorType type, QString name, QObject *parent = NULL )
         : QObject( parent ), mType( type ), mName( name ) {}
 
@@ -96,7 +96,9 @@ class CORE_EXPORT QgsAttributeEditorContainer : public QgsAttributeEditorElement
 
     virtual QDomElement toDomElement( QDomDocument& doc ) const;
     virtual void addChildElement( QgsAttributeEditorElement *widget );
+    virtual bool isGroupBox() const { return true; }
     QList<QgsAttributeEditorElement*> children() const { return mChildren; }
+    virtual QList<QgsAttributeEditorElement*> findElements( AttributeEditorType type ) const;
 
   private:
     QList<QgsAttributeEditorElement*> mChildren;
@@ -431,19 +433,20 @@ class CORE_EXPORT QgsVectorLayer : public QgsMapLayer
       Classification,
       EditRange,
       SliderRange,
-      CheckBox,      /**< @note added in 1.4 */
+      CheckBox,       /**< @note added in 1.4 */
       FileName,
       Enumeration,
-      Immutable,     /**< The attribute value should not be changed in the attribute form */
-      Hidden,        /**< The attribute value should not be shown in the attribute form @note added in 1.4 */
-      TextEdit,      /**< multiline edit @note added in 1.4*/
-      Calendar,      /**< calendar widget @note added in 1.5 */
-      DialRange,     /**< dial range @note added in 1.5 */
-      ValueRelation, /**< value map from an table @note added in 1.8 */
-      UuidGenerator, /**< uuid generator - readonly and automatically intialized @note added in 1.9 */
-      Photo,         /**< phote widget @note added in 1.9 */
-      WebView,       /**< webview widget @note added in 1.9 */
-      Color,         /**< color @note added in 1.9 */
+      Immutable,      /**< The attribute value should not be changed in the attribute form */
+      Hidden,         /**< The attribute value should not be shown in the attribute form @note added in 1.4 */
+      TextEdit,       /**< multiline edit @note added in 1.4*/
+      Calendar,       /**< calendar widget @note added in 1.5 */
+      DialRange,      /**< dial range @note added in 1.5 */
+      ValueRelation,  /**< value map from an table @note added in 1.8 */
+      UuidGenerator,  /**< uuid generator - readonly and automatically intialized @note added in 1.9 */
+      Photo,          /**< phote widget @note added in 1.9 */
+      WebView,        /**< webview widget @note added in 1.9 */
+      Color,          /**< color @note added in 1.9 */
+      EditorWidgetV2, /**< modularized edit widgets @note added in 2.1 */
     };
 
     /** Types of feature form suppression after feature creation
@@ -1039,6 +1042,12 @@ class CORE_EXPORT QgsVectorLayer : public QgsMapLayer
       @note added in version 1.9*/
     void addAttributeEditorWidget( QgsAttributeEditorElement* data );
 
+    const QString& editorWidgetV2( int fieldIdx );
+
+    const QMap<QString, QVariant>& editorWidgetV2Config( int fieldIdx );
+
+    QgsEditorWidgetWrapper* editorWidgetWrapper( int idx, QWidget* editor, const QVariant& value, QWidget* parent );
+
     /**Returns a list of tabs holding groups and fields
       @note added in version 1.9*/
     QList< QgsAttributeEditorElement* > &attributeEditorElements();
@@ -1114,6 +1123,10 @@ class CORE_EXPORT QgsVectorLayer : public QgsMapLayer
 
     /** set the active layout for the attribute editor for this layer (added in 1.9) */
     void setEditorLayout( EditorLayout editorLayout );
+
+    void setEditorWidgetV2( int attrIdx, const QString& widgetType );
+
+    void setEditorWidgetV2Config( int attrIdx, const QMap<QString, QVariant>& config );
 
     /** set string representing 'true' for a checkbox (added in 1.4) */
     void setCheckedState( int idx, QString checked, QString notChecked );
@@ -1265,6 +1278,12 @@ class CORE_EXPORT QgsVectorLayer : public QgsMapLayer
      */
     int layerTransparency() const;
 
+    QString metadata();
+
+    /** @note not available in python bindings */
+    inline QgsGeometryCache* cache() { return mCache; }
+
+
   public slots:
     /**
      * Select feature by its ID
@@ -1319,11 +1338,6 @@ class CORE_EXPORT QgsVectorLayer : public QgsMapLayer
     /** Check if there is a join with a layer that will be removed
       @note added in 1.7 */
     void checkJoinLayerRemove( QString theLayerId );
-
-    QString metadata();
-
-    /** @note not available in python bindings */
-    inline QgsGeometryCache* cache() { return mCache; }
 
     /**
      * @brief Is called when the cache image is being deleted. Overwrite and use to clean up.
@@ -1403,6 +1417,8 @@ class CORE_EXPORT QgsVectorLayer : public QgsMapLayer
     void committedFeaturesRemoved( const QString& layerId, const QgsFeatureIds& deletedFeatureIds );
     void committedAttributeValuesChanges( const QString& layerId, const QgsChangedAttributesMap& changedAttributesValues );
     void committedGeometriesChanges( const QString& layerId, const QgsGeometryMap& changedGeometries );
+
+    void saveLayerToProject();
 
     /** Emitted when the font family defined for labeling layer is not found on system
      * @note added in 1.9
@@ -1560,6 +1576,9 @@ class CORE_EXPORT QgsVectorLayer : public QgsMapLayer
     QMap< QString, ValueRelationData > mValueRelations;
     QMap< QString, QString> mDateFormats;
     QMap< QString, QSize> mWidgetSize;
+
+    QMap<int, QString> mEditorWidgetV2Types;
+    QMap<int, QMap<QString, QVariant> > mEditorWidgetV2Configs;
 
     /** Defines the default layout to use for the attribute editor (Drag and drop, UI File, Generated) */
     EditorLayout mEditorLayout;

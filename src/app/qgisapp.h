@@ -45,6 +45,7 @@ class QgsComposerView;
 class QgsContrastEnhancement;
 class QgsGeometry;
 class QgsFeature;
+class QgsVectorLayerTools;
 
 class QgsLegend;
 class QgsLayerOrder;
@@ -57,6 +58,7 @@ class QgsPoint;
 class QgsProviderRegistry;
 class QgsPythonUtils;
 class QgsRectangle;
+
 class QgsUndoWidget;
 class QgsVectorLayer;
 
@@ -175,6 +177,7 @@ class APP_EXPORT QgisApp : public QMainWindow, private Ui::MainWindow
     /** Get the mapcanvas object from the app */
     QgsMapCanvas *mapCanvas();
 
+    /** Return the messageBar object which allows to display unobtrusive messages to the user.*/
     QgsMessageBar* messageBar();
 
     /** Get the mapcanvas object from the app */
@@ -240,6 +243,7 @@ class APP_EXPORT QgisApp : public QMainWindow, private Ui::MainWindow
     /** overloaded function used to sort menu entries alphabetically */
     QMenu* createPopupMenu();
 
+    QgsVectorLayerTools* vectorLayerTools() { return mVectorLayerTools; }
 
     //! Actions to be inserted in menus and toolbars
     QAction *actionNewProject() { return mActionNewProject; }
@@ -1517,6 +1521,7 @@ class APP_EXPORT QgisApp : public QMainWindow, private Ui::MainWindow
     QgsMessageBar *mInfoBar;
     QWidget *mMacrosWarn;
 
+    QgsVectorLayerTools* mVectorLayerTools;
 #ifdef HAVE_TOUCH
     bool gestureEvent( QGestureEvent *event );
     void tapAndHoldTriggered( QTapAndHoldGesture *gesture );

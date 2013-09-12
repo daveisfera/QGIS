@@ -48,6 +48,11 @@ attributetable/qgsfeaturelistviewdelegate.cpp
 attributetable/qgsfeatureselectionmodel.cpp
 attributetable/qgsdualview.cpp
 
+editorwidgets/qgseditorconfigwidget.cpp
+editorwidgets/qgseditorwidgetfactory.cpp
+editorwidgets/qgseditorwidgetregistry.cpp
+editorwidgets/qgseditorwidgetwrapper.cpp
+
 qgisgui.cpp
 qgisinterface.cpp
 qgsannotationitem.cpp
@@ -97,6 +102,7 @@ qgsnewvectorlayerdialog.cpp
 qgsnumericsortlistviewitem.cpp
 qgsoptionsdialogbase.cpp
 qgscredentialdialog.cpp
+qgsattributeeditorcontext.cpp
 qgsowssourceselect.cpp
 qgsprojectbadlayerguihandler.cpp
 qgsprojectionselector.cpp
@@ -177,6 +183,10 @@ attributetable/qgsfeatureselectionmodel.h
 attributetable/qgsfeaturelistviewdelegate.h
 attributetable/qgsdualview.h
 
+editorwidgets/qgseditorconfigwidget.h
+editorwidgets/qgseditorwidgetregistry.h
+editorwidgets/qgseditorwidgetwrapper.h
+
 qgsattributedialog.h
 qgsattributeeditor.h
 qgsblendmodecombobox.h
@@ -236,6 +246,7 @@ QT4_WRAP_CPP(QGIS_GUI_MOC_SRCS ${QGIS_GUI_MOC_HDRS})
 SET(QGIS_GUI_HDRS
 qgisgui.h
 qgisinterface.h
+qgsattributeeditorcontext.h
 qgsbusyindicatordialog.h
 qgscharacterselectdialog.h
 qgscolordialog.h
@@ -251,6 +262,7 @@ qgsmapcanvasmap.h
 qgsmapcanvassnapper.h
 qgsmapoverviewcanvas.h
 qgsmaptool.h
+qgsvectorlayertools.h
 qgsmaptoolemitpoint.h
 qgsmaptoolidentify.h
 qgsmaptoolpan.h
@@ -295,6 +307,11 @@ attributetable/qgsfeaturelistmodel.h
 attributetable/qgsfeaturelistviewdelegate.h
 attributetable/qgsfeatureselectionmodel.h
 attributetable/qgsdualview.h
+
+editorwidgets/qgseditorconfigwidget.h
+editorwidgets/qgseditorwidgetfactory.h
+editorwidgets/qgseditorwidgetregistry.h
+editorwidgets/qgseditorwidgetwrapper.h
 
 raster/qgsrasterrendererwidget.h
 )

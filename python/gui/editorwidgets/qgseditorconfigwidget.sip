@@ -16,7 +16,7 @@
 class QgsEditorConfigWidget : QWidget
 {
 %TypeHeaderCode
-#include <editorwidgets/qgseditorconfigwidget.h>
+#include <qgseditorconfigwidget.h>
 %End
 
   public:

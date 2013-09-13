@@ -20,7 +20,7 @@
 #include "ui_qgsattributetypeedit.h"
 
 #include "qgsvectorlayer.h"
-#include "editorwidgets/qgseditorconfigwidget.h"
+#include "qgseditorconfigwidget.h"
 
 class QDialog;
 class QLayout;

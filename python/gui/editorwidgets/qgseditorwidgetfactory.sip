@@ -19,7 +19,7 @@
 class QgsEditorWidgetFactory
 {
 %TypeHeaderCode
-#include <editorwidgets/qgseditorwidgetfactory.h>
+#include <qgseditorwidgetfactory.h>
 %End
 
   public:

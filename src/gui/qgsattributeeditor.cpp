@@ -16,24 +16,24 @@
  ***************************************************************************/
 
 
-#include <editorwidgets/qgseditorwidgetfactory.h>
-#include <editorwidgets/qgseditorwidgetregistry.h>
-#include <editorwidgets/qgseditorwidgetwrapper.h>
+#include "qgseditorwidgetfactory.h"
+#include "qgseditorwidgetregistry.h"
+#include "qgseditorwidgetwrapper.h"
 
-#include <qgsattributedialog.h>
-#include <qgsattributeeditorcontext.h>
+#include "qgsattributedialog.h"
+#include "qgsattributeeditorcontext.h"
 #include "qgsattributeeditor.h"
-#include <qgscategorizedsymbolrendererv2.h>
-#include <qgscolorbutton.h>
-#include <qgsexpression.h>
-#include <qgsfieldvalidator.h>
-#include <qgsfilterlineedit.h>
-#include <qgslogger.h>
-#include <qgslonglongvalidator.h>
-#include <qgsmaplayerregistry.h>
-#include <qgsnetworkaccessmanager.h>
-#include <qgsvectordataprovider.h>
-#include <qgsvectorlayer.h>
+#include "qgscategorizedsymbolrendererv2.h"
+#include "qgscolorbutton.h"
+#include "qgsexpression.h"
+#include "qgsfieldvalidator.h"
+#include "qgsfilterlineedit.h"
+#include "qgslogger.h"
+#include "qgslonglongvalidator.h"
+#include "qgsmaplayerregistry.h"
+#include "qgsnetworkaccessmanager.h"
+#include "qgsvectordataprovider.h"
+#include "qgsvectorlayer.h"
 
 #include <QScrollArea>
 #include <QPushButton>

@@ -15,7 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 #include "qgsattributedialog.h"
-#include "editorwidgets/qgseditorwidgetwrapper.h"
+#include "qgseditorwidgetwrapper.h"
 #include "qgsfield.h"
 #include "qgslogger.h"
 #include "qgsmapcanvas.h"

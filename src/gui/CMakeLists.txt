@@ -48,10 +48,10 @@ attributetable/qgsfeaturelistviewdelegate.cpp
 attributetable/qgsfeatureselectionmodel.cpp
 attributetable/qgsdualview.cpp
 
-editorwidgets/qgseditorconfigwidget.cpp
-editorwidgets/qgseditorwidgetfactory.cpp
-editorwidgets/qgseditorwidgetregistry.cpp
-editorwidgets/qgseditorwidgetwrapper.cpp
+editorwidgets/core/qgseditorconfigwidget.cpp
+editorwidgets/core/qgseditorwidgetfactory.cpp
+editorwidgets/core/qgseditorwidgetregistry.cpp
+editorwidgets/core/qgseditorwidgetwrapper.cpp
 
 qgisgui.cpp
 qgisinterface.cpp
@@ -183,9 +183,9 @@ attributetable/qgsfeatureselectionmodel.h
 attributetable/qgsfeaturelistviewdelegate.h
 attributetable/qgsdualview.h
 
-editorwidgets/qgseditorconfigwidget.h
-editorwidgets/qgseditorwidgetregistry.h
-editorwidgets/qgseditorwidgetwrapper.h
+editorwidgets/core/qgseditorconfigwidget.h
+editorwidgets/core/qgseditorwidgetregistry.h
+editorwidgets/core/qgseditorwidgetwrapper.h
 
 qgsattributedialog.h
 qgsattributeeditor.h
@@ -308,10 +308,10 @@ attributetable/qgsfeaturelistviewdelegate.h
 attributetable/qgsfeatureselectionmodel.h
 attributetable/qgsdualview.h
 
-editorwidgets/qgseditorconfigwidget.h
-editorwidgets/qgseditorwidgetfactory.h
-editorwidgets/qgseditorwidgetregistry.h
-editorwidgets/qgseditorwidgetwrapper.h
+editorwidgets/core/qgseditorconfigwidget.h
+editorwidgets/core/qgseditorwidgetfactory.h
+editorwidgets/core/qgseditorwidgetregistry.h
+editorwidgets/core/qgseditorwidgetwrapper.h
 
 raster/qgsrasterrendererwidget.h
 )
@@ -356,6 +356,8 @@ INCLUDE_DIRECTORIES(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/symbology-ng
   ${CMAKE_CURRENT_SOURCE_DIR}/attributetable
+  ${CMAKE_CURRENT_SOURCE_DIR}/editorwidgets
+  ${CMAKE_CURRENT_SOURCE_DIR}/editorwidgets/core
   ../core
   ../core/composer
   ../core/raster

@@ -19,7 +19,7 @@
 class QgsEditorWidgetRegistry : QObject
 {
 %TypeHeaderCode
-#include <editorwidgets/qgseditorwidgetregistry.h>
+#include <qgseditorwidgetregistry.h>
 %End
 
   public:

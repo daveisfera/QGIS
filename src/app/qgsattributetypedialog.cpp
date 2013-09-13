@@ -24,8 +24,8 @@
 #include "qgisapp.h"
 #include "qgsproject.h"
 #include "qgslogger.h"
-#include "editorwidgets/qgseditorwidgetfactory.h"
-#include "editorwidgets/qgseditorwidgetregistry.h"
+#include "qgseditorwidgetfactory.h"
+#include "qgseditorwidgetregistry.h"
 
 #include <QTableWidgetItem>
 #include <QFile>

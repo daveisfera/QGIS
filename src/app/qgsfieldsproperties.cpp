@@ -13,8 +13,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "editorwidgets/qgseditorwidgetfactory.h"
-#include "editorwidgets/qgseditorwidgetregistry.h"
+#include "qgseditorwidgetfactory.h"
+#include "qgseditorwidgetregistry.h"
 #include "qgsaddattrdialog.h"
 #include "qgsaddtaborgroup.h"
 #include "qgsapplication.h"

@@ -60,6 +60,9 @@ class GUI_EXPORT QgsEditorWidgetWrapper : public QObject
      */
     QWidget* widget();
 
+		template <class T>
+		T* widget() { return dynamic_cast<T>( mWidget ); }
+
     /**
      * Will set the config of this wrapper to the specified config.
      *

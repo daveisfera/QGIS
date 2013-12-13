@@ -326,24 +326,20 @@ void GlobePlugin::run()
     mOsgViewer->run();
 #endif
 
+	  if ( settings.value( "/Plugin-Globe/anti-aliasing", true ).toBool() )
+    {
+      bool aaLevelIsInt;
+      QString aaLevelStr = settings.value( "/Plugin-Globe/anti-aliasing-level", "" ).toString();
+      int aaLevel = aaLevelStr.toInt( &aaLevelIsInt );
+      if ( aaLevelIsInt )
+      {
+        osg::DisplaySettings::instance()->setNumMultiSamples( aaLevel );
+      }
+    }
+
     mViewerWidget = new osgEarth::QtGui::ViewerWidget( mOsgViewer );
     mViewerWidget->setGeometry( 100, 100, 1024, 800 );
     mViewerWidget->show();
-
-    if ( settings.value( "/Plugin-Globe/anti-aliasing", true ).toBool() )
-    {
-      QGLFormat glf = QGLFormat::defaultFormat();
-      glf.setSampleBuffers( true );
-      bool aaLevelIsInt;
-      int aaLevel;
-      QString aaLevelStr = settings.value( "/Plugin-Globe/anti-aliasing-level", "" ).toString();
-      aaLevel = aaLevelStr.toInt( &aaLevelIsInt );
-      if ( aaLevelIsInt )
-      {
-        glf.setSamples( aaLevel );
-      }
-      mViewerWidget->setFormat( glf );
-    }
 
     // Set a home viewpoint
     manip->setHomeViewpoint(

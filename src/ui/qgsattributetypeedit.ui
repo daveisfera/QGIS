@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>751</width>
-    <height>451</height>
+    <height>487</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -132,7 +132,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>11</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="lineEditPage">
       <layout class="QVBoxLayout" name="verticalLayout_1">

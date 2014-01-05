@@ -57,6 +57,9 @@ editorwidgets/core/qgseditorwidgetwrapper.cpp
 editorwidgets/qgsrelationreferencewidget.cpp
 editorwidgets/qgsrelationreferencefactory.cpp
 editorwidgets/qgsrelreferenceconfigdlg.cpp
+editorwidgets/qgsrangewidget.cpp
+editorwidgets/qgsrangewidgetfactory.cpp
+editorwidgets/qgsrangeconfigdlg.cpp
 
 qgisgui.cpp
 qgisinterface.cpp
@@ -213,6 +216,8 @@ editorwidgets/core/qgseditorwidgetregistry.h
 editorwidgets/core/qgseditorwidgetwrapper.h
 editorwidgets/qgsrelationreferencewidget.h
 editorwidgets/qgsrelreferenceconfigdlg.h
+editorwidgets/qgsrangewidget.h
+editorwidgets/qgsrangeconfigdlg.h
 
 qgisinterface.h
 qgsattributedialog.h
@@ -379,6 +384,9 @@ editorwidgets/core/qgseditorwidgetwrapper.h
 editorwidgets/qgsrelationreferencefactory.h
 editorwidgets/qgsrelationreferencewidget.h
 editorwidgets/qgsrelreferenceconfigdlg.h
+editorwidgets/qgsrangewidget.h
+editorwidgets/qgsrangewidgetfactory.h
+editorwidgets/qgsrangeconfigdlg.h
 
 raster/qgsrasterrendererwidget.h
 )

@@ -85,15 +85,6 @@ class GUI_EXPORT QgsEditorWidgetRegistry : public QObject
     const QMap<QString, QgsEditorWidgetFactory*> factories();
 
     /**
-     * The other part which does the boring work for you
-     */
-    template <class W, class C>
-    void registerWidget( const QString& widgetType, const QString& name )
-    {
-      mWidgetFactories.insert( widgetType, new QgsEditWidgetFactoryHelper<W, C>( name ) );
-    }
-
-    /**
      * Register a new widget factory with the given id
      *
      * @param widgetId      The id which will be used later to refer to this widget type
@@ -113,6 +104,5 @@ class GUI_EXPORT QgsEditorWidgetRegistry : public QObject
   private:
     QMap<QString, QgsEditorWidgetFactory*> mWidgetFactories;
 };
-
 
 #endif // QGSEDITORWIDGETREGISTRY_H

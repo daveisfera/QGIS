@@ -505,7 +505,7 @@ QWidget* QgsAttributeEditor::createAttributeEditor( QWidget* parent, QWidget* ed
       }
     }
     break;
-
+#if 0
     case QgsVectorLayer::DialRange:
     case QgsVectorLayer::SliderRange:
     case QgsVectorLayer::EditRange:
@@ -582,6 +582,7 @@ QWidget* QgsAttributeEditor::createAttributeEditor( QWidget* parent, QWidget* ed
         break;
       }
     }
+#endif
 
     case QgsVectorLayer::CheckBox:
     {

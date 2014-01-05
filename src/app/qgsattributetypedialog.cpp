@@ -362,13 +362,13 @@ void QgsAttributeTypeDialog::setPageForEditType( QgsVectorLayer::EditType editTy
     case QgsVectorLayer::Classification:
       setPage( 1 );
       break;
-
+#if 0
     case QgsVectorLayer::EditRange:
     case QgsVectorLayer::SliderRange:
     case QgsVectorLayer::DialRange:
       setPage( 2 );
       break;
-
+#endif
     case QgsVectorLayer::UniqueValues:
     case QgsVectorLayer::UniqueValuesEditable:
       setPage( 3 );
@@ -549,7 +549,7 @@ void QgsAttributeTypeDialog::setIndex( int index, QgsVectorLayer::EditType editT
 
     }
     break;
-
+#if 0
     case QgsVectorLayer::EditRange:
     case QgsVectorLayer::SliderRange:
     case QgsVectorLayer::DialRange:
@@ -582,7 +582,7 @@ void QgsAttributeTypeDialog::setIndex( int index, QgsVectorLayer::EditType editT
       }
     }
     break;
-
+#endif
     case QgsVectorLayer::UniqueValuesEditable:
       editableUniqueValues->setChecked( true );
       break;
@@ -758,6 +758,7 @@ void QgsAttributeTypeDialog::accept()
                                                 maximumDoubleSpinBox->value(),
                                                 stepDoubleSpinBox->value() );
       }
+#if 0
       //select correct one
       switch ( rangeWidget->currentIndex() )
       {
@@ -772,6 +773,7 @@ void QgsAttributeTypeDialog::accept()
           break;
       }
       break;
+#endif
     case 3:
       if ( editableUniqueValues->isChecked() )
       {

@@ -1,0 +1,33 @@
+/***************************************************************************
+    qgsvaluerelationwidget.h
+     --------------------------------------
+    Date                 : 5.1.2014
+    Copyright            : (C) 2014 Matthias Kuhn
+    Email                : matthias dot kuhn at gmx dot ch
+ ***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
+
+#ifndef QGSVALUERELATIONWIDGET_H
+#define QGSVALUERELATIONWIDGET_H
+
+#include "qgseditorwidgetwrapper.h"
+
+class QgsValueRelationWidget : public QgsEditorWidgetWrapper
+{
+    Q_OBJECT
+  public:
+    explicit QgsValueRelationWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* editor = 0, QWidget* parent = 0 );
+
+  signals:
+
+  public slots:
+
+};
+
+#endif // QGSVALUERELATIONWIDGET_H

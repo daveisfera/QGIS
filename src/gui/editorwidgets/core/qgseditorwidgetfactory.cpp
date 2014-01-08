@@ -38,7 +38,7 @@ QgsEditorWidgetConfig QgsEditorWidgetFactory::readConfig( const QDomElement& con
   return QgsEditorWidgetConfig();
 }
 
-void QgsEditorWidgetFactory::writeConfig( const QgsEditorWidgetConfig& config, QDomElement& configElement, const QDomDocument& doc, const QgsVectorLayer* layer, int fieldIdx )
+void QgsEditorWidgetFactory::writeConfig( const QgsEditorWidgetConfig& config, QDomElement& configElement, QDomDocument& doc, const QgsVectorLayer* layer, int fieldIdx )
 {
   Q_UNUSED( config );
   Q_UNUSED( configElement );

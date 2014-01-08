@@ -15,7 +15,20 @@
 
 #include "qgsfilenamewidgetfactory.h"
 
+#include "qgsfilenamewidget.h"
+#include "qgsdummyconfigdlg.h"
+
 QgsFileNameWidgetFactory::QgsFileNameWidgetFactory( const QString& name ) :
     QgsEditorWidgetFactory( name )
 {
+}
+
+QgsEditorWidgetWrapper* QgsFileNameWidgetFactory::create( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent ) const
+{
+  return new QgsFileNameWidget( vl, fieldIdx, editor, parent );
+}
+
+QgsEditorConfigWidget* QgsFileNameWidgetFactory::configWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* parent ) const
+{
+  return new QgsDummyConfigDlg( vl, fieldIdx, parent, QObject::tr( "Simplifies file selection by adding a file chooser dialog." ) );
 }

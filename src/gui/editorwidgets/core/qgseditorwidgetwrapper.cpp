@@ -14,6 +14,8 @@
  ***************************************************************************/
 
 #include "qgseditorwidgetwrapper.h"
+#include "qgsvectorlayer.h"
+#include "qgsfield.h"
 
 #include <QWidget>
 
@@ -23,7 +25,7 @@ QgsEditorWidgetWrapper::QgsEditorWidgetWrapper( QgsVectorLayer* vl, int fieldIdx
     , mParent( parent )
     , mLayer( vl )
 {
-  mField = fieldIdx;
+  mFieldIdx = fieldIdx;
 }
 
 QWidget* QgsEditorWidgetWrapper::widget()
@@ -58,14 +60,24 @@ QVariant QgsEditorWidgetWrapper::config( QString key, QVariant defaultVal )
   return defaultVal;
 }
 
+const QgsEditorWidgetConfig QgsEditorWidgetWrapper::config()
+{
+  return mConfig;
+}
+
 QgsVectorLayer* QgsEditorWidgetWrapper::layer()
 {
   return mLayer;
 }
 
-int QgsEditorWidgetWrapper::field()
+int QgsEditorWidgetWrapper::fieldIdx()
 {
-  return mField;
+  return mFieldIdx;
+}
+
+QgsField QgsEditorWidgetWrapper::field()
+{
+  return mLayer->pendingFields()[mFieldIdx];
 }
 
 QgsEditorWidgetWrapper* QgsEditorWidgetWrapper::fromWidget( QWidget* widget )

@@ -19,3 +19,38 @@ QgsCheckboxWidget::QgsCheckboxWidget( QgsVectorLayer* vl, int fieldIdx, QWidget*
     :  QgsEditorWidgetWrapper( vl, fieldIdx, editor, parent )
 {
 }
+
+
+QVariant QgsCheckboxWidget::value()
+{
+  QVariant v;
+
+  if ( mGroupBox )
+    v = mGroupBox->isChecked() ? config( "CheckedState" ) : config( "UncheckedState" );
+
+  return v;
+}
+
+QWidget* QgsCheckboxWidget::createWidget( QWidget* parent )
+{
+  return new QCheckBox( parent );
+}
+
+void QgsCheckboxWidget::initWidget( QWidget* editor )
+{
+  mCheckBox = qobject_cast<QCheckBox*>( editor );
+  mGroupBox = qobject_cast<QGroupBox*>( editor );
+}
+
+void QgsCheckboxWidget::setValue( const QVariant& value )
+{
+  if ( mGroupBox )
+  {
+    mGroupBox->setChecked( value == config( "CheckedState" ) );
+  }
+
+  if ( mCheckBox )
+  {
+    mCheckBox->setChecked( value == config( "CheckedState" ) );
+  }
+}

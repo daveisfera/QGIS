@@ -15,7 +15,31 @@
 
 #include "qgshiddenwidget.h"
 
+#include <QWidget>
+
 QgsHiddenWidget::QgsHiddenWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent )
     :  QgsEditorWidgetWrapper( vl, fieldIdx, editor, parent )
 {
+}
+
+
+QVariant QgsHiddenWidget::value()
+{
+  return mValue;
+}
+
+QWidget* QgsHiddenWidget::createWidget( QWidget* parent )
+{
+  Q_UNUSED( parent )
+  return 0;
+}
+
+void QgsHiddenWidget::initWidget( QWidget* editor )
+{
+  editor->setVisible( false );
+}
+
+void QgsHiddenWidget::setValue( const QVariant& value )
+{
+  mValue = value;
 }

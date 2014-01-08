@@ -10,7 +10,6 @@ SET(QGIS_APP_SRCS
   qgsannotationwidget.cpp
   qgsattributeactiondialog.cpp
   qgsattributetypedialog.cpp
-  qgsattributetypeloaddialog.cpp
   qgsattributetabledialog.cpp
   qgsbookmarks.cpp
   qgsbrowserdockwidget.cpp
@@ -169,7 +168,6 @@ SET (QGIS_APP_MOC_HDRS
   qgsannotationwidget.h
   qgsattributeactiondialog.h
   qgsattributetypedialog.h
-  qgsattributetypeloaddialog.h
   qgsattributetabledialog.h
   qgsbookmarks.h
   qgsbrowserdockwidget.h

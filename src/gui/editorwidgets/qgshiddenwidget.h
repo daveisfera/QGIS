@@ -24,10 +24,19 @@ class QgsHiddenWidget : public QgsEditorWidgetWrapper
   public:
     explicit QgsHiddenWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* editor = 0, QWidget* parent = 0 );
 
-  signals:
+    // QgsEditorWidgetWrapper interface
+  public:
+    QVariant value();
+
+  protected:
+    QWidget* createWidget( QWidget* parent );
+    void initWidget( QWidget* editor );
 
   public slots:
+    void setValue( const QVariant& value );
 
+  private:
+    QVariant mValue;
 };
 
 #endif // QGSHIDDENWIDGET_H

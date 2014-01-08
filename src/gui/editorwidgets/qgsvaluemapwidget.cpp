@@ -19,3 +19,41 @@ QgsValueMapWidget::QgsValueMapWidget( QgsVectorLayer* vl, int fieldIdx, QWidget*
     :  QgsEditorWidgetWrapper( vl, fieldIdx, editor, parent )
 {
 }
+
+
+QVariant QgsValueMapWidget::value()
+{
+  QVariant v;
+
+  if ( mComboBox )
+    v = mComboBox->itemData( mComboBox->currentIndex() );
+
+  return v;
+}
+
+QWidget* QgsValueMapWidget::createWidget( QWidget* parent )
+{
+  return new QComboBox( parent );
+}
+
+void QgsValueMapWidget::initWidget( QWidget* editor )
+{
+  mComboBox = qobject_cast<QComboBox*>( editor );
+
+  if ( mComboBox )
+  {
+    const QgsEditorWidgetConfig cfg = config();
+    QgsEditorWidgetConfig::ConstIterator it = cfg.constBegin();
+
+    while ( it != cfg.constEnd() )
+    {
+      mComboBox->addItem( it.key(), it.value() );
+    }
+  }
+}
+
+void QgsValueMapWidget::setValue( const QVariant& value )
+{
+  if ( mComboBox )
+    mComboBox->setCurrentIndex( mComboBox->findData( value ) );
+}

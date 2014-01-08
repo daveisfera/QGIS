@@ -15,7 +15,53 @@
 
 #include "qgsvaluemapwidgetfactory.h"
 
+#include "qgsvaluemapwidget.h"
+#include "qgsvaluemapconfigdlg.h"
+
 QgsValueMapWidgetFactory::QgsValueMapWidgetFactory( const QString& name )
     : QgsEditorWidgetFactory( name )
 {
+}
+
+
+QgsEditorWidgetWrapper* QgsValueMapWidgetFactory::create( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent ) const
+{
+  return new QgsValueMapWidget( vl, fieldIdx, editor, parent );
+}
+
+QgsEditorConfigWidget* QgsValueMapWidgetFactory::configWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* parent ) const
+{
+  return new QgsValueMapConfigDlg( vl, fieldIdx, parent );
+}
+
+QgsEditorWidgetConfig QgsValueMapWidgetFactory::readConfig( const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx )
+{
+  QgsEditorWidgetConfig cfg;
+
+  QDomNodeList nodes = configElement.elementsByTagName( "value" );
+
+  for ( int i = 0; i < nodes.length(); ++i )
+  {
+    QDomElement elem = nodes.at( i ).toElement();
+    cfg.insert( elem.attribute( "key" ), elem.attribute( "value" ) );
+  }
+
+  return cfg;
+}
+
+void QgsValueMapWidgetFactory::writeConfig( const QgsEditorWidgetConfig& config, QDomElement& configElement, QDomDocument& doc, const QgsVectorLayer* layer, int fieldIdx )
+{
+  QgsEditorWidgetConfig::ConstIterator it = config.constBegin();
+
+  while ( it != config.constEnd() )
+  {
+    QDomElement elem = doc.createElement( "value" );
+
+    elem.setAttribute( "key", it.key() );
+    elem.setAttribute( "value", it.value().toString() );
+
+    configElement.appendChild( elem );
+
+    ++it;
+  }
 }

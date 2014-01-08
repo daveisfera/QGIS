@@ -22,6 +22,11 @@ class QgsFileNameWidgetFactory : public QgsEditorWidgetFactory
 {
   public:
     explicit QgsFileNameWidgetFactory( const QString& name );
+
+    // QgsEditorWidgetFactory interface
+  public:
+    QgsEditorWidgetWrapper* create( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent ) const;
+    QgsEditorConfigWidget* configWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* parent ) const;
 };
 
 #endif // QGSFILENAMEWIDGETFACTORY_H

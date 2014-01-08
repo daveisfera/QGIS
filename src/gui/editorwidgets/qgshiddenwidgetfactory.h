@@ -22,6 +22,11 @@ class QgsHiddenWidgetFactory : public QgsEditorWidgetFactory
 {
   public:
     QgsHiddenWidgetFactory( const QString& name );
+
+    // QgsEditorWidgetFactory interface
+  public:
+    QgsEditorWidgetWrapper* create( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent ) const;
+    QgsEditorConfigWidget* configWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* parent ) const;
 };
 
 #endif // QGSHIDDENWIDGETFACTORY_H

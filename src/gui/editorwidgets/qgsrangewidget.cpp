@@ -18,11 +18,11 @@
 #include "qgsvectorlayer.h"
 
 QgsRangeWidget::QgsRangeWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent )
-  :  QgsEditorWidgetWrapper( vl, fieldIdx, editor, parent )
-  , mIntSpinBox( 0 )
-  , mDoubleSpinBox( 0 )
-  , mSlider( 0 )
-  , mDial( 0 )
+    :  QgsEditorWidgetWrapper( vl, fieldIdx, editor, parent )
+    , mIntSpinBox( 0 )
+    , mDoubleSpinBox( 0 )
+    , mSlider( 0 )
+    , mDial( 0 )
 {
 }
 
@@ -40,7 +40,7 @@ QWidget* QgsRangeWidget::createWidget( QWidget* parent )
   }
   else
   {
-    switch( layer()->pendingFields()[field()].type() )
+    switch ( layer()->pendingFields()[fieldIdx()].type() )
     {
       case QVariant::Double:
         editor = new QDoubleSpinBox( parent );
@@ -71,15 +71,15 @@ void QgsRangeWidget::initWidget( QWidget* editor )
     mDoubleSpinBox->setMinimum( config( "Min" ).toDouble() );
     mDoubleSpinBox->setMaximum( config( "Max" ).toDouble() );
     mDoubleSpinBox->setSingleStep( config( "Step" ).toDouble() );
-    connect( mDoubleSpinBox, SIGNAL( valueChanged(double) ), this, SLOT(onDoubleValueChanged(double)));
+    connect( mDoubleSpinBox, SIGNAL( valueChanged( double ) ), this, SLOT( onDoubleValueChanged( double ) ) );
   }
 
-  if ( mIntSpinBox)
+  if ( mIntSpinBox )
   {
     mIntSpinBox->setMinimum( config( "Min" ).toInt() );
     mIntSpinBox->setMaximum( config( "Max" ).toInt() );
     mIntSpinBox->setSingleStep( config( "Step" ).toInt() );
-    connect( mIntSpinBox, SIGNAL( valueChanged(int) ), this, SLOT(onIntValueChanged(int)));
+    connect( mIntSpinBox, SIGNAL( valueChanged( int ) ), this, SLOT( onIntValueChanged( int ) ) );
   }
 
   if ( mDial )
@@ -87,7 +87,7 @@ void QgsRangeWidget::initWidget( QWidget* editor )
     mDial->setMinimum( config( "Min" ).toInt() );
     mDial->setMaximum( config( "Max" ).toInt() );
     mDial->setSingleStep( config( "Step" ).toInt() );
-    connect( mDial, SIGNAL( valueChanged(int) ), this, SLOT(onIntValueChanged(int)));
+    connect( mDial, SIGNAL( valueChanged( int ) ), this, SLOT( onIntValueChanged( int ) ) );
   }
 
   if ( mSlider )
@@ -95,7 +95,7 @@ void QgsRangeWidget::initWidget( QWidget* editor )
     mSlider->setMinimum( config( "Min" ).toInt() );
     mSlider->setMaximum( config( "Max" ).toInt() );
     mSlider->setSingleStep( config( "Step" ).toInt() );
-    connect( mSlider, SIGNAL( valueChanged(int) ), this, SLOT(onIntValueChanged(int)));
+    connect( mSlider, SIGNAL( valueChanged( int ) ), this, SLOT( onIntValueChanged( int ) ) );
   }
 
 }

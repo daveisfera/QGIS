@@ -18,16 +18,27 @@
 
 #include "qgseditorwidgetwrapper.h"
 
+#include <QComboBox>
+
 class QgsEnumerationWidget : public QgsEditorWidgetWrapper
 {
     Q_OBJECT
   public:
     explicit QgsEnumerationWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* editor = 0, QWidget* parent = 0 );
 
-  signals:
+    // QgsEditorWidgetWrapper interface
+  public:
+    QVariant value();
+
+  protected:
+    QWidget* createWidget( QWidget* parent );
+    void initWidget( QWidget* editor );
 
   public slots:
+    void setValue( const QVariant& value );
 
+  private:
+    QComboBox* mComboBox;
 };
 
 #endif // QGSENUMERATIONWIDGET_H

@@ -173,28 +173,6 @@ class APP_EXPORT QgsAttributeTypeDialog: public QDialog, private Ui::QgsAttribut
     void setStackPage( int index );
 
     /**
-     * Slot to handle button push to delete selected rows
-     */
-    void removeSelectedButtonPushed( );
-
-    /**
-     * Slot to handle load from layer button pushed to display dialog to load data
-     */
-    void loadFromLayerButtonPushed( );
-
-    /**
-     * Slot to handle load from CSV button pushed to display dialog to load data
-     */
-    void loadFromCSVButtonPushed( );
-
-    /**
-     * Slot to handle change of cell to have always empty row at end
-     * @param row index of row which was changed
-     * @param column index of column which was changed
-     */
-    void vCellChanged( int row, int column );
-
-    /**
      * update columns list
      */
     void updateLayerColumns( int idx );

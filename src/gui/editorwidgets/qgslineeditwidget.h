@@ -18,6 +18,11 @@
 
 #include "qgseditorwidgetwrapper.h"
 
+#include <QLineEdit>
+#include <QTextEdit>
+#include <QPlainTextEdit>
+#include <QComboBox>
+
 class QgsLineEditWidget : public QgsEditorWidgetWrapper
 {
     Q_OBJECT
@@ -26,8 +31,22 @@ class QgsLineEditWidget : public QgsEditorWidgetWrapper
 
   signals:
 
-  public slots:
+    // QgsEditorWidgetWrapper interface
+  public:
+    QVariant value();
 
+  protected:
+    QWidget* createWidget( QWidget* parent );
+    void initWidget( QWidget* editor );
+
+  public slots:
+    void setValue( const QVariant& value );
+
+  private:
+    QLineEdit* mLineEdit;
+    QTextEdit* mTextEdit;
+    QPlainTextEdit* mPlainTextEdit;
+    QComboBox* mComboBox;
 };
 
 #endif // QGSLINEEDITWIDGET_H

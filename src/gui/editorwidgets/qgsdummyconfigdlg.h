@@ -19,12 +19,12 @@
 #include "ui_qgsdummyconfigdlgbase.h"
 #include "qgseditorconfigwidget.h"
 
-class QgsDummyConfigDlgBase : public QgsEditorConfigWidget, private Ui::QgsDummyConfigDlgBase
+class QgsDummyConfigDlg : public QgsEditorConfigWidget, private Ui::QgsDummyConfigDlgBase
 {
     Q_OBJECT
 
   public:
-    explicit QgsDummyConfigDlgBase( QgsVectorLayer* vl, int fieldIdx, QWidget* parent );
+    explicit QgsDummyConfigDlg( QgsVectorLayer* vl, int fieldIdx, QWidget* parent, const QString& description );
 
     // QgsEditorConfigWidget interface
   public:

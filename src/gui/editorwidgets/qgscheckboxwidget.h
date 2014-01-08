@@ -18,16 +18,29 @@
 
 #include "qgseditorwidgetwrapper.h"
 
+#include <QCheckBox>
+#include <QGroupBox>
+
 class QgsCheckboxWidget : public QgsEditorWidgetWrapper
 {
     Q_OBJECT
   public:
     explicit QgsCheckboxWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* editor = 0, QWidget* parent = 0 );
 
-  signals:
+    // QgsEditorWidgetWrapper interface
+  public:
+    QVariant value();
+
+  protected:
+    QWidget*createWidget( QWidget* parent );
+    void initWidget( QWidget* editor );
 
   public slots:
+    void setValue( const QVariant& value );
 
+  private:
+    QCheckBox* mCheckBox;
+    QGroupBox* mGroupBox;
 };
 
 #endif // QGSCHECKBOXWIDGET_H

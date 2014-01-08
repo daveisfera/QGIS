@@ -18,15 +18,19 @@
 
 #include "ui_qgscheckboxconfigdlgbase.h"
 
-class QgsCheckBoxConfigDlgBase : public QWidget, private Ui::QgsCheckBoxConfigDlgBase
+#include "qgseditorconfigwidget.h"
+
+class QgsCheckBoxConfigDlg : public QgsEditorConfigWidget, private Ui::QgsCheckBoxConfigDlgBase
 {
     Q_OBJECT
 
   public:
-    explicit QgsCheckBoxConfigDlgBase( QWidget *parent = 0 );
+    explicit QgsCheckBoxConfigDlg( QgsVectorLayer* vl, int fieldIdx, QWidget *parent = 0 );
 
-  protected:
-    void changeEvent( QEvent *e );
+    // QgsEditorConfigWidget interface
+  public:
+    QgsEditorWidgetConfig config();
+    void setConfig( const QgsEditorWidgetConfig& config );
 };
 
 #endif // QGSCHECKBOXCONFIGDLG_H

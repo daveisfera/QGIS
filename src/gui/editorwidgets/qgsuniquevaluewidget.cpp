@@ -15,7 +15,74 @@
 
 #include "qgsuniquevaluewidget.h"
 
-QgsUniqueValueWidget::QgsUniqueValueWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent )
+#include "qgsvectorlayer.h"
+
+#include <QCompleter>
+
+QgsUniqueValuesWidget::QgsUniqueValuesWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent )
     :  QgsEditorWidgetWrapper( vl, fieldIdx, editor, parent )
 {
+}
+
+QVariant QgsUniqueValuesWidget::value()
+{
+  QVariant value;
+
+  if ( mComboBox )
+    value = mComboBox->itemData( mComboBox->currentIndex() );
+
+  if ( mLineEdit )
+    value = mLineEdit->text();
+
+  return value;
+}
+
+QWidget* QgsUniqueValuesWidget::createWidget( QWidget* parent )
+{
+  if ( config( "Editable" ).toBool() )
+    return new QLineEdit( parent );
+  else
+    return new QComboBox( parent );
+}
+
+void QgsUniqueValuesWidget::initWidget( QWidget* editor )
+{
+  mComboBox = qobject_cast<QComboBox*>( editor );
+  mLineEdit = qobject_cast<QLineEdit*>( editor );
+
+  QStringList sValues;
+
+  QList<QVariant> values;
+
+  layer()->uniqueValues( fieldIdx(), values );
+
+  Q_FOREACH( QVariant v, values )
+  {
+    if ( mComboBox )
+    {
+      mComboBox->addItem( v.toString(), v );
+    }
+
+    sValues << v.toString();
+  }
+
+  if ( mLineEdit )
+  {
+    QCompleter* c = new QCompleter( sValues );
+    c->setCompletionMode( QCompleter::PopupCompletion );
+    mLineEdit->setCompleter( c );
+  }
+}
+
+void QgsUniqueValuesWidget::setValue( const QVariant& value )
+{
+  if ( mComboBox )
+  {
+    mComboBox->setCurrentIndex( mComboBox->findData( value ) );
+  }
+
+  if ( mLineEdit )
+  {
+    mLineEdit->setText( value.toString() );
+  }
 }

@@ -14,8 +14,20 @@
  ***************************************************************************/
 
 #include "qgslineeditwidgetfactory.h"
+#include "qgslineeditwidget.h"
+#include "qgsdummyconfigdlg.h"
 
 QgsLineEditWidgetFactory::QgsLineEditWidgetFactory( const QString& name )
     : QgsEditorWidgetFactory( name )
 {
+}
+
+QgsEditorWidgetWrapper* QgsLineEditWidgetFactory::create( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent ) const
+{
+  return new QgsLineEditWidget( vl, fieldIdx, editor, parent );
+}
+
+QgsEditorConfigWidget* QgsLineEditWidgetFactory::configWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* parent ) const
+{
+  return new QgsDummyConfigDlg( vl, fieldIdx, parent, QObject::tr( "Simple edit box. This is the default editation widget." ) );
 }

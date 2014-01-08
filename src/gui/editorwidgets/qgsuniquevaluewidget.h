@@ -18,16 +18,29 @@
 
 #include "qgseditorwidgetwrapper.h"
 
-class QgsUniqueValueWidget : public QgsEditorWidgetWrapper
+#include <QComboBox>
+#include <QLineEdit>
+
+class QgsUniqueValuesWidget : public QgsEditorWidgetWrapper
 {
     Q_OBJECT
   public:
-    explicit QgsUniqueValueWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* editor = 0, QWidget* parent = 0 );
+    explicit QgsUniqueValuesWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* editor = 0, QWidget* parent = 0 );
 
-  signals:
+    // QgsEditorWidgetWrapper interface
+  public:
+    QVariant value();
+
+  protected:
+    QWidget* createWidget( QWidget* parent );
+    void initWidget( QWidget* editor );
 
   public slots:
+    void setValue( const QVariant& value );
 
+  private:
+    QComboBox* mComboBox;
+    QLineEdit* mLineEdit;
 };
 
 #endif // QGSUNIQUEVALUEWIDGET_H

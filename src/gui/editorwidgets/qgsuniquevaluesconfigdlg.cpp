@@ -15,21 +15,23 @@
 
 #include "qgsuniquevaluesconfigdlg.h"
 
-QgsUniqueValuesConfigDlgBase::QgsUniqueValuesConfigDlgBase( QWidget *parent ) :
-    QWidget( parent )
+QgsUniqueValuesConfigDlg::QgsUniqueValuesConfigDlg( QgsVectorLayer* vl, int fieldIdx, QWidget *parent ) :
+    QgsEditorConfigWidget( vl, fieldIdx, parent )
 {
   setupUi( this );
 }
 
-void QgsUniqueValuesConfigDlgBase::changeEvent( QEvent *e )
+
+QgsEditorWidgetConfig QgsUniqueValuesConfigDlg::config()
 {
-  QWidget::changeEvent( e );
-  switch ( e->type() )
-  {
-    case QEvent::LanguageChange:
-      retranslateUi( this );
-      break;
-    default:
-      break;
-  }
+  QgsEditorWidgetConfig cfg;
+
+  cfg.insert( "Editable", editableUniqueValues->isChecked() );
+
+  return cfg;
+}
+
+void QgsUniqueValuesConfigDlg::setConfig( const QgsEditorWidgetConfig& config )
+{
+  editableUniqueValues->setChecked( config.value( "Editable", false ).toBool() );
 }

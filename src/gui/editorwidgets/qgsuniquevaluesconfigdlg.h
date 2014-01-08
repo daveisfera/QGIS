@@ -18,15 +18,19 @@
 
 #include "ui_qgsuniquevaluesconfigdlgbase.h"
 
-class QgsUniqueValuesConfigDlgBase : public QWidget, private Ui::QgsUniqueValuesConfigDlgBase
+#include "qgseditorconfigwidget.h"
+
+class QgsUniqueValuesConfigDlg : public QgsEditorConfigWidget, private Ui::QgsUniqueValuesConfigDlgBase
 {
     Q_OBJECT
 
   public:
-    explicit QgsUniqueValuesConfigDlgBase( QWidget *parent = 0 );
+    explicit QgsUniqueValuesConfigDlg( QgsVectorLayer* vl, int fieldIdx, QWidget *parent = 0 );
 
-  protected:
-    void changeEvent( QEvent *e );
+    // QgsEditorConfigWidget interface
+  public:
+    QgsEditorWidgetConfig config();
+    void setConfig( const QgsEditorWidgetConfig& config );
 };
 
 #endif // QGSUNIQUEVALUESCONFIGDLG_H

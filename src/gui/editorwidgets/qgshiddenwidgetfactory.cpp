@@ -15,7 +15,20 @@
 
 #include "qgshiddenwidgetfactory.h"
 
+#include "qgshiddenwidget.h"
+#include "qgsdummyconfigdlg.h"
+
 QgsHiddenWidgetFactory::QgsHiddenWidgetFactory( const QString& name )
     : QgsEditorWidgetFactory( name )
 {
+}
+
+QgsEditorWidgetWrapper* QgsHiddenWidgetFactory::create( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent ) const
+{
+  return new QgsHiddenWidget( vl, fieldIdx, editor, parent );
+}
+
+QgsEditorConfigWidget* QgsHiddenWidgetFactory::configWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* parent ) const
+{
+  return new QgsDummyConfigDlg( vl, fieldIdx, parent, QObject::tr( "A hidden attribute will be invisible - the user is not able to see it's contents." ) );
 }

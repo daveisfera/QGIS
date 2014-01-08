@@ -28,6 +28,14 @@ class QgsValueMapConfigDlg : public QgsEditorConfigWidget, private Ui::QgsValueM
     explicit QgsValueMapConfigDlg( QgsVectorLayer* vl, int fieldIdx, QWidget* parent );
     virtual QgsEditorWidgetConfig config();
     virtual void setConfig( const QgsEditorWidgetConfig& config );
+
+    void updateMap( const QMap<QString, QVariant> &map, bool insertNull );
+
+  private slots:
+    void vCellChanged( int row, int column );
+    void removeSelectedButtonPushed();
+    void loadFromLayerButtonPushed();
+    void loadFromCSVButtonPushed();
 };
 
 #endif // QGSVALUEMAPCONFIGDLG_H

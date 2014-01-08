@@ -21,6 +21,7 @@
 #include <QVariant>
 
 class QgsVectorLayer;
+class QgsField;
 
 #include "qgseditorwidgetconfig.h"
 
@@ -112,7 +113,16 @@ class GUI_EXPORT QgsEditorWidgetWrapper : public QObject
      *
      * @see layer()
      */
-    int field();
+    int fieldIdx();
+
+    /**
+     * Access the field.
+     *
+     * @return Thefield you are working on
+     *
+     * @see layer()
+     */
+    QgsField field();
 
     /**
      * Will return a wrapper for a given widget
@@ -172,7 +182,7 @@ class GUI_EXPORT QgsEditorWidgetWrapper : public QObject
     QWidget* mWidget;
     QWidget* mParent;
     QgsVectorLayer* mLayer;
-    int mField;
+    int mFieldIdx;
 };
 
 // We'll use this class inside a QVariant in the widgets properties

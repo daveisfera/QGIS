@@ -15,17 +15,21 @@
 
 #include "qgsdummyconfigdlg.h"
 
-QgsDummyConfigDlgBase::QgsDummyConfigDlgBase( QgsVectorLayer* vl, int fieldIdx, QWidget* parent ) :
-    QgsEditorConfigWidget( vl, fieldIdx, parent )
+QgsDummyConfigDlg::QgsDummyConfigDlg( QgsVectorLayer* vl, int fieldIdx, QWidget* parent, const QString& description )
+    :    QgsEditorConfigWidget( vl, fieldIdx, parent )
 {
   setupUi( this );
+
+  mDummyTextLabel->setText( description );
 }
 
 
-QgsEditorWidgetConfig QgsDummyConfigDlgBase::config()
+QgsEditorWidgetConfig QgsDummyConfigDlg::config()
 {
+  return QgsEditorWidgetConfig();
 }
 
-void QgsDummyConfigDlgBase::setConfig( const QgsEditorWidgetConfig& config )
+void QgsDummyConfigDlg::setConfig( const QgsEditorWidgetConfig& config )
 {
+  Q_UNUSED( config );
 }

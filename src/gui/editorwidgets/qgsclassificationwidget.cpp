@@ -15,7 +15,48 @@
 
 #include "qgsclassificationwidget.h"
 
+#include "qgscategorizedsymbolrendererv2.h"
+#include "qgsvectorlayer.h"
+
 QgsClassificationWidget::QgsClassificationWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent )
     :  QgsEditorWidgetWrapper( vl, fieldIdx, editor, parent )
 {
+}
+
+QVariant QgsClassificationWidget::value()
+{
+  return mComboBox->currentText();
+}
+
+QWidget*QgsClassificationWidget::createWidget( QWidget* parent )
+{
+  return new QComboBox( parent );
+}
+
+void QgsClassificationWidget::initWidget( QWidget* editor )
+{
+  mComboBox = qobject_cast<QComboBox*>( editor );
+
+  if ( mComboBox )
+  {
+    const QgsCategorizedSymbolRendererV2 *csr = dynamic_cast<const QgsCategorizedSymbolRendererV2 *>( layer()->rendererV2() );
+    if ( csr )
+    {
+      const QgsCategoryList categories = csr->categories();
+      for ( int i = 0; i < categories.size(); i++ )
+      {
+        QString label = categories[i].label();
+        QString value = categories[i].value().toString();
+        if ( label.isEmpty() )
+          label = value;
+
+        mComboBox->addItem( label, value );
+      }
+    }
+  }
+}
+
+void QgsClassificationWidget::setValue( const QVariant& value )
+{
+  mComboBox->setCurrentIndex( mComboBox->findData( value ) );
 }

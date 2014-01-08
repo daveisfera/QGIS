@@ -22,6 +22,11 @@ class QgsClassificationWidgetWrapperFactory : public QgsEditorWidgetFactory
 {
   public:
     explicit QgsClassificationWidgetWrapperFactory( const QString& name );
+
+    // QgsEditorWidgetFactory interface
+  public:
+    QgsEditorWidgetWrapper* create( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent ) const;
+    QgsEditorConfigWidget* configWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* parent ) const;
 };
 
 #endif // QGSCLASSIFICATIONWIDGETWRAPPERFACTORY_H

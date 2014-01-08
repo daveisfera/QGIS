@@ -15,21 +15,22 @@
 
 #include "qgscheckboxconfigdlg.h"
 
-QgsCheckBoxConfigDlgBase::QgsCheckBoxConfigDlgBase( QWidget *parent ) :
-    QWidget( parent )
+QgsCheckBoxConfigDlg::QgsCheckBoxConfigDlg( QgsVectorLayer* vl, int fieldIdx, QWidget *parent ) :
+    QgsEditorConfigWidget( vl, fieldIdx, parent )
 {
   setupUi( this );
 }
 
-void QgsCheckBoxConfigDlgBase::changeEvent( QEvent *e )
+QgsEditorWidgetConfig QgsCheckBoxConfigDlg::config()
 {
-  QWidget::changeEvent( e );
-  switch ( e->type() )
-  {
-    case QEvent::LanguageChange:
-      retranslateUi( this );
-      break;
-    default:
-      break;
-  }
+  QgsEditorWidgetConfig cfg;
+
+  cfg.insert( "CheckedState", leCheckedState->text() );
+  cfg.insert( "UncheckedState", leUncheckedState->text() );
+}
+
+void QgsCheckBoxConfigDlg::setConfig( const QgsEditorWidgetConfig& config )
+{
+  leCheckedState->setText( config.value( "CheckedState" ).toString() );
+  leUncheckedState->setText( config.value( "UncheckedState" ).toString() ); ;
 }

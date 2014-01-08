@@ -41,12 +41,7 @@ QgsAttributeTypeDialog::QgsAttributeTypeDialog( QgsVectorLayer *vl )
     , mLayer( vl )
 {
   setupUi( this );
-  tableWidget->insertRow( 0 );
   connect( selectionListWidget, SIGNAL( currentRowChanged( int ) ), this, SLOT( setStackPage( int ) ) );
-  connect( removeSelectedButton, SIGNAL( clicked() ), this, SLOT( removeSelectedButtonPushed() ) );
-  connect( loadFromLayerButton, SIGNAL( clicked() ), this, SLOT( loadFromLayerButtonPushed() ) );
-  connect( loadFromCSVButton, SIGNAL( clicked() ), this, SLOT( loadFromCSVButtonPushed() ) );
-  connect( tableWidget, SIGNAL( cellChanged( int, int ) ), this, SLOT( vCellChanged( int, int ) ) );
   connect( valueRelationEditExpression, SIGNAL( clicked() ), this, SLOT( editValueRelationExpression() ) );
 
   QMapIterator<QString, QgsEditorWidgetFactory*> i( QgsEditorWidgetRegistry::instance()->factories() );
@@ -189,39 +184,6 @@ void QgsAttributeTypeDialog::setCheckedState( QString checked, QString unchecked
   leUncheckedState->setText( unchecked );
 }
 
-void QgsAttributeTypeDialog::vCellChanged( int row, int column )
-{
-  Q_UNUSED( column );
-  if ( row == tableWidget->rowCount() - 1 )
-  {
-    tableWidget->insertRow( row + 1 );
-  } //else check type
-}
-
-void QgsAttributeTypeDialog::removeSelectedButtonPushed()
-{
-  QList<QTableWidgetItem *> list = tableWidget->selectedItems();
-  QSet<int> rowsToRemove;
-  int removed = 0;
-  int i;
-  for ( i = 0; i < list.size(); i++ )
-  {
-    if ( list[i]->column() == 0 )
-    {
-      int row = list[i]->row();
-      if ( !rowsToRemove.contains( row ) )
-      {
-        rowsToRemove.insert( row );
-      }
-    }
-  }
-  for ( i = 0; i < rowsToRemove.values().size(); i++ )
-  {
-    tableWidget->removeRow( rowsToRemove.values()[i] - removed );
-    removed++;
-  }
-}
-
 void QgsAttributeTypeDialog::editValueRelationExpression()
 {
   QString id = valueRelationLayer->itemData( valueRelationLayer->currentIndex() ).toString();
@@ -244,112 +206,6 @@ void QgsAttributeTypeDialog::editValueRelationExpression()
     valueRelationFilterExpression->setText( dlg.expressionBuilder()->expressionText() );
   }
 }
-
-void QgsAttributeTypeDialog::loadFromLayerButtonPushed()
-{
-  QgsAttributeTypeLoadDialog layerDialog( mLayer );
-  if ( !layerDialog.exec() )
-    return;
-
-  updateMap( layerDialog.valueMap(), layerDialog.insertNull() );
-}
-
-void QgsAttributeTypeDialog::loadFromCSVButtonPushed()
-{
-  QString fileName = QFileDialog::getOpenFileName( 0 , tr( "Select a file" ) );
-  if ( fileName.isNull() )
-    return;
-
-  QFile f( fileName );
-
-  if ( !f.open( QIODevice::ReadOnly ) )
-  {
-    QMessageBox::information( NULL,
-                              tr( "Error" ),
-                              tr( "Could not open file %1\nError was:%2" ).arg( fileName ).arg( f.errorString() ),
-                              QMessageBox::Cancel );
-    return;
-  }
-
-  QTextStream s( &f );
-  s.setAutoDetectUnicode( true );
-
-  QRegExp re0( "^([^;]*);(.*)$" );
-  re0.setMinimal( true );
-  QRegExp re1( "^([^,]*),(.*)$" );
-  re1.setMinimal( true );
-  QMap<QString, QVariant> map;
-
-  s.readLine();
-
-  while ( !s.atEnd() )
-  {
-    QString l = s.readLine().trimmed();
-
-    QString key, val;
-    if ( re0.indexIn( l ) >= 0 && re0.captureCount() == 2 )
-    {
-      key = re0.cap( 1 ).trimmed();
-      val = re0.cap( 2 ).trimmed();
-    }
-    else if ( re1.indexIn( l ) >= 0 && re1.captureCount() == 2 )
-    {
-      key = re1.cap( 1 ).trimmed();
-      val = re1.cap( 2 ).trimmed();
-    }
-    else
-      continue;
-
-    if (( key.startsWith( "\"" ) && key.endsWith( "\"" ) ) ||
-        ( key.startsWith( "'" ) && key.endsWith( "'" ) ) )
-    {
-      key = key.mid( 1, key.length() - 2 );
-    }
-
-    if (( val.startsWith( "\"" ) && val.endsWith( "\"" ) ) ||
-        ( val.startsWith( "'" ) && val.endsWith( "'" ) ) )
-    {
-      val = val.mid( 1, val.length() - 2 );
-    }
-
-    map[ key ] = val;
-  }
-
-  updateMap( map );
-}
-
-void QgsAttributeTypeDialog::updateMap( const QMap<QString, QVariant> &map, bool insertNull )
-{
-  tableWidget->clearContents();
-  for ( int i = tableWidget->rowCount() - 1; i > 0; i-- )
-  {
-    tableWidget->removeRow( i );
-  }
-  int row = 0;
-
-  if ( insertNull )
-  {
-    QSettings settings;
-    tableWidget->setItem( row, 0, new QTableWidgetItem( settings.value( "qgis/nullValue", "NULL" ).toString() ) );
-    tableWidget->setItem( row, 1, new QTableWidgetItem( "<NULL>" ) );
-    ++row;
-  }
-
-  for ( QMap<QString, QVariant>::const_iterator mit = map.begin(); mit != map.end(); ++mit, row++ )
-  {
-    tableWidget->insertRow( row );
-    if ( mit.value().isNull() )
-    {
-      tableWidget->setItem( row, 0, new QTableWidgetItem( mit.key() ) );
-    }
-    else
-    {
-      tableWidget->setItem( row, 0, new QTableWidgetItem( mit.key() ) );
-      tableWidget->setItem( row, 1, new QTableWidgetItem( mit.value().toString() ) );
-    }
-  }
-}
-
 
 void QgsAttributeTypeDialog::setPageForEditType( QgsVectorLayer::EditType editType )
 {
@@ -466,86 +322,12 @@ void QgsAttributeTypeDialog::setIndex( int index, QgsVectorLayer::EditType editT
   QgsAttributeList attributeList = QgsAttributeList();
   attributeList.append( index );
 
-  QgsFeatureIterator fit = mLayer->getFeatures( QgsFeatureRequest().setFlags( QgsFeatureRequest::NoGeometry ).setSubsetOfAttributes( attributeList ) );
-
-  QgsFeature f;
-
-  QString text;
-  //calculate min and max for range for this field
-  if ( mLayer->pendingFields()[index].type() == QVariant::Int
-       || mLayer->pendingFields()[index].type() == QVariant::LongLong )
-  {
-    rangeWidget->clear();
-    rangeWidget->addItems( QStringList() << tr( "Editable" ) << tr( "Slider" ) << tr( "Dial" ) );
-    int min = INT_MIN;
-    int max = INT_MAX;
-    while ( fit.nextFeature( f ) )
-    {
-      QVariant val = f.attribute( index );
-      if ( val.isValid() && !val.isNull() )
-      {
-        int valInt = val.toInt();
-        if ( min > valInt )
-          min = valInt;
-        if ( max < valInt )
-          max = valInt;
-      }
-      text = tr( "Current minimum for this value is %1 and current maximum is %2." ).arg( min ).arg( max );
-    }
-  }
-  else if ( mLayer->pendingFields()[index].type() == QVariant::Double )
-  {
-    double dMin = -DBL_MAX;
-    double dMax = DBL_MAX;
-
-    rangeWidget->clear();
-    rangeWidget->addItems( QStringList() << tr( "Editable" ) << tr( "Slider" ) );
-    while ( fit.nextFeature( f ) )
-    {
-      QVariant val = f.attribute( index );
-      if ( val.isValid() && !val.isNull() )
-      {
-        double dVal =  val.toDouble();
-        if ( dMin > dVal )
-          dMin = dVal;
-        if ( dMax < dVal )
-          dMax = dVal;
-      }
-      text = tr( "Current minimum for this value is %1 and current maximum is %2." ).arg( dMin ).arg( dMax );
-    }
-  }
-  else
-  {
-    text = tr( "Attribute has no integer or real type, therefore range is not usable." );
-  }
-  valuesLabel->setText( text );
-
   setPageForEditType( editType );
 
   switch ( editType )
   {
     case QgsVectorLayer::ValueMap:
     {
-      tableWidget->clearContents();
-      for ( int i = tableWidget->rowCount() - 1; i > 0; i-- )
-      {
-        tableWidget->removeRow( i );
-      }
-
-      int row = 0;
-      for ( QMap<QString, QVariant>::iterator mit = mValueMap.begin(); mit != mValueMap.end(); ++mit, row++ )
-      {
-        tableWidget->insertRow( row );
-        if ( mit.value().isNull() )
-        {
-          tableWidget->setItem( row, 0, new QTableWidgetItem( mit.key() ) );
-        }
-        else
-        {
-          tableWidget->setItem( row, 0, new QTableWidgetItem( mit.value().toString() ) );
-          tableWidget->setItem( row, 1, new QTableWidgetItem( mit.key() ) );
-        }
-      }
 
     }
     break;
@@ -636,28 +418,6 @@ void QgsAttributeTypeDialog::setStackPage( int index )
   switch ( index )
   {
     case 2:
-      if ( mLayer->pendingFields()[mIndex].type() != QVariant::Double &&
-           mLayer->pendingFields()[mIndex].type() != QVariant::Int &&
-           mLayer->pendingFields()[mIndex].type() != QVariant::LongLong )
-      {
-        okDisabled = true;
-      }
-      else if ( mLayer->pendingFields()[mIndex].type() != QVariant::Double )
-      {
-        rangeStackedWidget->setCurrentIndex( 0 );
-        //load data
-        minimumSpinBox->setValue( mRangeData.mMin.toInt() );
-        maximumSpinBox->setValue( mRangeData.mMax.toInt() );
-        stepSpinBox->setValue( mRangeData.mStep.toInt() );
-      }
-      else
-      {
-        rangeStackedWidget->setCurrentIndex( 1 );
-        //load data
-        minimumDoubleSpinBox->setValue( mRangeData.mMin.toDouble() );
-        maximumDoubleSpinBox->setValue( mRangeData.mMax.toDouble() );
-        stepDoubleSpinBox->setValue( mRangeData.mStep.toDouble() );
-      }
       stackedWidget->setCurrentIndex( 2 );
       break;
     case 6:
@@ -744,36 +504,6 @@ void QgsAttributeTypeDialog::accept()
       mEditType = QgsVectorLayer::Classification;
       break;
     case 2:
-      //store range data
-      if ( mLayer->pendingFields()[mIndex].type() == QVariant::Int
-           || mLayer->pendingFields()[mIndex].type() == QVariant::LongLong )
-      {
-        mRangeData = QgsVectorLayer::RangeData( minimumSpinBox->value(),
-                                                maximumSpinBox->value(),
-                                                stepSpinBox->value() );
-      }
-      else
-      {
-        mRangeData = QgsVectorLayer::RangeData( minimumDoubleSpinBox->value(),
-                                                maximumDoubleSpinBox->value(),
-                                                stepDoubleSpinBox->value() );
-      }
-#if 0
-      //select correct one
-      switch ( rangeWidget->currentIndex() )
-      {
-        case 0:
-          mEditType = QgsVectorLayer::EditRange;
-          break;
-        case 1:
-          mEditType = QgsVectorLayer::SliderRange;
-          break;
-        case 2:
-          mEditType = QgsVectorLayer::DialRange;
-          break;
-      }
-      break;
-#endif
     case 3:
       if ( editableUniqueValues->isChecked() )
       {
@@ -788,25 +518,6 @@ void QgsAttributeTypeDialog::accept()
       mEditType = QgsVectorLayer::FileName;
       break;
     case 5:
-      //store data to map
-      mValueMap.clear();
-      for ( int i = 0; i < tableWidget->rowCount() - 1; i++ )
-      {
-        QTableWidgetItem *ki = tableWidget->item( i, 0 );
-        QTableWidgetItem *vi = tableWidget->item( i, 1 );
-
-        if ( !ki )
-          continue;
-
-        if ( !vi || vi->text().isNull() )
-        {
-          mValueMap.insert( ki->text(), ki->text() );
-        }
-        else
-        {
-          mValueMap.insert( vi->text(), ki->text() );
-        }
-      }
       mEditType = QgsVectorLayer::ValueMap;
       break;
     case 6:

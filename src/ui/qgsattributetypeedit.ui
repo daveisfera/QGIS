@@ -132,7 +132,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>8</number>
      </property>
      <widget class="QWidget" name="lineEditPage">
       <layout class="QVBoxLayout" name="verticalLayout_1">

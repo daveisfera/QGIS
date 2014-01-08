@@ -22,6 +22,11 @@ class QgsLineEditWidgetFactory : public QgsEditorWidgetFactory
 {
   public:
     QgsLineEditWidgetFactory( const QString& name );
+
+    // QgsEditorWidgetFactory interface
+  public:
+    virtual QgsEditorWidgetWrapper* create( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent ) const;
+    virtual QgsEditorConfigWidget* configWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* parent ) const;
 };
 
 #endif // QGSLINEEDITWIDGETFACTORY_H

@@ -29,6 +29,9 @@ class QgsRangeWidgetFactory : public QgsEditorWidgetFactory
     virtual QgsEditorConfigWidget* configWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* parent ) const;
     virtual QgsEditorWidgetConfig readConfig( const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx );
     virtual void writeConfig( const QgsEditorWidgetConfig& config, QDomElement& configElement, const QDomDocument& doc, const QgsVectorLayer* layer, int fieldIdx );
+
+  private:
+    bool supportsField(QgsVectorLayer *vl, int fieldIdx);
 };
 
 #endif // QGSRANGEWIDGETFACTORY_H

@@ -103,6 +103,27 @@ class GUI_EXPORT QgsEditorWidgetFactory
      */
     virtual void writeConfig( const QgsEditorWidgetConfig& config, QDomElement& configElement, QDomDocument& doc, const QgsVectorLayer* layer, int fieldIdx );
 
+    /**
+     * Check if this editor widget type supports a certain field.
+     *
+     * @param vl        The layer
+     * @param fieldIdx  The field index
+     * @return          True if the type is supported for this field
+     */
+    inline bool supportsField( QgsVectorLayer* vl, int fieldIdx ) { return isFieldSupported( vl, fieldIdx ); }
+
+  private:
+    /**
+     * This method allows to disable this editor widget type for a certain field.
+     * By default, it returns true for all fields.
+     * Reimplement this if you only support certain fields.
+     *
+     * @param vl
+     * @param fieldIdx
+     * @return True if the field is supported.
+     */
+    virtual bool isFieldSupported( QgsVectorLayer* vl, int fieldIdx );
+
   private:
     QString mName;
 };

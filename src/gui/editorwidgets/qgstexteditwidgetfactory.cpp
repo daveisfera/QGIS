@@ -15,7 +15,20 @@
 
 #include "qgstexteditwidgetfactory.h"
 
+#include "qgstexteditwidget.h"
+#include "qgsdummyconfigdlg.h"
+
 QgsTextEditWidgetFactory::QgsTextEditWidgetFactory( const QString& name )
     : QgsEditorWidgetFactory( name )
 {
+}
+
+QgsEditorWidgetWrapper* QgsTextEditWidgetFactory::create(QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent) const
+{
+  return new QgsTextEditWidget( vl, fieldIdx, editor, parent );
+}
+
+QgsEditorConfigWidget* QgsTextEditWidgetFactory::configWidget(QgsVectorLayer* vl, int fieldIdx, QWidget* parent) const
+{
+  return new QgsDummyConfigDlg( vl, fieldIdx, parent, QObject::tr( "A text edit field that accepts multiple lines will be used." ) );
 }

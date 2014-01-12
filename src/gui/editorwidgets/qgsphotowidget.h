@@ -18,16 +18,39 @@
 
 #include "qgseditorwidgetwrapper.h"
 
+#include <QLabel>
+#include <QPushButton>
+#include <QLineEdit>
+
 class QgsPhotoWidget : public QgsEditorWidgetWrapper
 {
     Q_OBJECT
   public:
     explicit QgsPhotoWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* editor = 0, QWidget* parent = 0 );
 
-  signals:
+    // QgsEditorWidgetWrapper interface
+  public:
+    QVariant value();
+
+  protected:
+    QWidget* createWidget(QWidget* parent);
+    void initWidget(QWidget* editor);
 
   public slots:
+    void setValue(const QVariant& value);
+    void setEnabled(bool enabled);
 
+  private slots:
+    void selectFileName();
+    void loadPixmap( const QString& fileName );
+
+  private:
+    //! This label is used as a container to display the picture
+    QLabel* mPhotoLabel;
+    //! The line edit containing the path to the picture
+    QLineEdit* mLineEdit;
+    //! The button to open the file chooser dialog
+    QPushButton* mButton;
 };
 
 #endif // QGSPHOTOWIDGET_H

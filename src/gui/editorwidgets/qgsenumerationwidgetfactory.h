@@ -27,6 +27,9 @@ class QgsEnumerationWidgetFactory : public QgsEditorWidgetFactory
   public:
     QgsEditorWidgetWrapper* create( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent ) const;
     QgsEditorConfigWidget* configWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* parent ) const;
+
+  private:
+    bool isFieldSupported(QgsVectorLayer* vl, int fieldIdx);
 };
 
 #endif // QGSENUMERATIONWIDGETFACTORY_H

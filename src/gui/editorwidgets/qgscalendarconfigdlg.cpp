@@ -15,21 +15,23 @@
 
 #include "qgscalendarconfigdlg.h"
 
-QgsCalendarConfigDlgBase::QgsCalendarConfigDlgBase( QWidget *parent ) :
-    QWidget( parent )
+QgsCalendarConfigDlg::QgsCalendarConfigDlg(QgsVectorLayer* vl, int fieldIdx, QWidget *parent )
+  :    QgsEditorConfigWidget( vl, fieldIdx, parent )
 {
   setupUi( this );
 }
 
-void QgsCalendarConfigDlgBase::changeEvent( QEvent *e )
+
+QgsEditorWidgetConfig QgsCalendarConfigDlg::config()
 {
-  QWidget::changeEvent( e );
-  switch ( e->type() )
-  {
-    case QEvent::LanguageChange:
-      retranslateUi( this );
-      break;
-    default:
-      break;
-  }
+  QgsEditorWidgetConfig cfg;
+
+  cfg.insert( "DateFormat", leDateFormat->text() );
+
+  return cfg;
+}
+
+void QgsCalendarConfigDlg::setConfig(const QgsEditorWidgetConfig& config)
+{
+  leDateFormat->setText( config.value( "DateFormat", "" ).toString() );
 }

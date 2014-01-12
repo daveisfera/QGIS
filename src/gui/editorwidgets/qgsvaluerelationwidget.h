@@ -18,16 +18,34 @@
 
 #include "qgseditorwidgetwrapper.h"
 
+#include <QComboBox>
+#include <QListWidget>
+
 class QgsValueRelationWidget : public QgsEditorWidgetWrapper
 {
     Q_OBJECT
   public:
     explicit QgsValueRelationWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* editor = 0, QWidget* parent = 0 );
 
-  signals:
+
+    // QgsEditorWidgetWrapper interface
+  public:
+    QVariant value();
+
+  protected:
+    QWidget* createWidget(QWidget* parent);
+    void initWidget(QWidget* editor);
+    void initCache();
 
   public slots:
+    void setValue(const QVariant& value);
 
+  private:
+    QComboBox* mComboBox;
+    QListWidget* mListWidget;
+
+    QMap<QString, QString> mMap;
+    QgsVectorLayer* mLayer;
 };
 
 #endif // QGSVALUERELATIONWIDGET_H

@@ -18,15 +18,19 @@
 
 #include "ui_qgsphotoconfigdlgbase.h"
 
-class QgsPhotoConfigDlgBase : public QWidget, private Ui::QgsPhotoConfigDlgBase
+#include "qgseditorconfigwidget.h"
+
+class QgsPhotoConfigDlg : public QgsEditorConfigWidget, private Ui::QgsPhotoConfigDlgBase
 {
     Q_OBJECT
 
   public:
-    explicit QgsPhotoConfigDlgBase( QWidget *parent = 0 );
+    explicit QgsPhotoConfigDlg( QgsVectorLayer* vl, int fieldIdx, QWidget *parent = 0 );
 
-  protected:
-    void changeEvent( QEvent *e );
+    // QgsEditorConfigWidget interface
+  public:
+    QgsEditorWidgetConfig config();
+    void setConfig(const QgsEditorWidgetConfig& config);
 };
 
 #endif // QGSPHOTOCONFIGDLG_H

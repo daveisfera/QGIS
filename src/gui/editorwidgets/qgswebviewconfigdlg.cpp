@@ -1,7 +1,7 @@
 /***************************************************************************
-    qgsvaluerelationconfigdlg.cpp
+    qgswebviewwidgetconfigdlgbase.cpp
      --------------------------------------
-    Date                 : 5.1.2014
+    Date                 : 11.1.2014
     Copyright            : (C) 2014 Matthias Kuhn
     Email                : matthias dot kuhn at gmx dot ch
  ***************************************************************************
@@ -13,23 +13,26 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "qgsvaluerelationconfigdlg.h"
+#include "qgswebviewconfigdlg.h"
 
-QgsValueRelationConfigDlg::QgsValueRelationConfigDlg( QgsVectorLayer* vl, int fieldIdx, QWidget* parent ) :
-    QgsEditorConfigWidget( vl, fieldIdx, parent )
+QgsWebViewWidgetConfigDlg::QgsWebViewWidgetConfigDlg( QgsVectorLayer* vl, int fieldIdx, QWidget *parent )
+  :  QgsEditorConfigWidget( vl, fieldIdx, parent)
 {
-  setupUi( this );
+  setupUi(this);
 }
 
-QgsEditorWidgetConfig QgsValueRelationConfigDlg::config()
+QgsEditorWidgetConfig QgsWebViewWidgetConfigDlg::config()
 {
-  // TODO
   QgsEditorWidgetConfig cfg;
+
+  cfg.insert( "Height", sbWidgetHeight->value() );
+  cfg.insert( "Width", sbWidgetWidth->value() );
 
   return cfg;
 }
 
-void QgsValueRelationConfigDlg::setConfig(const QgsEditorWidgetConfig& config)
+void QgsWebViewWidgetConfigDlg::setConfig(const QgsEditorWidgetConfig& config)
 {
-  // TODO
+  sbWidgetHeight->setValue( config.value( "Height", 0 ).toInt() );
+  sbWidgetWidth->setValue( config.value( "Width", 0 ).toInt() );
 }

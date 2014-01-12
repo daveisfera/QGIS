@@ -16,6 +16,8 @@
 #include "qgsrangewidgetfactory.h"
 #include "qgsrangeconfigdlg.h"
 #include "qgsrangewidget.h"
+#include "qgsvectorlayer.h"
+
 
 QgsRangeWidgetFactory::QgsRangeWidgetFactory( QString name )
   : QgsEditorWidgetFactory( name )
@@ -56,4 +58,18 @@ void QgsRangeWidgetFactory::writeConfig( const QgsEditorWidgetConfig& config, QD
   configElement.setAttribute( "Min", config["Min"].toInt() );
   configElement.setAttribute( "Max", config["Max"].toInt() );
   configElement.setAttribute( "Step", config["Step"].toInt() );
+}
+
+bool QgsRangeWidgetFactory::supportsField(QgsVectorLayer* vl, int fieldIdx)
+{
+  switch( vl->pendingFields()[fieldIdx].type() )
+  {
+    case QVariant::LongLong:
+    case QVariant::Double:
+    case QVariant::Int:
+      return true;
+
+    default:
+      return false;
+  }
 }

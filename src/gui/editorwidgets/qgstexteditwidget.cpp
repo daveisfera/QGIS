@@ -19,3 +19,30 @@ QgsTextEditWidget::QgsTextEditWidget( QgsVectorLayer* vl, int fieldIdx, QWidget*
     :  QgsEditorWidgetWrapper( vl, fieldIdx, editor, parent )
 {
 }
+
+
+QVariant QgsTextEditWidget::value()
+{
+  QVariant v;
+
+  if ( mTextEdit )
+    v = mTextEdit->toHtml();
+
+  return v;
+}
+
+QWidget*QgsTextEditWidget::createWidget(QWidget* parent)
+{
+  return new QTextEdit( parent );
+}
+
+void QgsTextEditWidget::initWidget(QWidget* editor)
+{
+  mTextEdit = qobject_cast<QTextEdit*>( editor );
+}
+
+void QgsTextEditWidget::setValue(const QVariant& value)
+{
+  if ( mTextEdit )
+    mTextEdit->setHtml( value.toString() );
+}

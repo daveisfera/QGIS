@@ -19,3 +19,30 @@ QgsColorWidget::QgsColorWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* edito
     QgsEditorWidgetWrapper( vl, fieldIdx, editor, parent )
 {
 }
+
+
+QVariant QgsColorWidget::value()
+{
+  QVariant v;
+
+  if ( mColorButton )
+    v = mColorButton->color();
+
+  return v;
+}
+
+QWidget*QgsColorWidget::createWidget(QWidget* parent)
+{
+  return new QgsColorButton( parent );
+}
+
+void QgsColorWidget::initWidget(QWidget* editor)
+{
+  mColorButton = qobject_cast<QgsColorButton*>( editor );
+}
+
+void QgsColorWidget::setValue(const QVariant& value)
+{
+  if ( mColorButton )
+    mColorButton->setColor( QColor( value.toString() ) );
+}

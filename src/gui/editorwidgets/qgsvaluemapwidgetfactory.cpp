@@ -36,11 +36,14 @@ QgsEditorConfigWidget* QgsValueMapWidgetFactory::configWidget( QgsVectorLayer* v
 
 QgsEditorWidgetConfig QgsValueMapWidgetFactory::readConfig( const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx )
 {
+  Q_UNUSED( layer )
+  Q_UNUSED( fieldIdx )
+
   QgsEditorWidgetConfig cfg;
 
   QDomNodeList nodes = configElement.elementsByTagName( "value" );
 
-  for ( int i = 0; i < nodes.length(); ++i )
+  for ( unsigned int i = 0; i < nodes.length(); ++i )
   {
     QDomElement elem = nodes.at( i ).toElement();
     cfg.insert( elem.attribute( "key" ), elem.attribute( "value" ) );
@@ -51,6 +54,9 @@ QgsEditorWidgetConfig QgsValueMapWidgetFactory::readConfig( const QDomElement& c
 
 void QgsValueMapWidgetFactory::writeConfig( const QgsEditorWidgetConfig& config, QDomElement& configElement, QDomDocument& doc, const QgsVectorLayer* layer, int fieldIdx )
 {
+  Q_UNUSED( layer )
+  Q_UNUSED( fieldIdx )
+
   QgsEditorWidgetConfig::ConstIterator it = config.constBegin();
 
   while ( it != config.constEnd() )

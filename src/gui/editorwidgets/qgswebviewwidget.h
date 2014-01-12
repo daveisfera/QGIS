@@ -18,16 +18,39 @@
 
 #include "qgseditorwidgetwrapper.h"
 
+#include <QWebView>
+#include <QLineEdit>
+#include <QPushButton>
+
 class QgsWebViewWidget : public QgsEditorWidgetWrapper
 {
     Q_OBJECT
   public:
     explicit QgsWebViewWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* editor = 0, QWidget* parent = 0 );
 
-  signals:
+
+    // QgsEditorWidgetWrapper interface
+  public:
+    QVariant value();
+
+  protected:
+    QWidget* createWidget(QWidget* parent);
+    void initWidget(QWidget* editor);
 
   public slots:
+    void setValue(const QVariant& value);
+    void setEnabled(bool enabled);
 
+  private slots:
+    void loadUrl( const QString &url );
+
+  private:
+    //! This label is used as a container to display the picture
+    QWebView* mWebView;
+    //! The line edit containing the path to the picture
+    QLineEdit* mLineEdit;
+    //! The button to open the file chooser dialog
+    QPushButton* mButton;
 };
 
 #endif // QGSWEBVIEWWIDGET_H

@@ -18,15 +18,19 @@
 
 #include "ui_qgscalendarconfigdlgbase.h"
 
-class QgsCalendarConfigDlgBase : public QWidget, private Ui::QgsCalendarConfigDlgBase
+#include "qgseditorconfigwidget.h"
+
+class QgsCalendarConfigDlg : public QgsEditorConfigWidget, private Ui::QgsCalendarConfigDlgBase
 {
     Q_OBJECT
 
   public:
-    explicit QgsCalendarConfigDlgBase( QWidget *parent = 0 );
+    explicit QgsCalendarConfigDlg( QgsVectorLayer* vl, int fieldIdx, QWidget *parent = 0 );
 
-  protected:
-    void changeEvent( QEvent *e );
+    // QgsEditorConfigWidget interface
+  public:
+    QgsEditorWidgetConfig config();
+    void setConfig(const QgsEditorWidgetConfig& config);
 };
 
 #endif // QGSCALENDARCONFIGDLG_H

@@ -615,18 +615,18 @@ QgisApp::QgisApp( QSplashScreen *splash, bool restorePlugins, QWidget * parent, 
   editorWidgetRegistry->registerWidget( "LineEdit", new QgsLineEditWidgetFactory( tr( "Line edit" ) ) );
   editorWidgetRegistry->registerWidget( "Classification", new QgsClassificationWidgetWrapperFactory( tr( "Classification" ) ) );
   editorWidgetRegistry->registerWidget( "Range", new QgsRangeWidgetFactory( tr( "Range" ) ) );
-  editorWidgetRegistry->registerWidget( "UniqueValues", new QgsUniqueValueWidgetFactory( tr( "Unique values" ) ) );
-  editorWidgetRegistry->registerWidget( "FileName", new QgsFileNameWidgetFactory( tr( "File name" ) ) );
-  editorWidgetRegistry->registerWidget( "ValueMap", new QgsValueMapWidgetFactory( tr( "Value map" ) ) );
+  editorWidgetRegistry->registerWidget( "UniqueValues", new QgsUniqueValueWidgetFactory( tr( "Unique Values" ) ) );
+  editorWidgetRegistry->registerWidget( "FileName", new QgsFileNameWidgetFactory( tr( "File Name" ) ) );
+  editorWidgetRegistry->registerWidget( "ValueMap", new QgsValueMapWidgetFactory( tr( "Value Map" ) ) );
   editorWidgetRegistry->registerWidget( "Enumeration", new QgsEnumerationWidgetFactory( tr( "Enumeration" ) ) );
   editorWidgetRegistry->registerWidget( "Hidden", new QgsHiddenWidgetFactory( tr( "Hidden" ) ) );
-  editorWidgetRegistry->registerWidget( "CheckBox", new QgsCheckboxWidgetFactory( tr( "CheckBox" ) ) );
-  editorWidgetRegistry->registerWidget( "TextEdit", new QgsTextEditWidgetFactory( tr( "TextEdit" ) ) );
+  editorWidgetRegistry->registerWidget( "CheckBox", new QgsCheckboxWidgetFactory( tr( "Check Box" ) ) );
+  editorWidgetRegistry->registerWidget( "TextEdit", new QgsTextEditWidgetFactory( tr( "Text Edit" ) ) );
   editorWidgetRegistry->registerWidget( "Calendar", new QgsCalendarWidgetFactory( tr( "Calendar" ) ) );
-  editorWidgetRegistry->registerWidget( "ValueRelation", new QgsValueRelationWidgetFactory( tr( "ValueRelation" ) ) );
-  editorWidgetRegistry->registerWidget( "UuidGenerator", new QgsUuidWidgetFactory( tr( "UuidGenerator" ) ) );
+  editorWidgetRegistry->registerWidget( "ValueRelation", new QgsValueRelationWidgetFactory( tr( "Value Relation" ) ) );
+  editorWidgetRegistry->registerWidget( "UuidGenerator", new QgsUuidWidgetFactory( tr( "Uuid Generator" ) ) );
   editorWidgetRegistry->registerWidget( "Photo", new QgsPhotoWidgetFactory( tr( "Photo" ) ) );
-  editorWidgetRegistry->registerWidget( "WebView", new QgsWebViewWidgetFactory( tr( "WebView" ) ) );
+  editorWidgetRegistry->registerWidget( "WebView", new QgsWebViewWidgetFactory( tr( "Web View" ) ) );
   editorWidgetRegistry->registerWidget( "Color", new QgsColorWidgetFactory( tr( "Color" ) ) );
   editorWidgetRegistry->registerWidget( "RelationReference", new QgsRelationReferenceFactory( context, tr( "Relation Reference" ) ) );
 

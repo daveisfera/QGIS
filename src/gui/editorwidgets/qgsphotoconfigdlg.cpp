@@ -15,21 +15,24 @@
 
 #include "qgsphotoconfigdlg.h"
 
-QgsPhotoConfigDlgBase::QgsPhotoConfigDlgBase( QWidget *parent ) :
-    QWidget( parent )
+QgsPhotoConfigDlg::QgsPhotoConfigDlg( QgsVectorLayer* vl, int fieldIdx, QWidget *parent )
+  :    QgsEditorConfigWidget( vl, fieldIdx, parent )
 {
   setupUi( this );
 }
 
-void QgsPhotoConfigDlgBase::changeEvent( QEvent *e )
+QgsEditorWidgetConfig QgsPhotoConfigDlg::config()
 {
-  QWidget::changeEvent( e );
-  switch ( e->type() )
-  {
-    case QEvent::LanguageChange:
-      retranslateUi( this );
-      break;
-    default:
-      break;
-  }
+  QgsEditorWidgetConfig cfg;
+
+  cfg.insert( "Height", sbWidgetHeight->value() );
+  cfg.insert( "Width", sbWidgetWidth->value() );
+
+  return cfg;
+}
+
+void QgsPhotoConfigDlg::setConfig(const QgsEditorWidgetConfig& config)
+{
+  sbWidgetHeight->setValue( config.value( "Height", 0 ).toInt() );
+  sbWidgetWidth->setValue( config.value( "Width", 0 ).toInt() );
 }

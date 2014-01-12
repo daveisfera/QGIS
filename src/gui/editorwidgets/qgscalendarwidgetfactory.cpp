@@ -15,7 +15,32 @@
 
 #include "qgscalendarwidgetfactory.h"
 
+#include "qgscalendarwidget.h"
+#include "qgscalendarconfigdlg.h"
+
 QgsCalendarWidgetFactory::QgsCalendarWidgetFactory( QString name )
     : QgsEditorWidgetFactory( name )
 {
+}
+
+QgsEditorWidgetWrapper* QgsCalendarWidgetFactory::create(QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent) const
+{
+  return new QgsCalendarWidget( vl, fieldIdx, editor, parent );
+}
+
+QgsEditorConfigWidget* QgsCalendarWidgetFactory::configWidget(QgsVectorLayer* vl, int fieldIdx, QWidget* parent) const
+{
+  return new QgsCalendarConfigDlg( vl, fieldIdx, parent );
+}
+
+QgsEditorWidgetConfig QgsCalendarWidgetFactory::readConfig(const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx)
+{
+  QgsEditorWidgetConfig cfg;
+  cfg.insert( "DateFormat", configElement.attribute( "DateFormat", "" ) );
+  return cfg;
+}
+
+void QgsCalendarWidgetFactory::writeConfig(const QgsEditorWidgetConfig& config, QDomElement& configElement, QDomDocument& doc, const QgsVectorLayer* layer, int fieldIdx)
+{
+  configElement.setAttribute( "DateFormat", config.value( "DateFormat", "" ).toString() );
 }

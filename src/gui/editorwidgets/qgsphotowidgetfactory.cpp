@@ -15,7 +15,35 @@
 
 #include "qgsphotowidgetfactory.h"
 
+#include "qgsphotowidget.h"
+#include "qgsphotoconfigdlg.h"
+
 QgsPhotoWidgetFactory::QgsPhotoWidgetFactory( const QString& name )
     :  QgsEditorWidgetFactory( name )
 {
+}
+
+
+QgsEditorWidgetWrapper* QgsPhotoWidgetFactory::create(QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent) const
+{
+  return new QgsPhotoWidget( vl, fieldIdx, editor, parent );
+}
+
+QgsEditorConfigWidget* QgsPhotoWidgetFactory::configWidget(QgsVectorLayer* vl, int fieldIdx, QWidget* parent) const
+{
+  return new QgsPhotoConfigDlg( vl, fieldIdx, parent );
+}
+
+QgsEditorWidgetConfig QgsPhotoWidgetFactory::readConfig(const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx)
+{
+  QgsEditorWidgetConfig cfg;
+
+  cfg.insert( "Height", configElement.attribute( "Height", 0 ).toInt() );
+  cfg.insert( "Width", configElement.attribute( "Width", 0 ).toInt() );
+}
+
+void QgsPhotoWidgetFactory::writeConfig(const QgsEditorWidgetConfig& config, QDomElement& configElement, QDomDocument& doc, const QgsVectorLayer* layer, int fieldIdx)
+{
+  configElement.setAttribute( "Height", config.value( "Height", 0 ).toString() );
+  configElement.setAttribute( "Width", config.value( "Width", 0 ).toString() );
 }

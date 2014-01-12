@@ -17,6 +17,8 @@
 
 #include "qgsenumerationwidget.h"
 #include "qgsdummyconfigdlg.h"
+#include "qgsvectorlayer.h"
+#include "qgsvectordataprovider.h"
 
 QgsEnumerationWidgetFactory::QgsEnumerationWidgetFactory( const QString& name )
     :  QgsEditorWidgetFactory( name )
@@ -31,4 +33,15 @@ QgsEditorWidgetWrapper* QgsEnumerationWidgetFactory::create( QgsVectorLayer* vl,
 QgsEditorConfigWidget* QgsEnumerationWidgetFactory::configWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* parent ) const
 {
   return new QgsDummyConfigDlg( vl, fieldIdx, parent, QObject::tr( "Combo box with values that can be used within the column's type. Must be supported by the provider." ) );
+}
+
+
+bool QgsEnumerationWidgetFactory::isFieldSupported(QgsVectorLayer* vl, int fieldIdx)
+{
+  QStringList list;
+  vl->dataProvider()->enumValues( fieldIdx, list );
+  if ( list.size() > 0 )
+    return true;
+  else
+    return false;
 }

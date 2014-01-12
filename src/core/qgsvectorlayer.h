@@ -461,6 +461,9 @@ class CORE_EXPORT QgsVectorLayer : public QgsMapLayer
       UiFileLayout = 2
     };
 
+    /**
+     * @deprecated
+     */
     enum EditType
     {
       LineEdit,

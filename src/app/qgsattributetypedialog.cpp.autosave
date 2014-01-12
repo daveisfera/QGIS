@@ -59,11 +59,9 @@ QgsAttributeTypeDialog::QgsAttributeTypeDialog(QgsVectorLayer *vl , int fieldIdx
 
   // Set required list width based on content + twice the border width
   selectionListWidget->setMinimumWidth( selectionListWidget->sizeHintForColumn( 0 )
-                                        + 2
-                                        + selectionListWidget->verticalScrollBar()->width() );
+                                        + 2 );
   selectionListWidget->setMaximumWidth( selectionListWidget->sizeHintForColumn( 0 )
-                                        + 2
-                                        + selectionListWidget->verticalScrollBar()->width() );
+                                        + 2 );
 }
 
 QgsAttributeTypeDialog::~QgsAttributeTypeDialog()

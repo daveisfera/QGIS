@@ -22,6 +22,13 @@ class QgsValueRelationWidgetFactory : public QgsEditorWidgetFactory
 {
   public:
     explicit QgsValueRelationWidgetFactory( const QString& name );
+
+    // QgsEditorWidgetFactory interface
+  public:
+    QgsEditorWidgetWrapper* create(QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent) const;
+    QgsEditorConfigWidget* configWidget(QgsVectorLayer* vl, int fieldIdx, QWidget* parent) const;
+    QgsEditorWidgetConfig readConfig(const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx);
+    void writeConfig(const QgsEditorWidgetConfig& config, QDomElement& configElement, QDomDocument& doc, const QgsVectorLayer* layer, int fieldIdx);
 };
 
 #endif // QGSVALUERELATIONWIDGETFACTORY_H

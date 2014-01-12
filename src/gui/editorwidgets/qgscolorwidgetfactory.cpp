@@ -15,7 +15,21 @@
 
 #include "qgscolorwidgetfactory.h"
 
+#include "qgscolorwidget.h"
+#include "qgsdummyconfigdlg.h"
+
 QgsColorWidgetFactory::QgsColorWidgetFactory( const QString& name )
     : QgsEditorWidgetFactory( name )
 {
+}
+
+
+QgsEditorWidgetWrapper*QgsColorWidgetFactory::create(QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent) const
+{
+  return new QgsColorWidget( vl, fieldIdx, editor, parent );
+}
+
+QgsEditorConfigWidget*QgsColorWidgetFactory::configWidget(QgsVectorLayer* vl, int fieldIdx, QWidget* parent) const
+{
+  return new QgsDummyConfigDlg( vl, fieldIdx, parent, QObject::tr( "Field contains a color." ) );
 }

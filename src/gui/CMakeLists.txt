@@ -99,6 +99,7 @@ editorwidgets/qgsvaluemapwidgetfactory.cpp
 editorwidgets/qgsvaluerelationconfigdlg.cpp
 editorwidgets/qgsvaluerelationwidget.cpp
 editorwidgets/qgsvaluerelationwidgetfactory.cpp
+editorwidgets/qgswebviewconfigdlg.cpp
 editorwidgets/qgswebviewwidget.cpp
 editorwidgets/qgswebviewwidgetfactory.cpp
 
@@ -284,6 +285,7 @@ editorwidgets/qgsvaluemapconfigdlg.h
 editorwidgets/qgsvaluemapwidget.h
 editorwidgets/qgsvaluerelationconfigdlg.h
 editorwidgets/qgsvaluerelationwidget.h
+editorwidgets/qgswebviewconfigdlg.h
 editorwidgets/qgswebviewwidget.h
 
 qgisinterface.h
@@ -495,6 +497,7 @@ editorwidgets/qgsvaluemapwidgetfactory.h
 editorwidgets/qgsvaluerelationconfigdlg.h
 editorwidgets/qgsvaluerelationwidget.h
 editorwidgets/qgsvaluerelationwidgetfactory.h
+editorwidgets/qgswebviewconfigdlg.h
 editorwidgets/qgswebviewwidget.h
 editorwidgets/qgswebviewwidgetfactory.h
 

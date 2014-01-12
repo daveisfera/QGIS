@@ -18,15 +18,19 @@
 
 #include "ui_qgsvaluerelationconfigdlgbase.h"
 
-class QgsValueRelationConfigDlgBase : public QWidget, private Ui::QgsValueRelationConfigDlgBase
+#include "qgseditorconfigwidget.h"
+
+class QgsValueRelationConfigDlg : public QgsEditorConfigWidget, private Ui::QgsValueRelationConfigDlgBase
 {
     Q_OBJECT
 
   public:
-    explicit QgsValueRelationConfigDlgBase( QWidget *parent = 0 );
+    explicit QgsValueRelationConfigDlg( QgsVectorLayer* vl, int fieldIdx, QWidget *parent = 0 );
 
-  protected:
-    void changeEvent( QEvent *e );
+    // QgsEditorConfigWidget interface
+  public:
+    QgsEditorWidgetConfig config();
+    void setConfig(const QgsEditorWidgetConfig& config);
 };
 
 #endif // QGSVALUERELATIONCONFIGDLG_H

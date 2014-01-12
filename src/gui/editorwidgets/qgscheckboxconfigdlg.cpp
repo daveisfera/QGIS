@@ -27,6 +27,8 @@ QgsEditorWidgetConfig QgsCheckBoxConfigDlg::config()
 
   cfg.insert( "CheckedState", leCheckedState->text() );
   cfg.insert( "UncheckedState", leUncheckedState->text() );
+
+  return cfg;
 }
 
 void QgsCheckBoxConfigDlg::setConfig( const QgsEditorWidgetConfig& config )

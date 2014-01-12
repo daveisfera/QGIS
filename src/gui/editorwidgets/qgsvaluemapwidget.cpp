@@ -48,6 +48,7 @@ void QgsValueMapWidget::initWidget( QWidget* editor )
     while ( it != cfg.constEnd() )
     {
       mComboBox->addItem( it.key(), it.value() );
+      ++it;
     }
   }
 }

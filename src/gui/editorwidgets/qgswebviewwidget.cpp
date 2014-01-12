@@ -15,7 +15,101 @@
 
 #include "qgswebviewwidget.h"
 
+#include "qgsfilterlineedit.h"
+#include "qgsnetworkaccessmanager.h"
+
+#include <QGridLayout>
+
 QgsWebViewWidget::QgsWebViewWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent )
     :  QgsEditorWidgetWrapper( vl, fieldIdx, editor, parent )
 {
+}
+
+void QgsWebViewWidget::loadUrl( const QString &url )
+{
+  if ( mWebView )
+    mWebView->load( url );
+}
+
+QVariant QgsWebViewWidget::value()
+{
+  QVariant v;
+
+  if ( mLineEdit )
+    v = mLineEdit->text();
+
+  return v;
+}
+
+QWidget* QgsWebViewWidget::createWidget(QWidget* parent)
+{
+  QWidget* container = new QWidget( parent );
+  QGridLayout* layout = new QGridLayout( container );
+  QgsFilterLineEdit* le = new QgsFilterLineEdit( container );
+  QWebView* webView = new QWebView( parent );
+  webView->setObjectName( "EditorWebView" );
+  QPushButton* pb = new QPushButton( tr( "..." ), container );
+  pb->setObjectName( "FileChooserButton" );
+
+  layout->addWidget( webView, 0, 0, 1, 2 );
+  layout->addWidget( le, 1, 0 );
+  layout->addWidget( pb, 1, 1 );
+
+  container->setLayout( layout );
+
+  return container;
+}
+
+void QgsWebViewWidget::initWidget( QWidget* editor )
+{
+  QWidget* container;
+
+  mLineEdit = qobject_cast<QLineEdit*>( editor );
+
+  if ( mLineEdit )
+    container = qobject_cast<QWidget*>( mLineEdit->parent() );
+  else
+  {
+    container = editor;
+    mLineEdit = container->findChild<QLineEdit*>();
+  }
+
+  mButton = container->findChild<QPushButton*>( "FileChooserButton" );
+  if ( !mButton)
+    mButton = container->findChild<QPushButton*>();
+
+  mWebView = container->findChild<QWebView*>( "EditorWebView" );
+  if ( !mWebView )
+    mWebView = container->findChild<QWebView*>();
+
+  if ( mWebView )
+  {
+    mWebView->page()->setNetworkAccessManager( QgsNetworkAccessManager::instance() );
+    mWebView->settings()->setAttribute( QWebSettings::LocalContentCanAccessRemoteUrls, true );
+    mWebView->settings()->setAttribute( QWebSettings::JavascriptCanOpenWindows, true );
+#ifdef QGISDEBUG
+    mWebView->settings()->setAttribute( QWebSettings::DeveloperExtrasEnabled, true );
+#endif
+  }
+
+  if ( mButton )
+    connect( mButton, SIGNAL( clicked() ), this, SLOT( selectFileName() ) );
+
+  if ( mLineEdit )
+    connect( mLineEdit, SIGNAL( textChanged(QString)), this, SLOT( loadUrl(QString) ) );
+}
+
+void QgsWebViewWidget::setValue( const QVariant& value )
+{
+  if ( mLineEdit )
+    mLineEdit->setText( value.toString() );
+}
+
+void QgsWebViewWidget::setEnabled( bool enabled )
+{
+  if ( mLineEdit )
+    mLineEdit->setEnabled( enabled );
+
+  if ( mButton )
+    mButton->setEnabled( enabled );
 }

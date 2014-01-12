@@ -15,7 +15,58 @@
 
 #include "qgsuuidwidget.h"
 
+#include <QUuid>
+
 QgsUuidWidget::QgsUuidWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent )
     :  QgsEditorWidgetWrapper( vl, fieldIdx, editor, parent )
 {
+}
+
+QVariant QgsUuidWidget::value()
+{
+  QVariant v;
+
+  if ( mLineEdit )
+    v = mLineEdit->text();
+  if ( mLabel )
+    v = mLabel->text();
+
+  return v;
+}
+
+QWidget* QgsUuidWidget::createWidget(QWidget* parent)
+{
+  return new QLineEdit( parent );
+}
+
+void QgsUuidWidget::initWidget(QWidget* editor)
+{
+  mLineEdit = qobject_cast<QLineEdit*>( editor );
+  mLabel = qobject_cast<QLabel*>( editor );
+  if ( mLineEdit )
+    mLineEdit->setEnabled( false );
+}
+
+void QgsUuidWidget::setValue(const QVariant& value)
+{
+  if ( value.isNull() )
+  {
+    if ( mLineEdit )
+      mLineEdit->setText( QUuid::createUuid().toString() );
+    if ( mLabel )
+      mLabel->setText( QUuid::createUuid().toString() );
+  }
+  else
+  {
+    if ( mLineEdit )
+      mLineEdit->setText( value.toString() );
+    if ( mLabel )
+      mLabel->setText( value.toString() );
+  }
+}
+
+void QgsUuidWidget::setEnabled( bool enabled )
+{
+  Q_UNUSED( enabled )
+  // Do nothing... it is always disabled
 }

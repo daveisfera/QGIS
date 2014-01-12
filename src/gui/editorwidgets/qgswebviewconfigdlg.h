@@ -1,7 +1,7 @@
 /***************************************************************************
-    qgsvaluerelationconfigdlg.cpp
+    qgswebviewwidgetconfigdlgbase.h
      --------------------------------------
-    Date                 : 5.1.2014
+    Date                 : 11.1.2014
     Copyright            : (C) 2014 Matthias Kuhn
     Email                : matthias dot kuhn at gmx dot ch
  ***************************************************************************
@@ -13,23 +13,24 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "qgsvaluerelationconfigdlg.h"
+#ifndef QGSWEBVIEWWIDGETCONFIGDLGBASE_H
+#define QGSWEBVIEWWIDGETCONFIGDLGBASE_H
 
-QgsValueRelationConfigDlg::QgsValueRelationConfigDlg( QgsVectorLayer* vl, int fieldIdx, QWidget* parent ) :
-    QgsEditorConfigWidget( vl, fieldIdx, parent )
+#include "ui_qgswebviewconfigdlgbase.h"
+
+#include "qgseditorconfigwidget.h"
+
+class QgsWebViewWidgetConfigDlg : public QgsEditorConfigWidget, private Ui::QgsWebViewWidgetConfigDlgBase
 {
-  setupUi( this );
-}
+    Q_OBJECT
 
-QgsEditorWidgetConfig QgsValueRelationConfigDlg::config()
-{
-  // TODO
-  QgsEditorWidgetConfig cfg;
+  public:
+    explicit QgsWebViewWidgetConfigDlg( QgsVectorLayer* vl, int fieldIdx, QWidget *parent );
 
-  return cfg;
-}
+    // QgsEditorConfigWidget interface
+  public:
+    QgsEditorWidgetConfig config();
+    void setConfig(const QgsEditorWidgetConfig& config);
+};
 
-void QgsValueRelationConfigDlg::setConfig(const QgsEditorWidgetConfig& config)
-{
-  // TODO
-}
+#endif // QGSWEBVIEWWIDGETCONFIGDLGBASE_H

@@ -47,3 +47,10 @@ void QgsEditorWidgetFactory::writeConfig( const QgsEditorWidgetConfig& config, Q
   Q_UNUSED( fieldIdx );
 }
 
+bool QgsEditorWidgetFactory::isFieldSupported( QgsVectorLayer* vl, int fieldIdx )
+{
+  Q_UNUSED( vl )
+  Q_UNUSED( fieldIdx )
+  return true;
+}
+

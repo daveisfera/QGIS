@@ -18,16 +18,30 @@
 
 #include "qgseditorwidgetwrapper.h"
 
+#include <QLineEdit>
+#include <QLabel>
+
 class QgsUuidWidget : public QgsEditorWidgetWrapper
 {
     Q_OBJECT
   public:
     explicit QgsUuidWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* editor = 0, QWidget* parent = 0 );
 
-  signals:
+    // QgsEditorWidgetWrapper interface
+  public:
+    QVariant value();
+
+  protected:
+    QWidget* createWidget(QWidget* parent);
+    void initWidget(QWidget* editor);
 
   public slots:
+    void setValue(const QVariant& value);
+    void setEnabled( bool enabled );
 
+  private:
+    QLabel* mLabel;
+    QLineEdit* mLineEdit;
 };
 
 #endif // QGSUUIDWIDGET_H

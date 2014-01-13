@@ -1677,7 +1677,9 @@ class CORE_EXPORT QgsVectorLayer : public QgsMapLayer
 
     QStringList mCommitErrors;
 
+#if 0
     QMap< QString, EditType > mEditTypes;
+#endif
     QMap< QString, bool> mFieldEditables;
     QMap< QString, bool> mLabelOnTop;
     QMap< QString, QMap<QString, QVariant> > mValueMaps;

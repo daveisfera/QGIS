@@ -98,7 +98,19 @@ class GUI_EXPORT QgsEditorWidgetRegistry : public QObject
     QgsEditorWidgetRegistry();
 
   private slots:
+    /**
+     * Read all the editor widget information from a map layer XML node
+     * @param mapLayer
+     * @param layerElem
+     */
     void readMapLayer( QgsMapLayer* mapLayer , const QDomElement& layerElem );
+    /**
+     * Read all old-style editor widget configuration from a map node. Will update
+     * a project file to the new version on next save
+     * @param mapLayer
+     * @param layerElem
+     */
+    void readLegacyConfig( QgsMapLayer* mapLayer , const QDomElement& layerElem );
     void writeMapLayer( QgsMapLayer* mapLayer , QDomElement& layerElem, QDomDocument& doc );
 
   private:

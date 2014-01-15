@@ -104,161 +104,193 @@ void QgsEditorWidgetRegistry::readMapLayer( QgsMapLayer* mapLayer, const QDomEle
   QgsVectorLayer* vectorLayer = qobject_cast<QgsVectorLayer*>( mapLayer );
   Q_ASSERT( vectorLayer );
 
-  for ( int idx = 0; idx < vectorLayer->pendingFields().count(); ++idx )
+  QDomNodeList editTypeNodes = layerElem.namedItem( "edittypes" ).childNodes();
+
+  for ( int i = 0; i < editTypeNodes.size(); i++ )
   {
-    if ( vectorLayer->editType( idx ) != QgsVectorLayer::EditorWidgetV2 )
+    QDomNode editTypeNode = editTypeNodes.at( i );
+    QDomElement editTypeElement = editTypeNode.toElement();
+
+    QString name = editTypeElement.attribute( "name" );
+
+    int idx = vectorLayer->fieldNameIndex( name );
+
+    QgsVectorLayer::EditType editType =
+      ( QgsVectorLayer::EditType ) editTypeElement.attribute( "type" ).toInt();
+
+    QString ewv2Type;
+    if ( editType != QgsVectorLayer::EditorWidgetV2 )
+      ewv2Type = readLegacyConfig( vectorLayer, editTypeElement );
+    else
+      ewv2Type = editTypeElement.attribute( "widgetv2type" );
+
+    if ( mWidgetFactories.contains( ewv2Type ) )
     {
-      continue;
+      vectorLayer->setEditorWidgetV2( idx, ewv2Type );
+      QDomElement ewv2CfgElem = editTypeElement.namedItem( "widgetv2config" ).toElement();
+
+      if ( !ewv2CfgElem.isNull() )
+      {
+        QMap<QString, QVariant> cfg = mWidgetFactories[ewv2Type]->readEditorConfig( ewv2CfgElem, vectorLayer, idx );
+        vectorLayer->setEditorWidgetV2Config( idx, cfg );
+      }
     }
-
-    QDomNodeList editTypeNodes = layerElem.namedItem( "edittypes" ).childNodes();
-
-    for ( int i = 0; i < editTypeNodes.size(); i++ )
+    else
     {
-      QDomNode editTypeNode = editTypeNodes.at( i );
-      QDomElement editTypeElement = editTypeNode.toElement();
-
-      QString name = editTypeElement.attribute( "name" );
-
-      if ( vectorLayer->fieldNameIndex( name ) != idx )
-        continue;
-
-      QgsVectorLayer::EditType editType =
-        ( QgsVectorLayer::EditType ) editTypeElement.attribute( "type" ).toInt();
-
-      if ( editType != QgsVectorLayer::EditorWidgetV2 )
-        continue;
-
-      const QString ewv2Type = editTypeElement.attribute( "widgetv2type" );
-
-      if ( mWidgetFactories.contains( ewv2Type ) )
-      {
-        vectorLayer->setEditorWidgetV2( idx, ewv2Type );
-        QDomElement ewv2CfgElem = editTypeElement.namedItem( "widgetv2config" ).toElement();
-
-        if ( !ewv2CfgElem.isNull() )
-        {
-          QMap<QString, QVariant> cfg = mWidgetFactories[ewv2Type]->readConfig( ewv2CfgElem, vectorLayer, idx );
-          vectorLayer->setEditorWidgetV2Config( idx, cfg );
-        }
-      }
-      else
-      {
-        QgsMessageLog::logMessage( tr( "Unknown attribute editor widget '%1'" ).arg( ewv2Type ) );
-      }
+      QgsMessageLog::logMessage( tr( "Unknown attribute editor widget '%1'" ).arg( ewv2Type ) );
     }
   }
 }
 
-void QgsEditorWidgetRegistry::readLegacyConfig( QgsMapLayer* mapLayer, )
+QString QgsEditorWidgetRegistry::readLegacyConfig( QgsVectorLayer* vl, const QDomElement& editTypeElement )
 {
-  mEditTypes.clear();
-  QDomNode editTypesNode = node.namedItem( "edittypes" );
-  if ( !editTypesNode.isNull() )
+  QString name = editTypeElement.attribute( "name" );
+
+  QgsVectorLayer::EditType editType = ( QgsVectorLayer::EditType ) editTypeElement.attribute( "type" ).toInt();
+
+  QString widgetType = "LineEdit"; // Fallback
+
+  switch ( editType )
   {
-    QDomNodeList editTypeNodes = editTypesNode.childNodes();
-
-    for ( int i = 0; i < editTypeNodes.size(); i++ )
-    {
-      QDomNode editTypeNode = editTypeNodes.at( i );
-      QDomElement editTypeElement = editTypeNode.toElement();
-
-      QString name = editTypeElement.attribute( "name" );
-      if ( fieldNameIndex( name ) < -1 )
-        continue;
-
-      EditType editType = ( EditType ) editTypeElement.attribute( "type" ).toInt();
-      mEditTypes.insert( name, editType );
-
-      int editable = editTypeElement.attribute( "editable" , "1" ).toInt();
-      mFieldEditables.insert( name, editable == 1 );
-
-      int labelOnTop = editTypeElement.attribute( "labelontop" , "0" ).toInt();
-      mLabelOnTop.insert( name, labelOnTop == 1 );
-
-      switch ( editType )
+    case QgsVectorLayer::ValueMap:
+      widgetType = "ValueMap";
+#if 0
+      if ( editTypeNode.hasChildNodes() )
       {
-        case ValueMap:
-          if ( editTypeNode.hasChildNodes() )
-          {
-            mValueMaps.insert( name, QMap<QString, QVariant>() );
+        mValueMaps.insert( name, QMap<QString, QVariant>() );
 
-            QDomNodeList valueMapNodes = editTypeNode.childNodes();
-            for ( int j = 0; j < valueMapNodes.size(); j++ )
-            {
-              QDomElement value = valueMapNodes.at( j ).toElement();
-              mValueMaps[ name ].insert( value.attribute( "key" ), value.attribute( "value" ) );
-            }
-          }
-          break;
-
-        case EditRange:
-        case SliderRange:
-        case DialRange:
+        QDomNodeList valueMapNodes = editTypeNode.childNodes();
+        for ( int j = 0; j < valueMapNodes.size(); j++ )
         {
-          QVariant min = editTypeElement.attribute( "min" );
-          QVariant max = editTypeElement.attribute( "max" );
-          QVariant step = editTypeElement.attribute( "step" );
-
-          mRanges[ name ] = RangeData( min, max, step );
+          QDomElement value = valueMapNodes.at( j ).toElement();
+          mValueMaps[ name ].insert( value.attribute( "key" ), value.attribute( "value" ) );
         }
-        break;
-
-        case CheckBox:
-          mCheckedStates[ name ] = QPair<QString, QString>( editTypeElement.attribute( "checked" ), editTypeElement.attribute( "unchecked" ) );
-          break;
-
-        case ValueRelation:
-        {
-          QString id = editTypeElement.attribute( "layer" );
-          QString key = editTypeElement.attribute( "key" );
-          QString value = editTypeElement.attribute( "value" );
-          bool allowNull = editTypeElement.attribute( "allowNull" ) == "true";
-          bool orderByValue = editTypeElement.attribute( "orderByValue" ) == "true";
-          bool allowMulti = editTypeElement.attribute( "allowMulti", "false" ) == "true";
-
-          QString filterExpression;
-          if ( editTypeElement.hasAttribute( "filterAttributeColumn" ) &&
-               editTypeElement.hasAttribute( "filterAttributeValue" ) )
-          {
-            filterExpression = QString( "\"%1\"='%2'" )
-                               .arg( editTypeElement.attribute( "filterAttributeColumn" ) )
-                               .arg( editTypeElement.attribute( "filterAttributeValue" ) );
-          }
-          else
-          {
-            filterExpression  = editTypeElement.attribute( "filterExpression", QString::null );
-          }
-
-          mValueRelations[ name ] = ValueRelationData( id, key, value, allowNull, orderByValue, allowMulti, filterExpression );
-        }
-        break;
-
-        case Calendar:
-          mDateFormats[ name ] = editTypeElement.attribute( "dateFormat" );
-          break;
-
-        case Photo:
-        case WebView:
-          mWidgetSize[ name ] = QSize( editTypeElement.attribute( "widgetWidth" ).toInt(), editTypeElement.attribute( "widgetHeight" ).toInt() );
-          break;
-
-        case Classification:
-        case FileName:
-        case Immutable:
-        case Hidden:
-        case LineEdit:
-        case TextEdit:
-        case Enumeration:
-        case UniqueValues:
-        case UniqueValuesEditable:
-        case UuidGenerator:
-        case Color:
-        case EditorWidgetV2: // Will get a signal and read there
-          break;
       }
+#endif
+      break;
+
+    case QgsVectorLayer::EditRange:
+      widgetType = "EditRange";
+      break;
+    case QgsVectorLayer::SliderRange:
+      widgetType = "SliderRange";
+      break;
+    case QgsVectorLayer::DialRange:
+      widgetType = "DialRange";
+      break;
+#if 0
+    {
+      QVariant min = editTypeElement.attribute( "min" );
+      QVariant max = editTypeElement.attribute( "max" );
+      QVariant step = editTypeElement.attribute( "step" );
+
+      mRanges[ name ] = RangeData( min, max, step );
     }
+#endif
+    break;
+
+    case QgsVectorLayer::CheckBox:
+      widgetType = "CheckBox";
+      break;
+#if 0
+      mCheckedStates[ name ] = QPair<QString, QString>( editTypeElement.attribute( "checked" ), editTypeElement.attribute( "unchecked" ) );
+      break;
+#endif
+    case QgsVectorLayer::ValueRelation:
+      widgetType = "ValueRelation";
+      break;
+#if 0
+    {
+      QString id = editTypeElement.attribute( "layer" );
+      QString key = editTypeElement.attribute( "key" );
+      QString value = editTypeElement.attribute( "value" );
+      bool allowNull = editTypeElement.attribute( "allowNull" ) == "true";
+      bool orderByValue = editTypeElement.attribute( "orderByValue" ) == "true";
+      bool allowMulti = editTypeElement.attribute( "allowMulti", "false" ) == "true";
+
+      QString filterExpression;
+      if ( editTypeElement.hasAttribute( "filterAttributeColumn" ) &&
+           editTypeElement.hasAttribute( "filterAttributeValue" ) )
+      {
+        filterExpression = QString( "\"%1\"='%2'" )
+                           .arg( editTypeElement.attribute( "filterAttributeColumn" ) )
+                           .arg( editTypeElement.attribute( "filterAttributeValue" ) );
+      }
+      else
+      {
+        filterExpression  = editTypeElement.attribute( "filterExpression", QString::null );
+      }
+
+      mValueRelations[ name ] = ValueRelationData( id, key, value, allowNull, orderByValue, allowMulti, filterExpression );
+    }
+    break;
+#endif
+    case QgsVectorLayer::Calendar:
+      widgetType = "Calendar";
+#if 0
+      mDateFormats[ name ] = editTypeElement.attribute( "dateFormat" );
+#endif
+      break;
+
+    case QgsVectorLayer::Photo:
+      widgetType = "Photo";
+      break;
+    case QgsVectorLayer::WebView:
+      widgetType = "WebView";
+      break;
+#if 0
+      mWidgetSize[ name ] = QSize( editTypeElement.attribute( "widgetWidth" ).toInt(), editTypeElement.attribute( "widgetHeight" ).toInt() );
+      break;
+#endif
+    case QgsVectorLayer::Classification:
+      widgetType = "Classification";
+      break;
+
+    case QgsVectorLayer::FileName:
+      widgetType = "FileName";
+      break;
+
+    case QgsVectorLayer::Immutable:
+      widgetType = "Immutable";
+      break;
+
+    case QgsVectorLayer::Hidden:
+      widgetType = "Hidden";
+      break;
+
+    case QgsVectorLayer::LineEdit:
+      widgetType = "LineEdit";
+      break;
+
+    case QgsVectorLayer::TextEdit:
+      widgetType = "TextEdit";
+      break;
+
+    case QgsVectorLayer::Enumeration:
+      widgetType = "Enumeration";
+      break;
+
+    case QgsVectorLayer::UniqueValues:
+      widgetType = "UniqueValues";
+      break;
+
+    case QgsVectorLayer::UniqueValuesEditable:
+      widgetType = "UniqueValuesEditable";
+      break;
+
+    case QgsVectorLayer::UuidGenerator:
+      widgetType = "UuidGenerator";
+      break;
+
+    case QgsVectorLayer::Color:
+      widgetType = "Color";
+      break;
+
+    case QgsVectorLayer::EditorWidgetV2: // Should not land here
+      break;
   }
+
+  return widgetType;
 }
 
 void QgsEditorWidgetRegistry::writeMapLayer( QgsMapLayer* mapLayer, QDomElement& layerElem, QDomDocument& doc )

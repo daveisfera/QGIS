@@ -1848,7 +1848,7 @@ bool QgsVectorLayer::writeSymbology( QDomNode& node, QDomDocument& doc, QString&
         mDiagramLayerSettings->writeXML( mapLayerNode, doc, this );
     }
   }
-
+#if 0
   //edit types
   if ( mEditTypes.size() > 0 )
   {
@@ -1943,6 +1943,7 @@ bool QgsVectorLayer::writeSymbology( QDomNode& node, QDomDocument& doc, QString&
 
     node.appendChild( editTypesElement );
   }
+#endif
 
   QDomElement efField  = doc.createElement( "editform" );
   QDomText efText = doc.createTextNode( QgsProject::instance()->writePath( mEditForm ) );
@@ -2604,18 +2605,22 @@ bool QgsVectorLayer::isModified() const
 
 QgsVectorLayer::EditType QgsVectorLayer::editType( int idx )
 {
+#if 0
   const QgsFields &fields = pendingFields();
   if ( idx >= 0 && idx < fields.count() && mEditTypes.contains( fields[idx].name() ) )
     return mEditTypes[ fields[idx].name()];
   else
     return LineEdit;
+#endif
 }
 
 void QgsVectorLayer::setEditType( int idx, EditType type )
 {
+#if 0
   const QgsFields &fields = pendingFields();
   if ( idx >= 0 && idx < fields.count() )
     mEditTypes[ fields[idx].name()] = type;
+#endif
 }
 
 QgsVectorLayer::EditorLayout QgsVectorLayer::editorLayout()

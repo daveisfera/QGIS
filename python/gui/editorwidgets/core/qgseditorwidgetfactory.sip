@@ -25,10 +25,15 @@ class QgsEditorWidgetFactory
   public:
     QgsEditorWidgetFactory( const QString& name );
     virtual ~QgsEditorWidgetFactory();
+
+    QString name();
+
     virtual QgsEditorWidgetWrapper* create( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent ) const = 0 /Factory/;
     virtual QgsEditorConfigWidget* configWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* parent ) const = 0 /Factory/;
-    virtual QgsEditorWidgetConfig readConfig( const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx );
+    QgsEditorWidgetConfig readEditorConfig( const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx );
     virtual void writeConfig( const QgsEditorWidgetConfig& config, QDomElement& configElement, QDomDocument& doc, const QgsVectorLayer* layer, int fieldIdx );
 
-    virtual QString name();
+  private:
+    virtual QgsEditorWidgetConfig readConfig( const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx );
+    virtual bool isFieldSupported( QgsVectorLayer* vl, int fieldIdx );
 };

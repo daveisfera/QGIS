@@ -94,7 +94,7 @@ const QString QgsAttributeTypeDialog::editorWidgetV2Text()
   }
 }
 
-const QMap<QString, QVariant> QgsAttributeTypeDialog::editorWidgetV2Config()
+const QgsEditorWidgetConfig QgsAttributeTypeDialog::editorWidgetV2Config()
 {
   QListWidgetItem* item = selectionListWidget->currentItem();
   if ( item )
@@ -107,7 +107,7 @@ const QMap<QString, QVariant> QgsAttributeTypeDialog::editorWidgetV2Config()
     }
   }
 
-  return QMap<QString, QVariant>();
+  return QgsEditorWidgetConfig();
 }
 
 void QgsAttributeTypeDialog::setWidgetV2Config( const QgsEditorWidgetConfig& config )

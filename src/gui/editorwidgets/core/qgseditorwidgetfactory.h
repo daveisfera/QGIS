@@ -61,13 +61,11 @@ class GUI_EXPORT QgsEditorWidgetFactory
     virtual QgsEditorWidgetWrapper* create( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent ) const = 0;
 
     /**
-     * Return The human readable name of this widget type
-     *
-     * By default returns the name specified when constructing and does not need to be overwritten
+     * Return The human readable identifier name of this widget type
      *
      * @return a name
      */
-    virtual QString name();
+    QString name();
 
     /**
      * Override this in your implementation.
@@ -90,7 +88,7 @@ class GUI_EXPORT QgsEditorWidgetFactory
      *
      * @return A configuration object. This will be passed to your widget wrapper later on
      */
-    virtual QgsEditorWidgetConfig readConfig( const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx );
+    QgsEditorWidgetConfig readEditorConfig( const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx );
 
     /**
      * Serialize your configuration and save it in a xml doc.
@@ -113,6 +111,17 @@ class GUI_EXPORT QgsEditorWidgetFactory
     inline bool supportsField( QgsVectorLayer* vl, int fieldIdx ) { return isFieldSupported( vl, fieldIdx ); }
 
   private:
+    /**
+     * Read the config from an XML file and map it to a proper {@link QgsEditorWidgetConfig}.
+     *
+     * @param configElement The configuration element from the project file
+     * @param layer         The layer for which this configuration applies
+     * @param fieldIdx      The field on the layer for which this configuration applies
+     *
+     * @return A configuration object. This will be passed to your widget wrapper later on
+     */
+    virtual QgsEditorWidgetConfig readConfig( const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx );
+
     /**
      * This method allows to disable this editor widget type for a certain field.
      * By default, it returns true for all fields.

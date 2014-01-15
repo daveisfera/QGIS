@@ -57,7 +57,7 @@ class APP_EXPORT QgsAttributeTypeDialog: public QDialog, private Ui::QgsAttribut
 
     const QString editorWidgetV2Text();
 
-    const QMap<QString, QVariant> editorWidgetV2Config();
+    const QgsEditorWidgetConfig editorWidgetV2Config();
 
     void setWidgetV2Config( const QgsEditorWidgetConfig& config );
 

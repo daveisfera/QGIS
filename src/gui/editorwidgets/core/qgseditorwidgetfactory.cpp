@@ -29,13 +29,9 @@ QString QgsEditorWidgetFactory::name()
   return mName;
 }
 
-QgsEditorWidgetConfig QgsEditorWidgetFactory::readConfig( const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx )
+QgsEditorWidgetConfig QgsEditorWidgetFactory::readEditorConfig( const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx )
 {
-  Q_UNUSED( configElement );
-  Q_UNUSED( layer );
-  Q_UNUSED( fieldIdx );
-
-  return QgsEditorWidgetConfig();
+  return readConfig( configElement, layer, fieldIdx );
 }
 
 void QgsEditorWidgetFactory::writeConfig( const QgsEditorWidgetConfig& config, QDomElement& configElement, QDomDocument& doc, const QgsVectorLayer* layer, int fieldIdx )
@@ -45,6 +41,15 @@ void QgsEditorWidgetFactory::writeConfig( const QgsEditorWidgetConfig& config, Q
   Q_UNUSED( doc );
   Q_UNUSED( layer );
   Q_UNUSED( fieldIdx );
+}
+
+QgsEditorWidgetConfig QgsEditorWidgetFactory::readConfig( const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx )
+{
+  Q_UNUSED( configElement );
+  Q_UNUSED( layer );
+  Q_UNUSED( fieldIdx );
+
+  return QgsEditorWidgetConfig();
 }
 
 bool QgsEditorWidgetFactory::isFieldSupported( QgsVectorLayer* vl, int fieldIdx )

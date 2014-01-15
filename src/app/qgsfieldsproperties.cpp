@@ -225,15 +225,9 @@ void QgsFieldsProperties::setRow( int row, int idx, const QgsField &field )
 
   FieldConfig cfg( mLayer, idx );
   QPushButton *pb;
-  if ( cfg.mEditType == QgsVectorLayer::EditorWidgetV2 )
-  {
-    pb = new QPushButton( QgsEditorWidgetRegistry::instance()->name( cfg.mEditorWidgetV2Type ) );
-    pb->setProperty( "EditWidgetV2", cfg.mEditType );
-  }
-  else
-  {
-    pb = new QPushButton( editTypeButtonText( cfg.mEditType ) );
-  }
+  pb = new QPushButton( QgsEditorWidgetRegistry::instance()->name( cfg.mEditorWidgetV2Type ) );
+  pb->setProperty( "EditWidgetV2", cfg.mEditType );
+
 
   mFieldsList->setCellWidget( row, attrEditTypeCol, pb );
   connect( pb, SIGNAL( pressed() ), this, SLOT( attributeTypeDialog( ) ) );

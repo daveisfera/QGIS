@@ -110,7 +110,7 @@ class GUI_EXPORT QgsEditorWidgetRegistry : public QObject
      * @param mapLayer
      * @param layerElem
      */
-    void readLegacyConfig( QgsMapLayer* mapLayer , const QDomElement& layerElem );
+    QString readLegacyConfig( QgsVectorLayer* vl, const QDomElement& editTypeElement );
     void writeMapLayer( QgsMapLayer* mapLayer , QDomElement& layerElem, QDomDocument& doc );
 
   private:

@@ -1539,6 +1539,10 @@ class CORE_EXPORT QgsVectorLayer : public QgsMapLayer
     /** Signal emitted when setLayerTransparency() is called */
     void layerTransparencyChanged( int layerTransparency );
 
+    void editCommandStarted( const QString& text );
+    void editCommandEnded();
+    void editCommandDestroyed();
+
   private slots:
     void onRelationsLoaded();
 

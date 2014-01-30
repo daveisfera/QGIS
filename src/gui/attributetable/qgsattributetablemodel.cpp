@@ -55,6 +55,7 @@ QgsAttributeTableModel::QgsAttributeTableModel( QgsVectorLayerCache *layerCache,
   connect( layer(), SIGNAL( featureDeleted( QgsFeatureId ) ), this, SLOT( featureDeleted( QgsFeatureId ) ) );
   connect( layer(), SIGNAL( attributeDeleted( int ) ), this, SLOT( attributeDeleted( int ) ) );
   connect( layer(), SIGNAL( updatedFields() ), this, SLOT( updatedFields() ) );
+  connect( layer(), SIGNAL( editCommandEnded() ), this, SLOT( editCommandEnded() ) );
   connect( mLayerCache, SIGNAL( featureAdded( QgsFeatureId ) ), this, SLOT( featureAdded( QgsFeatureId ) ) );
   connect( mLayerCache, SIGNAL( cachedLayerDeleted() ), this, SLOT( layerDeleted() ) );
 }
@@ -160,6 +161,13 @@ void QgsAttributeTableModel::updatedFields()
   QgsDebugMsg( "entered." );
   loadAttributes();
   emit modelChanged();
+}
+
+void QgsAttributeTableModel::editCommandEnded()
+{
+  emit dataChanged( minChangedIdx, maxChangedIdx );
+  minChangedIdx = QModelIndex();
+  maxChangedIdx = QModelIndex();
 }
 
 void QgsAttributeTableModel::attributeDeleted( int idx )
@@ -591,7 +599,15 @@ bool QgsAttributeTableModel::setData( const QModelIndex &index, const QVariant &
   if ( !layer()->isModified() )
     return false;
 
-  emit dataChanged( index, index );
+  if ( index.row() < minChangedIdx.row() || index.column() < minChangedIdx.column() || !minChangedIdx.isValid() )
+  {
+    minChangedIdx = index;
+  }
+  if ( index.row() > maxChangedIdx.row() || index.column() > maxChangedIdx.column() || !maxChangedIdx.isValid() )
+  {
+    maxChangedIdx = index;
+  }
+  // emit dataChanged( index, index );
 
   return true;
 }

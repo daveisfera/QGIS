@@ -212,6 +212,8 @@ class GUI_EXPORT QgsAttributeTableModel: public QAbstractTableModel
      */
     virtual void updatedFields();
 
+    virtual void editCommandEnded();
+
     /**
      * Called whenever a column is removed;
      */
@@ -274,6 +276,8 @@ class GUI_EXPORT QgsAttributeTableModel: public QAbstractTableModel
     int mCachedField;
     /** Allows to cache one specific column (used for sorting) */
     QHash<QgsFeatureId, QVariant> mFieldCache;
+
+    QModelIndex minChangedIdx, maxChangedIdx;
 };
 
 

@@ -1,0 +1,39 @@
+From 770920ce4b4805562eb1dd85aa8ef15e0052e05e Mon Sep 17 00:00:00 2001
+From: Matthias Kuhn <matthias.kuhn@gmx.ch>
+Date: Sat, 22 Feb 2014 15:04:04 +0100
+Subject: [PATCH] external httplib2
+
+---
+ python/plugins/processing/admintools/CMakeLists.txt       | 3 +--
+ python/plugins/processing/admintools/geoserver/catalog.py | 2 +-
+ 2 files changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/python/plugins/processing/admintools/CMakeLists.txt b/python/plugins/processing/admintools/CMakeLists.txt
+index 895b571..a1656ed 100644
+--- a/python/plugins/processing/admintools/CMakeLists.txt
++++ b/python/plugins/processing/admintools/CMakeLists.txt
+@@ -1,6 +1,5 @@
+ FILE(GLOB PY_FILES *.py)
+ 
+ ADD_SUBDIRECTORY(geoserver)
+-ADD_SUBDIRECTORY(httplib2)
+ 
+-PLUGIN_INSTALL(processing ./admintools ${PY_FILES})
+\ No newline at end of file
++PLUGIN_INSTALL(processing ./admintools ${PY_FILES})
+diff --git a/python/plugins/processing/admintools/geoserver/catalog.py b/python/plugins/processing/admintools/geoserver/catalog.py
+index 8b22f4d..2f9f805 100644
+--- a/python/plugins/processing/admintools/geoserver/catalog.py
++++ b/python/plugins/processing/admintools/geoserver/catalog.py
+@@ -41,7 +41,7 @@ from processing.admintools.geoserver.layergroup import LayerGroup, \
+     UnsavedLayerGroup
+ from processing.admintools.geoserver.workspace import workspace_from_index, \
+     Workspace
+-from processing.admintools import httplib2
++import httplib2
+ 
+ 
+ logger = logging.getLogger('gsconfig.catalog')
+-- 
+1.8.5.3
+

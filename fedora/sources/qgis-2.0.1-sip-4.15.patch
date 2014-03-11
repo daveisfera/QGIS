@@ -1,0 +1,160 @@
+diff -ur qgis-2.0.1/python/CMakeLists.txt qgis-2.0.1-sip/python/CMakeLists.txt
+--- qgis-2.0.1/python/CMakeLists.txt	2013-09-11 01:06:52.000000000 +0200
++++ qgis-2.0.1-sip/python/CMakeLists.txt	2013-10-19 20:49:29.597349650 +0200
+@@ -75,7 +75,7 @@
+ # core module
+ FILE(GLOB_RECURSE sip_files_core core/*.sip)
+ SET(SIP_EXTRA_FILES_DEPEND ${sip_files_core})
+-SET(SIP_EXTRA_OPTIONS ${PYQT4_SIP_FLAGS} -o -a ${CMAKE_BINARY_DIR}/python/qgis.core.api)
++SET(SIP_EXTRA_OPTIONS ${PYQT4_SIP_FLAGS} -a ${CMAKE_BINARY_DIR}/python/qgis.core.api)
+ ADD_SIP_PYTHON_MODULE(qgis.core core/core.sip qgis_core)
+ 
+ # additional gui includes
+@@ -90,7 +90,13 @@
+ # gui module
+ FILE(GLOB_RECURSE sip_files_gui gui/*.sip)
+ SET(SIP_EXTRA_FILES_DEPEND ${sip_files_core} ${sip_files_gui})
+-SET(SIP_EXTRA_OPTIONS ${PYQT4_SIP_FLAGS} -o -a ${CMAKE_BINARY_DIR}/python/qgis.gui.api)
++SET(SIP_EXTRA_OPTIONS ${PYQT4_SIP_FLAGS} -a ${CMAKE_BINARY_DIR}/python/qgis.gui.api)
++
++IF(UNIX AND NOT SIP_VERSION_NUM LESS 265984)
++  SET(SIP_EXTRA_OPTIONS -P ${SIP_EXTRA_OPTIONS})
++  ADD_DEFINITIONS(-Dprotected=public)
++ENDIF(UNIX AND NOT SIP_VERSION_NUM LESS 265984)
++
+ ADD_SIP_PYTHON_MODULE(qgis.gui gui/gui.sip qgis_core qgis_gui)
+ 
+ # additional analysis includes
+@@ -113,13 +119,13 @@
+   analysis/interpolation/*.sip
+ )
+ SET(SIP_EXTRA_FILES_DEPEND ${sip_files_core} ${sip_files_analysis})
+-SET(SIP_EXTRA_OPTIONS ${PYQT4_SIP_FLAGS} -o -a ${CMAKE_BINARY_DIR}/python/qgis.analysis.api)
++SET(SIP_EXTRA_OPTIONS ${PYQT4_SIP_FLAGS} -a ${CMAKE_BINARY_DIR}/python/qgis.analysis.api)
+ ADD_SIP_PYTHON_MODULE(qgis.analysis analysis/analysis.sip qgis_core qgis_analysis)
+ 
+ # network-analysis module
+ FILE(GLOB_RECURSE sip_files_network_analysis analysis/network/*.sip)
+ SET(SIP_EXTRA_FILES_DEPEND ${sip_files_core} ${sip_files_network_analysis})
+-SET(SIP_EXTRA_OPTIONS ${PYQT4_SIP_FLAGS} -o -a ${CMAKE_BINARY_DIR}/python/qgis.networkanalysis.api)
++SET(SIP_EXTRA_OPTIONS ${PYQT4_SIP_FLAGS} -a ${CMAKE_BINARY_DIR}/python/qgis.networkanalysis.api)
+ ADD_SIP_PYTHON_MODULE(qgis.networkanalysis analysis/network/networkanalysis.sip qgis_core qgis_networkanalysis)
+ 
+ SET(QGIS_PYTHON_DIR ${PYTHON_SITE_PACKAGES_DIR}/qgis)
+Only in qgis-2.0.1-sip/python: CMakeLists.txt.orig
+Only in qgis-2.0.1-sip/python: CMakeLists.txt.rej
+diff -ur qgis-2.0.1/python/gui/qgsmaptooltouch.sip qgis-2.0.1-sip/python/gui/qgsmaptooltouch.sip
+--- qgis-2.0.1/python/gui/qgsmaptooltouch.sip	2013-09-11 01:06:52.000000000 +0200
++++ qgis-2.0.1-sip/python/gui/qgsmaptooltouch.sip	2013-10-19 20:47:47.412374663 +0200
+@@ -24,5 +24,7 @@
+     virtual void canvasDoubleClickEvent( QMouseEvent * e );
+ 
+     virtual bool isTransient();
++
++    bool gestureEvent( QGestureEvent *event );
+ };
+ %End
+Only in qgis-2.0.1-sip: qgis-2.0.1
+diff -ur qgis-2.0.1/src/core/qgsmaplayerregistry.h qgis-2.0.1-sip/src/core/qgsmaplayerregistry.h
+--- qgis-2.0.1/src/core/qgsmaplayerregistry.h	2013-09-11 01:06:52.000000000 +0200
++++ qgis-2.0.1-sip/src/core/qgsmaplayerregistry.h	2013-10-19 20:47:47.410374765 +0200
+@@ -239,6 +239,11 @@
+     //! protected constructor
+     QgsMapLayerRegistry( QObject * parent = 0 );
+ 
++    /** debugging member
++        invoked when a connect() is made to this object
++    */
++    void connectNotify( const char * signal );
++
+   private:
+ 
+     static QgsMapLayerRegistry* mInstance;
+@@ -246,10 +251,6 @@
+     QMap<QString, QgsMapLayer*> mMapLayers;
+     QSet<QgsMapLayer*> mOwnedLayers;
+ 
+-    /** debugging member
+-        invoked when a connect() is made to this object
+-    */
+-    void connectNotify( const char * signal );
+ 
+ 
+ }; // class QgsMapLayerRegistry
+diff -ur qgis-2.0.1/src/gui/qgsattributedialog.h qgis-2.0.1-sip/src/gui/qgsattributedialog.h
+--- qgis-2.0.1/src/gui/qgsattributedialog.h	2013-09-11 01:06:52.000000000 +0200
++++ qgis-2.0.1-sip/src/gui/qgsattributedialog.h	2013-10-19 20:47:47.410374765 +0200
+@@ -59,9 +59,10 @@
+ 
+     void dialogDestroyed();
+ 
+-  private:
++  protected:
+     bool eventFilter( QObject *obj, QEvent *event );
+ 
++  private:
+     QDialog *mDialog;
+     QString mSettingsPath;
+     // Used to sync multiple widgets for the same field
+diff -ur qgis-2.0.1/src/gui/qgsmapcanvas.h qgis-2.0.1-sip/src/gui/qgsmapcanvas.h
+--- qgis-2.0.1/src/gui/qgsmapcanvas.h	2013-09-11 01:06:52.000000000 +0200
++++ qgis-2.0.1-sip/src/gui/qgsmapcanvas.h	2013-10-19 20:47:47.411374714 +0200
+@@ -410,6 +410,11 @@
+     /// Handle pattern for implementation object
+     std::auto_ptr<CanvasProperties> mCanvasProperties;
+ 
++    /**debugging member
++       invoked when a connect() is made to this object
++    */
++    void connectNotify( const char * signal );
++
+   private slots:
+     void crsTransformEnabled( bool );
+ 
+@@ -459,11 +464,6 @@
+        the last entry in case a lot of resize events arrive in short time*/
+     QList< QPair<int, int> > mResizeQueue;
+ 
+-    /**debugging member
+-       invoked when a connect() is made to this object
+-    */
+-    void connectNotify( const char * signal );
+-
+     //! current layer in legend
+     QgsMapLayer* mCurrentLayer;
+ 
+diff -ur qgis-2.0.1/src/gui/qgsmaptooltouch.h qgis-2.0.1-sip/src/gui/qgsmaptooltouch.h
+--- qgis-2.0.1/src/gui/qgsmaptooltouch.h	2013-09-11 01:06:52.000000000 +0200
++++ qgis-2.0.1-sip/src/gui/qgsmaptooltouch.h	2013-10-19 20:47:47.412374663 +0200
+@@ -49,13 +49,14 @@
+ 
+     virtual bool isTransient() { return true; }
+ 
++    bool gestureEvent( QGestureEvent *event );
++
+   private:
+ 
+     //! Flag to indicate a map canvas drag operation is taking place
+     bool mDragging;
+     //! Flag to indicate a pinch gesture is taking place
+     bool mPinching;
+-    bool gestureEvent( QGestureEvent *event );
+     void pinchTriggered( QPinchGesture *gesture );
+ };
+ 
+diff -ur qgis-2.0.1/src/gui/qgsmessagelogviewer.h qgis-2.0.1-sip/src/gui/qgsmessagelogviewer.h
+--- qgis-2.0.1/src/gui/qgsmessagelogviewer.h	2013-09-11 01:06:52.000000000 +0200
++++ qgis-2.0.1-sip/src/gui/qgsmessagelogviewer.h	2013-10-19 20:47:47.411374714 +0200
+@@ -42,10 +42,11 @@
+   public slots:
+     void logMessage( QString message, QString tag, QgsMessageLog::MessageLevel level );
+ 
+-  private:
++  protected:
+     void showEvent( QShowEvent * );
+     void hideEvent( QHideEvent * );
+ 
++  private:
+     QToolButton *mButton;
+     int mCount;
+ 

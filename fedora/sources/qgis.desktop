@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Quantum GIS
+GenericName=Geographic Information System
+Comment=
+Exec=qgis
+Icon=qgis
+Terminal=false
+Type=Application
+Categories=Education;Geography;Science;

@@ -19,7 +19,7 @@
 
 Name:           qgis
 Version:        2.2.0
-Release:        2%{?dist}
+Release:        %{_relver}%{?dist}
 Summary:        A user friendly Open Source Geographic Information System
 
 # There are build issues at the moment; working with upstream

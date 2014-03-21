@@ -47,5 +47,5 @@ for arch in "${ARCHS[@]}"
 do :
   echo "Building for $arch"
   mkdir $OUTDIR/$arch
-  mock -r $arch --rebuild $OUTDIR/$srpm --resultdir=$OUTDIR/$arch
+  mock -r $arch --rebuild $OUTDIR/$srpm --define "_relver $RELVER" --resultdir=$OUTDIR/$arch
 done

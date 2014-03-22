@@ -31,7 +31,7 @@ branch=$(git branch --no-color 2> /dev/null |
 
 # Create source tarball
 cd ..
-git archive --format=tar --prefix=qgis-$version/ $branch | bzip2 >fedora/qgis-$version.tar.gz
+git archive --format=tar --prefix=qgis-$version/ $branch | bzip2 >fedora/sources/qgis-$version.tar.gz
 cd fedora
 
 # Build source package

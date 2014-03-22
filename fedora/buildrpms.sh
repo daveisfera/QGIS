@@ -1,19 +1,19 @@
 #!/bin/bash
 
-# Define some default values...
-RELVER=1
-OUTDIR="result/"
-ARCHS=( "fedora-19-i386"
-        "fedora-19-x86_64"
-        "fedora-20-i386"
-        "fedora-20-x86_64"
-      )
-
-# Load config values from config file
-source config
+# Load default config
+source default.cfg
+# Load local config file
+if [ -f local.cfg ]
+then
+  source local.cfg
+fi
 
 # Clean logfiles
-rm $OUTDIR/build.log
+if [ -f $OUTDIR/build.log ]
+then
+  echo ".. Cleaning log file"
+  rm $OUTDIR/build.log
+fi
 
 # Get the version string
 major=$(grep -e 'SET(CPACK_PACKAGE_VERSION_MAJOR' ../CMakeLists.txt |
@@ -25,27 +25,42 @@ patch=$(grep -e 'SET(CPACK_PACKAGE_VERSION_PATCH' ../CMakeLists.txt |
 
 version=$(echo $major.$minor.$patch)
 
-# Current git branch
+echo ".. Building version $version"
+
+# Current git branch name
 branch=$(git branch --no-color 2> /dev/null |
     sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/')
 
+echo ".. Creating source tarball"
 # Create source tarball
 cd ..
-git archive --format=tar --prefix=qgis-$version/ $branch | bzip2 >fedora/sources/qgis-$version.tar.gz
+git archive --format=tar --prefix=qgis-$version/ $BRANCH | bzip2 >fedora/sources/qgis-$version.tar.gz
 cd fedora
 
+echo ".. Creating source package"
 # Build source package
 mock --buildsrpm --spec qgis.spec --sources ./sources --define "_relver $RELVER" --resultdir=$OUTDIR
-
+if [ $? -ne 0 ]
+then
+  echo ".. Creating source package failed"
+  exit 1
+fi
 
 srpm=$(grep -e 'Wrote: .*\.src\.rpm' $OUTDIR/build.log |
     sed 's_Wrote: /builddir/build/SRPMS/\(.*\)_\1_')
 
-echo "-- SRPM: $srpm"
+echo ".. Source package created: $srpm"
 
 for arch in "${ARCHS[@]}"
 do :
-  echo "Building for $arch"
+  echo ".. Building packages for $arch"
   mkdir $OUTDIR/$arch
   mock -r $arch --rebuild $OUTDIR/$srpm --define "_relver $RELVER" --resultdir=$OUTDIR/$arch
+  if [ $? -eq 0 ]
+  then
+    echo ".. Signing packages for $arch"
+    rpm --resign $OUTDIR/$arch/*-$version-$RELVER.*.rpm
+  else
+    exit 1
+  fi
 done

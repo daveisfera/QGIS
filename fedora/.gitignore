@@ -1,3 +1,4 @@
 result
 *.tar.gz
-config
+local.cfg
+version.cfg

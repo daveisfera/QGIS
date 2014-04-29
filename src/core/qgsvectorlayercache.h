@@ -249,17 +249,42 @@ class CORE_EXPORT QgsVectorLayerCache : public QObject
      * You should connect to this signal instead of the layers', if you want to be sure
      * that this cache has updated information for the new feature
      *
-     * @param fid The featureid of the changed feature
+     * @param fid The featureid of the added feature
      */
     void featureAdded( QgsFeatureId fid );
 
+    /**
+     * Is emitted, when an existing feature has been deleted from the layer and this cache.
+     *
+     * @param fid The featureid of the deleted feature
+     */
+    void featureDeleted( QgsFeatureId fid );
+
+    /**
+     * Is emitted, whenever an existing feature's geoemtry has changed.
+     *
+     * @param fid The featureid of the changed feature
+     * @param geom The new geometry
+     */
+    void geometryChanged( QgsFeatureId, const QgsGeometry& geom );
+
+    /**
+     * Convenience signal emitted along any of the following signals:
+     *  * featureAdded
+     *  * attributeValueChanged
+     *  * featureDeleted
+     *  * geometryChanged
+     *
+     */
+    void featureChanged();
+
   private slots:
     void onAttributeValueChanged( QgsFeatureId fid, int field, const QVariant& value );
-    void featureDeleted( QgsFeatureId fid );
+    void onFeatureDeleted( QgsFeatureId fid );
     void onFeatureAdded( QgsFeatureId fid );
     void attributeAdded( int field );
     void attributeDeleted( int field );
-    void geometryChanged( QgsFeatureId fid, QgsGeometry& geom );
+    void onGeometryChanged( QgsFeatureId fid, QgsGeometry& geom );
     void layerDeleted();
     void updatedFields();
 

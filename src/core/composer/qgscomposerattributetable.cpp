@@ -86,14 +86,8 @@ void QgsComposerAttributeTable::initCache()
 {
   if ( mVectorLayerCache )
   {
-    mVectorLayerCache->deleteLater();
+    delete mVectorLayerCache;
     mVectorLayerCache = 0;
-  }
-
-  if ( mFeatureIdIndex )
-  {
-    delete mFeatureIdIndex;
-    mFeatureIdIndex = 0;
   }
 
   if ( mVectorLayer )

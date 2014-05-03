@@ -107,10 +107,21 @@ class GUI_EXPORT QgsEditorWidgetRegistry : public QObject
     /**
      * Read all old-style editor widget configuration from a map node. Will update
      * a project file to the new version on next save
-     * @param mapLayer
-     * @param layerElem
+     * @param mapLayer   The layer in question
+     * @param layerElem  The layer element from the project file
+     * @param cfg        Writable config element
+     *
+     * @deprecated
      */
-    QString readLegacyConfig( QgsVectorLayer* vl, const QDomElement& editTypeElement );
+    Q_DECL_DEPRECATED QString readLegacyConfig(QgsVectorLayer* vl, const QDomElement& editTypeElement , QgsEditorWidgetConfig& cfg );
+
+    /**
+     * Write all the widget config to a layer XML node
+     *
+     * @param mapLayer   The layer for which the config is being written
+     * @param layerElem  The XML element to which the config will be written
+     * @param doc        The document from which to create elements
+     */
     void writeMapLayer( QgsMapLayer* mapLayer , QDomElement& layerElem, QDomDocument& doc );
 
   private:

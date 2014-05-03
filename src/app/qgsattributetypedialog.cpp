@@ -110,6 +110,41 @@ const QgsEditorWidgetConfig QgsAttributeTypeDialog::editorWidgetV2Config()
   return QgsEditorWidgetConfig();
 }
 
+void QgsAttributeTypeDialog::setWidgetV2Type( const QString& type )
+{
+  for( int i = 0; i < selectionListWidget->count(); i++ )
+  {
+    QListWidgetItem* item = selectionListWidget->item( i );
+    if ( item->data( Qt::UserRole ).toString() == type )
+    {
+      selectionListWidget->setCurrentItem( item );
+      break;
+    }
+  }
+
+  if ( mEditorConfigWidgets.contains( type ) )
+  {
+    stackedWidget->setCurrentWidget( mEditorConfigWidgets[type] );
+  }
+  else
+  {
+    QgsEditorConfigWidget* cfgWdg = QgsEditorWidgetRegistry::instance()->createConfigWidget( type, mLayer, mFieldIdx, this );
+
+    if ( cfgWdg )
+    {
+      cfgWdg->setConfig( mWidgetV2Config );
+
+      stackedWidget->addWidget( cfgWdg );
+      stackedWidget->setCurrentWidget( cfgWdg );
+      mEditorConfigWidgets.insert( type, cfgWdg );
+    }
+    else
+    {
+      QgsDebugMsg( "Oops, couldn't create editor widget config dialog..." );
+    }
+  }
+}
+
 void QgsAttributeTypeDialog::setWidgetV2Config( const QgsEditorWidgetConfig& config )
 {
   mWidgetV2Config = config;
@@ -139,25 +174,5 @@ void QgsAttributeTypeDialog::on_selectionListWidget_currentRowChanged( int index
 {
   const QString editType = selectionListWidget->item( index )->data( Qt::UserRole ).toString();
 
-  if ( mEditorConfigWidgets.contains( editType ) )
-  {
-    stackedWidget->setCurrentWidget( mEditorConfigWidgets[editType] );
-  }
-  else
-  {
-    QgsEditorConfigWidget* cfgWdg = QgsEditorWidgetRegistry::instance()->createConfigWidget( editType, mLayer, mFieldIdx, this );
-
-    if ( cfgWdg )
-    {
-      cfgWdg->setConfig( mWidgetV2Config );
-
-      stackedWidget->addWidget( cfgWdg );
-      stackedWidget->setCurrentWidget( cfgWdg );
-      mEditorConfigWidgets.insert( editType, cfgWdg );
-    }
-    else
-    {
-      QgsDebugMsg( "Oops, couldn't create editor widget config dialog..." );
-    }
-  }
+  setWidgetV2Type( editType );
 }

@@ -1848,20 +1848,18 @@ bool QgsVectorLayer::writeSymbology( QDomNode& node, QDomDocument& doc, QString&
         mDiagramLayerSettings->writeXML( mapLayerNode, doc, this );
     }
   }
-#if 0
+
   //edit types
-  if ( mEditTypes.size() > 0 )
+  QDomElement editTypesElement = doc.createElement( "edittypes" );
+
+  Q_FOREACH( QgsField field, pendingFields().toList() )
   {
-    QDomElement editTypesElement = doc.createElement( "edittypes" );
+    QDomElement editTypeElement = doc.createElement( "edittype" );
+    editTypeElement.setAttribute( "name", field.name() );
+    editTypeElement.setAttribute( "editable", mFieldEditables[field.name()] ? 1 : 0 );
+    editTypeElement.setAttribute( "labelontop", mLabelOnTop[field.name()] ? 1 : 0 );
 
-    for ( QMap<QString, EditType>::const_iterator it = mEditTypes.begin(); it != mEditTypes.end(); ++it )
-    {
-      QDomElement editTypeElement = doc.createElement( "edittype" );
-      editTypeElement.setAttribute( "name", it.key() );
-      editTypeElement.setAttribute( "type", it.value() );
-      editTypeElement.setAttribute( "editable", mFieldEditables[ it.key()] ? 1 : 0 );
-      editTypeElement.setAttribute( "labelontop", mLabelOnTop[ it.key()] ? 1 : 0 );
-
+#if 0
       switch (( EditType ) it.value() )
       {
         case ValueMap:
@@ -1937,13 +1935,13 @@ bool QgsVectorLayer::writeSymbology( QDomNode& node, QDomDocument& doc, QString&
         case EditorWidgetV2: // Will get a signal and save there
           break;
       }
-
-      editTypesElement.appendChild( editTypeElement );
     }
-
-    node.appendChild( editTypesElement );
-  }
 #endif
+
+    editTypesElement.appendChild( editTypeElement );
+  }
+
+  node.appendChild( editTypesElement );
 
   QDomElement efField  = doc.createElement( "editform" );
   QDomText efText = doc.createTextNode( QgsProject::instance()->writePath( mEditForm ) );

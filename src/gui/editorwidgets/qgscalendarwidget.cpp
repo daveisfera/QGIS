@@ -69,7 +69,7 @@ QWidget* QgsCalendarWidget::createWidget(QWidget* parent)
   return new QCalendarWidget( parent );
 }
 
-void QgsCalendarWidget::initWidget(QWidget* editor)
+void QgsCalendarWidget::initWidget( QWidget* editor )
 {
   mCalendarWidget = qobject_cast<QCalendarWidget*>( editor );
   mLineEdit = qobject_cast<QLineEdit*>( editor );
@@ -87,6 +87,9 @@ void QgsCalendarWidget::initWidget(QWidget* editor)
     mPushButton->setToolTip( tr( "Select date in calendar" ) );
     connect( mPushButton, SIGNAL( clicked() ), this, SLOT( selectDate() ) );
   }
+
+  if ( mLineEdit )
+    mLineEdit->setValidator( new QgsFieldValidator(mLineEdit, field(), config( "DateFormat" ).toString() ) );
 }
 
 void QgsCalendarWidget::setValue(const QVariant& value)

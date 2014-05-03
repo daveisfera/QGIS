@@ -39,7 +39,7 @@ class APP_EXPORT QgsAttributeTypeDialog: public QDialog, private Ui::QgsAttribut
      * @param index of page to be selected
      * @param editTypeInt type of edit type which was selected before save
      */
-    void setIndex( int index, QgsVectorLayer::EditType editType );
+    void setIndex( int index, QgsVectorLayer::EditType type );
 
     /**
      * Setting page which is to be selected
@@ -51,11 +51,13 @@ class APP_EXPORT QgsAttributeTypeDialog: public QDialog, private Ui::QgsAttribut
      * Getter to get selected edit type
      * @return selected edit type
      */
-    QgsVectorLayer::EditType editType();
+    QgsVectorLayer::EditType type();
 
     const QString editorWidgetV2Type();
 
     const QString editorWidgetV2Text();
+
+    void setWidgetV2Type( const QString& type );
 
     const QgsEditorWidgetConfig editorWidgetV2Config();
 

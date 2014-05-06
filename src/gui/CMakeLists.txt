@@ -110,6 +110,7 @@ qgsannotationitem.cpp
 qgsattributedialog.cpp
 qgsattributeeditor.cpp
 qgsattributeeditorcontext.cpp
+qgsattributeform.cpp
 qgsattributetypeloaddialog.cpp
 qgsblendmodecombobox.cpp
 qgsbusyindicatordialog.cpp
@@ -291,6 +292,7 @@ editorwidgets/qgswebviewwidget.h
 qgisinterface.h
 qgsattributedialog.h
 qgsattributeeditor.h
+qgsattributeform.h
 qgsattributetypeloaddialog.h
 qgsblendmodecombobox.h
 qgsbusyindicatordialog.h
@@ -374,6 +376,7 @@ qgisinterface.h
 qgsattributeeditor.h
 qgsattributedialog.h
 qgsattributeeditorcontext.h
+qgsattributeform.h
 qgsattributetypeloaddialog.h
 qgsbusyindicatordialog.h
 qgscharacterselectdialog.h

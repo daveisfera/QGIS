@@ -48,6 +48,7 @@ QWidget* QgsFileNameWidget::createWidget( QWidget* parent )
   QPushButton* pbn = new QPushButton( tr( "..." ), container );
   QGridLayout* layout = new QGridLayout();
 
+  layout->setMargin( 0 );
   layout->addWidget( le, 0, 0 );
   layout->addWidget( pbn, 0, 1 );
 

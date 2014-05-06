@@ -30,8 +30,9 @@ QVariant QgsHiddenWidget::value()
 
 QWidget* QgsHiddenWidget::createWidget( QWidget* parent )
 {
-  Q_UNUSED( parent )
-  return 0;
+  QWidget* wdg = new QWidget( parent );
+  wdg->setVisible( false );
+  return wdg;
 }
 
 void QgsHiddenWidget::initWidget( QWidget* editor )

@@ -3603,25 +3603,25 @@ void QgsVectorLayer::onRelationsLoaded()
   }
 }
 
-QgsVectorLayer::ValueRelationData &QgsVectorLayer::valueRelation( int idx )
+QgsVectorLayer::ValueRelationData QgsVectorLayer::valueRelation( int idx )
 {
-  const QgsFields &fields = pendingFields();
-
-  // FIXME: throw an exception!?
-  static QgsVectorLayer::ValueRelationData invalidData;
-  if ( idx < 0 || idx >= fields.count() )
+  if ( mEditorWidgetV2Types.value( idx ) == "ValueRelation" )
   {
-    QgsDebugMsg( QString( "field %1 not found" ).arg( idx ) );
-    return invalidData;
-  }
-  QString fieldName = fields[idx].name();
+    QgsEditorWidgetConfig cfg = editorWidgetV2Config( idx );
 
-  if ( !mValueRelations.contains( fieldName ) )
+    return ValueRelationData( cfg.value( "Layer" ).toString(),
+                              cfg.value( "Key" ).toString(),
+                              cfg.value( "Value" ).toString(),
+                              cfg.value( "AllowNull" ).toBool(),
+                              cfg.value( "OrderByValue" ).toBool(),
+                              cfg.value( "AllowMulti" ).toBool(),
+                              cfg.value( "FilterExpression" ).toString()
+                            );
+  }
+  else
   {
-    mValueRelations[fieldName] = ValueRelationData();
+    return ValueRelationData();
   }
-
-  return mValueRelations[fieldName];
 }
 
 QList<QgsRelation> QgsVectorLayer::referencingRelations( int idx )

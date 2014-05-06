@@ -1255,7 +1255,7 @@ class CORE_EXPORT QgsVectorLayer : public QgsMapLayer
     /**access relations
      * @note added in 1.8
      **/
-    ValueRelationData &valueRelation( int idx );
+    ValueRelationData valueRelation( int idx );
 
     /**
      * Get relations, where the foreign key is on this layer
@@ -1690,7 +1690,7 @@ class CORE_EXPORT QgsVectorLayer : public QgsMapLayer
     QMap< QString, QSize> mWidgetSize;
 
     QMap<int, QString> mEditorWidgetV2Types;
-    QMap<int, QMap<QString, QVariant> > mEditorWidgetV2Configs;
+    QMap<int, QgsEditorWidgetConfig > mEditorWidgetV2Configs;
 
     /** Defines the default layout to use for the attribute editor (Drag and drop, UI File, Generated) */
     EditorLayout mEditorLayout;

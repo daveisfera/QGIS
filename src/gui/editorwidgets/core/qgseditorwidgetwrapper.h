@@ -118,7 +118,7 @@ class GUI_EXPORT QgsEditorWidgetWrapper : public QObject
     /**
      * Access the field.
      *
-     * @return Thefield you are working on
+     * @return The field you are working on
      *
      * @see layer()
      */

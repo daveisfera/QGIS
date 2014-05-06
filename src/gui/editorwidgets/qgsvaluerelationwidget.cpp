@@ -83,7 +83,7 @@ void QgsValueRelationWidget::initWidget( QWidget* editor )
 
 void QgsValueRelationWidget::initCache()
 {
-  const QgsVectorLayer::ValueRelationData &data = layer()->valueRelation( fieldIdx() );
+  const QgsVectorLayer::ValueRelationData& data = layer()->valueRelation( fieldIdx() );
 
   mLayer = qobject_cast<QgsVectorLayer*>( QgsMapLayerRegistry::instance()->mapLayer( data.mLayer ) );
 

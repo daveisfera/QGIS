@@ -14,22 +14,44 @@
  ***************************************************************************/
 
 #include "qgsvaluerelationconfigdlg.h"
+#include "qgsmaplayerregistry.h"
+#include "qgsvectorlayer.h"
+#include "qgsexpressionbuilderdialog.h"
 
 QgsValueRelationConfigDlg::QgsValueRelationConfigDlg( QgsVectorLayer* vl, int fieldIdx, QWidget* parent ) :
     QgsEditorConfigWidget( vl, fieldIdx, parent )
 {
   setupUi( this );
+  mLayerName->setFilters( QgsMapLayerProxyModel::VectorLayer );
+  connect( mLayerName, SIGNAL(layerChanged(QgsMapLayer*)), mKeyColumn, SLOT(setLayer(QgsMapLayer*)) );
+  connect( mLayerName, SIGNAL(layerChanged(QgsMapLayer*)), mValueColumn, SLOT(setLayer(QgsMapLayer*)) );
 }
 
 QgsEditorWidgetConfig QgsValueRelationConfigDlg::config()
 {
-  // TODO
   QgsEditorWidgetConfig cfg;
+
+  cfg.insert( "Layer", mLayerName->currentLayer()->id() );
+  cfg.insert( "Key", mKeyColumn->currentField() );
+  cfg.insert( "Value", mValueColumn->currentField() );
+  cfg.insert( "AllowMulti", mAllowMulti->isChecked() );
+  cfg.insert( "AllowNull", mAllowNull->isChecked() );
+  cfg.insert( "OrderByValue", mOrderByValue->isChecked() );
+  cfg.insert( "FilterExpression", mFilterExpression->toPlainText() );
 
   return cfg;
 }
 
-void QgsValueRelationConfigDlg::setConfig(const QgsEditorWidgetConfig& config)
+void QgsValueRelationConfigDlg::setConfig( const QgsEditorWidgetConfig& config )
 {
-  // TODO
+  QgsVectorLayer* lyr = qobject_cast<QgsVectorLayer*>( QgsMapLayerRegistry::instance()->mapLayer( config.value( "Layer" ).toString() ) );
+  mLayerName->setLayer( lyr );
+  mKeyColumn->setLayer( lyr );
+  mKeyColumn->setField( config.value( "Key" ).toString() );
+  mValueColumn->setLayer( lyr );
+  mValueColumn->setField( config.value( "Value" ).toString() );
+  mAllowMulti->setChecked( config.value( "AllowMulti" ).toBool() );
+  mAllowNull->setChecked( config.value( "AllowNull" ).toBool() );
+  mOrderByValue->setChecked( config.value( "OrderByValue" ).toBool() );
+  mFilterExpression->setPlainText( config.value( "EditExpression" ).toString() );
 }

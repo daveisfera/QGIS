@@ -23,8 +23,8 @@ QgsValueRelationConfigDlg::QgsValueRelationConfigDlg( QgsVectorLayer* vl, int fi
 {
   setupUi( this );
   mLayerName->setFilters( QgsMapLayerProxyModel::VectorLayer );
-  connect( mLayerName, SIGNAL(layerChanged(QgsMapLayer*)), mKeyColumn, SLOT(setLayer(QgsMapLayer*)) );
-  connect( mLayerName, SIGNAL(layerChanged(QgsMapLayer*)), mValueColumn, SLOT(setLayer(QgsMapLayer*)) );
+  connect( mLayerName, SIGNAL( layerChanged( QgsMapLayer* ) ), mKeyColumn, SLOT( setLayer( QgsMapLayer* ) ) );
+  connect( mLayerName, SIGNAL( layerChanged( QgsMapLayer* ) ), mValueColumn, SLOT( setLayer( QgsMapLayer* ) ) );
 }
 
 QgsEditorWidgetConfig QgsValueRelationConfigDlg::config()
@@ -46,9 +46,7 @@ void QgsValueRelationConfigDlg::setConfig( const QgsEditorWidgetConfig& config )
 {
   QgsVectorLayer* lyr = qobject_cast<QgsVectorLayer*>( QgsMapLayerRegistry::instance()->mapLayer( config.value( "Layer" ).toString() ) );
   mLayerName->setLayer( lyr );
-  mKeyColumn->setLayer( lyr );
   mKeyColumn->setField( config.value( "Key" ).toString() );
-  mValueColumn->setLayer( lyr );
   mValueColumn->setField( config.value( "Value" ).toString() );
   mAllowMulti->setChecked( config.value( "AllowMulti" ).toBool() );
   mAllowNull->setChecked( config.value( "AllowNull" ).toBool() );

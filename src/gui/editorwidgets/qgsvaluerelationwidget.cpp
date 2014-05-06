@@ -162,4 +162,8 @@ void QgsValueRelationWidget::setValue(const QVariant& value)
       mListWidget->addItem( item );
     }
   }
+  else if ( mComboBox )
+  {
+    mComboBox->setCurrentIndex( mComboBox->findData( value ) );
+  }
 }

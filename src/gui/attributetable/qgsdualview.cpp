@@ -74,6 +74,9 @@ void QgsDualView::init( QgsVectorLayer* layer, QgsMapCanvas* mapCanvas, const Qg
   mAttributeEditorScrollArea->layout()->addWidget( mAttributeForm );
   mAttributeEditorScrollArea->setWidget( mAttributeForm );
 
+  connect( mAttributeForm, SIGNAL( attributeChanged( QString, QVariant ) ), this, SLOT( featureFormAttributeChanged() ) );
+  connect( layer, SIGNAL( beforeCommitChanges() ), mAttributeForm, SLOT( save() ) );
+
   columnBoxInit();
 }
 
@@ -258,6 +261,7 @@ void QgsDualView::on_mFeatureList_currentEditSelectionChanged( const QgsFeature 
 
 void QgsDualView::setCurrentEditSelection( const QgsFeatureIds& fids )
 {
+  mFeatureList->setCurrentFeatureEdited( false );
   mFeatureList->setEditSelection( fids );
 }
 
@@ -362,6 +366,11 @@ void QgsDualView::viewWillShowContextMenu( QMenu* menu, QModelIndex atIndex )
 void QgsDualView::previewExpressionChanged( const QString expression )
 {
   mLayerCache->layer()->setDisplayExpression( expression );
+}
+
+void QgsDualView::featureFormAttributeChanged()
+{
+  mFeatureList->setCurrentFeatureEdited( true );
 }
 
 void QgsDualView::reloadAttribute( const int& idx )

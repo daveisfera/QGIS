@@ -194,6 +194,13 @@ class GUI_EXPORT QgsDualView : public QStackedWidget, private Ui::QgsDualViewBas
     void previewExpressionChanged( const QString expression );
 
     /**
+     * Will be called whenever the currently shown feature form changes.
+     * Will forward this signal to the feature list to visually represent
+     * that there has been an edit event.
+     */
+    void featureFormAttributeChanged();
+
+    /**
      * Will be called periodically, when loading layers from slow data providers.
      *
      * @param i       The number of features already loaded

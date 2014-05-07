@@ -107,6 +107,12 @@ QgsFeatureIds QgsFeatureListView::currentEditSelection()
   return selection;
 }
 
+void QgsFeatureListView::setCurrentFeatureEdited( bool state )
+{
+  mItemDelegate->setCurrentFeatureEdited( state );
+  viewport()->update( visualRegionForSelection( mCurrentEditSelectionModel->selection() ) );
+}
+
 void QgsFeatureListView::mousePressEvent( QMouseEvent *event )
 {
   QPoint pos = event->pos();

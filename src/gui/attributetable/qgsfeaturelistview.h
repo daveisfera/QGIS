@@ -107,6 +107,13 @@ class GUI_EXPORT QgsFeatureListView : public QListView
      */
     QgsFeatureIds currentEditSelection();
 
+    /**
+     * Sets if the currently shown form has received any edit events so far.
+     *
+     * @param status The status
+     */
+    void setCurrentFeatureEdited( bool state );
+
   protected:
     virtual void mouseMoveEvent( QMouseEvent *event );
     virtual void mousePressEvent( QMouseEvent *event );

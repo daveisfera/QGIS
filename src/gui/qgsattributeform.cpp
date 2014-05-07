@@ -70,6 +70,8 @@ void QgsAttributeForm::setFeature( const QgsFeature& feature )
 
 bool QgsAttributeForm::save()
 {
+  bool success = true;
+
   if ( mFeature.isValid() )
   {
     bool doUpdate = false;
@@ -95,14 +97,17 @@ bool QgsAttributeForm::save()
         if ( dst[i] == src[i] )
           continue;
 
-        mLayer->changeAttributeValue( mFeature.id(), i, dst[i], src[i] );
+        success &= mLayer->changeAttributeValue( mFeature.id(), i, dst[i], src[i] );
       }
 
-      mLayer->endEditCommand();
+      if ( success )
+        mLayer->endEditCommand();
+      else
+        mLayer->destroyEditCommand();
     }
   }
 
-  return true;
+  return success;
 }
 
 void QgsAttributeForm::onAttributeChanged( const QVariant& value )

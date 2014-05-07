@@ -20,7 +20,6 @@ QgsTextEditWidget::QgsTextEditWidget( QgsVectorLayer* vl, int fieldIdx, QWidget*
 {
 }
 
-
 QVariant QgsTextEditWidget::value()
 {
   QVariant v;

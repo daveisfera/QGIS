@@ -71,6 +71,13 @@ void QgsUniqueValuesWidget::initWidget( QWidget* editor )
     QCompleter* c = new QCompleter( sValues );
     c->setCompletionMode( QCompleter::PopupCompletion );
     mLineEdit->setCompleter( c );
+
+    connect( mLineEdit, SIGNAL( textChanged( QString ) ), this, SLOT( valueChanged( QString ) ) );
+  }
+
+  if ( mComboBox )
+  {
+    connect( mComboBox, SIGNAL( currentIndexChanged( int ) ), this, SLOT( valueChanged() ) );
   }
 }
 

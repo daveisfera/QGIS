@@ -28,7 +28,7 @@ class QgsRangeWidget : public QgsEditorWidgetWrapper
 {
     Q_OBJECT
   public:
-    explicit QgsRangeWidget(QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent = 0 );
+    explicit QgsRangeWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent = 0 );
 
     // QgsEditorWidgetWrapper interface
   public:
@@ -40,10 +40,6 @@ class QgsRangeWidget : public QgsEditorWidgetWrapper
 
   public slots:
     virtual void setValue( const QVariant& value );
-
-  private slots:
-    void onIntValueChanged( int value );
-    void onDoubleValueChanged( double value );
 
   private:
     QSpinBox* mIntSpinBox;

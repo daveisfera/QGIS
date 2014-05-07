@@ -57,16 +57,24 @@ void QgsLineEditWidget::initWidget( QWidget* editor )
   if ( mLineEdit )
   {
     mLineEdit->setValidator( new QgsFieldValidator( mLineEdit, layer()->pendingFields()[fieldIdx()], layer()->dateFormat( fieldIdx() ) ) );
+    connect( mLineEdit, SIGNAL( textChanged( QString ) ), this, SLOT( valueChanged( QString ) ) );
   }
 
   if ( mTextEdit )
   {
     mTextEdit->setAcceptRichText( true );
+    connect( mTextEdit, SIGNAL( textChanged() ), this, SLOT( valueChanged() ) );
+  }
+
+  if ( mPlainTextEdit )
+  {
+    connect( mPlainTextEdit, SIGNAL( textChanged() ), this, SLOT( valueChanged() ) );
   }
 
   if ( mComboBox && mComboBox->isEditable() )
   {
     mComboBox->setValidator( new QgsFieldValidator( mLineEdit, layer()->pendingFields()[fieldIdx()], layer()->dateFormat( fieldIdx() ) ) );
+    connect( mComboBox, SIGNAL( editTextChanged( QString ) ), this, SLOT( valueChanged( QString ) ) );
   }
 }
 

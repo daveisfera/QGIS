@@ -40,6 +40,11 @@ void QgsCheckboxWidget::initWidget( QWidget* editor )
 {
   mCheckBox = qobject_cast<QCheckBox*>( editor );
   mGroupBox = qobject_cast<QGroupBox*>( editor );
+
+  if ( mCheckBox )
+    connect( mCheckBox, SIGNAL( toggled( bool ) ), this, SLOT( valueChanged( bool ) ) );
+  if ( mGroupBox )
+    connect( mGroupBox, SIGNAL( toggled( bool ) ), this, SLOT( valueChanged( bool ) ) );
 }
 
 void QgsCheckboxWidget::setValue( const QVariant& value )

@@ -31,17 +31,19 @@ QVariant QgsColorWidget::value()
   return v;
 }
 
-QWidget*QgsColorWidget::createWidget(QWidget* parent)
+QWidget*QgsColorWidget::createWidget( QWidget* parent )
 {
   return new QgsColorButton( parent );
 }
 
-void QgsColorWidget::initWidget(QWidget* editor)
+void QgsColorWidget::initWidget( QWidget* editor )
 {
   mColorButton = qobject_cast<QgsColorButton*>( editor );
+
+  connect( mColorButton, SIGNAL( colorChanged( QColor ) ), this, SLOT( valueChanged() ) );
 }
 
-void QgsColorWidget::setValue(const QVariant& value)
+void QgsColorWidget::setValue( const QVariant& value )
 {
   if ( mColorButton )
     mColorButton->setColor( QColor( value.toString() ) );

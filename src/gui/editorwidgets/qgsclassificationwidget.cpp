@@ -25,7 +25,7 @@ QgsClassificationWidget::QgsClassificationWidget( QgsVectorLayer* vl, int fieldI
 
 QVariant QgsClassificationWidget::value()
 {
-  return mComboBox->currentText();
+  return mComboBox->itemData( mComboBox->currentIndex() );
 }
 
 QWidget*QgsClassificationWidget::createWidget( QWidget* parent )
@@ -53,6 +53,8 @@ void QgsClassificationWidget::initWidget( QWidget* editor )
         mComboBox->addItem( label, value );
       }
     }
+
+    connect( mComboBox, SIGNAL( currentIndexChanged( int ) ), this, SLOT( valueChanged() ) );
   }
 }
 

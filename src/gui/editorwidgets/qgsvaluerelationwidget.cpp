@@ -28,26 +28,28 @@ QVariant QgsValueRelationWidget::value()
 {
   QVariant v;
 
-  if( mComboBox )
+  if ( mComboBox )
     v = mComboBox->itemData( mComboBox->currentIndex() );
 
   if ( mListWidget )
   {
     QStringList selection;
-    Q_FOREACH( const QListWidgetItem* item, mListWidget->selectedItems() )
+    for ( int i = 0; i < mListWidget->count(); ++i )
     {
-      selection << item->data( Qt::UserRole ).toString();
+      QListWidgetItem* item = mListWidget->item( i );
+      if ( item->checkState() == Qt::Checked )
+        selection << item->data( Qt::UserRole ).toString();
     }
 
-    v = selection.join( ",").prepend( "{" ).append( "}" );
+    v = selection.join( "," ).prepend( "{" ).append( "}" );
   }
 
   return v;
 }
 
-QWidget* QgsValueRelationWidget::createWidget(QWidget* parent)
+QWidget* QgsValueRelationWidget::createWidget( QWidget* parent )
 {
-  if ( config("AllowMulti").toBool() )
+  if ( config( "AllowMulti" ).toBool() )
   {
     return new QListWidget( parent );
   }
@@ -78,6 +80,27 @@ void QgsValueRelationWidget::initWidget( QWidget* editor )
       else
         mComboBox->addItem( it.value(), it.key() );
     }
+
+    connect( mComboBox, SIGNAL( currentIndexChanged( int ) ), this, SLOT( valueChanged() ) );
+  }
+  else if ( mListWidget )
+  {
+    for ( QMap<QString, QString>::ConstIterator it = mMap.begin(); it != mMap.end(); it++ )
+    {
+      QListWidgetItem *item;
+      if ( config( "OrderByValue" ).toBool() )
+      {
+        item = new QListWidgetItem( it.key() );
+        item->setData( Qt::UserRole, it.value() );
+      }
+      else
+      {
+        item = new QListWidgetItem( it.value() );
+        item->setData( Qt::UserRole, it.key() );
+      }
+      mListWidget->addItem( item );
+    }
+    connect( mListWidget, SIGNAL( itemChanged( QListWidgetItem* ) ), this, SLOT( valueChanged() ) );
   }
 }
 
@@ -93,9 +116,9 @@ void QgsValueRelationWidget::initCache()
     int vi = mLayer->fieldNameIndex( data.mOrderByValue ? data.mKey : data.mValue );
 
     QgsExpression *e = 0;
-    if ( !config( "FilterExpression").toString().isEmpty() )
+    if ( !config( "FilterExpression" ).toString().isEmpty() )
     {
-      e = new QgsExpression( config( "FilterExpression").toString() );
+      e = new QgsExpression( config( "FilterExpression" ).toString() );
       if ( e->hasParserError() || !e->prepare( mLayer->pendingFields() ) )
         ki = -1;
     }
@@ -112,7 +135,7 @@ void QgsValueRelationWidget::initCache()
         if ( e->needsGeometry() )
           flags |= QgsFeatureRequest::NoGeometry;
 
-        Q_FOREACH ( const QString &field, e->referencedColumns() )
+        Q_FOREACH( const QString &field, e->referencedColumns() )
         {
           int idx = mLayer->fieldNameIndex( field );
           if ( idx < 0 )
@@ -138,28 +161,23 @@ void QgsValueRelationWidget::initCache()
   }
 }
 
-void QgsValueRelationWidget::setValue(const QVariant& value)
+void QgsValueRelationWidget::setValue( const QVariant& value )
 {
   if ( mListWidget )
   {
     QStringList checkList = value.toString().remove( QChar( '{' ) ).remove( QChar( '}' ) ).split( "," );
 
-    for ( QMap<QString, QString>::ConstIterator it = mMap.begin(); it != mMap.end(); it++ )
+    for ( int i = 0; i < mListWidget->count(); ++i )
     {
-      QListWidgetItem *item;
+      QListWidgetItem* item = mListWidget->item( i );
       if ( config( "OrderByValue" ).toBool() )
       {
-        item = new QListWidgetItem( it.key() );
-        item->setData( Qt::UserRole, it.value() );
-        item->setCheckState( checkList.contains( it.value() ) ? Qt::Checked : Qt::Unchecked );
+        item->setCheckState( checkList.contains( item->data( Qt::UserRole ).toString() ) ? Qt::Checked : Qt::Unchecked );
       }
       else
       {
-        item = new QListWidgetItem( it.value() );
-        item->setData( Qt::UserRole, it.key() );
-        item->setCheckState( checkList.contains( it.key() ) ? Qt::Checked : Qt::Unchecked );
+        item->setCheckState( checkList.contains( item->data( Qt::UserRole ).toString() ) ? Qt::Checked : Qt::Unchecked );
       }
-      mListWidget->addItem( item );
     }
   }
   else if ( mComboBox )
@@ -167,3 +185,4 @@ void QgsValueRelationWidget::setValue(const QVariant& value)
     mComboBox->setCurrentIndex( mComboBox->findData( value ) );
   }
 }
+

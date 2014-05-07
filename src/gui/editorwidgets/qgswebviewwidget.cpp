@@ -41,7 +41,7 @@ QVariant QgsWebViewWidget::value()
   return v;
 }
 
-QWidget* QgsWebViewWidget::createWidget(QWidget* parent)
+QWidget* QgsWebViewWidget::createWidget( QWidget* parent )
 {
   QWidget* container = new QWidget( parent );
   QGridLayout* layout = new QGridLayout( container );
@@ -67,7 +67,9 @@ void QgsWebViewWidget::initWidget( QWidget* editor )
   mLineEdit = qobject_cast<QLineEdit*>( editor );
 
   if ( mLineEdit )
+  {
     container = qobject_cast<QWidget*>( mLineEdit->parent() );
+  }
   else
   {
     container = editor;
@@ -75,7 +77,7 @@ void QgsWebViewWidget::initWidget( QWidget* editor )
   }
 
   mButton = container->findChild<QPushButton*>( "FileChooserButton" );
-  if ( !mButton)
+  if ( !mButton )
     mButton = container->findChild<QPushButton*>();
 
   mWebView = container->findChild<QWebView*>( "EditorWebView" );
@@ -96,13 +98,18 @@ void QgsWebViewWidget::initWidget( QWidget* editor )
     connect( mButton, SIGNAL( clicked() ), this, SLOT( selectFileName() ) );
 
   if ( mLineEdit )
-    connect( mLineEdit, SIGNAL( textChanged(QString)), this, SLOT( loadUrl(QString) ) );
+  {
+    connect( mLineEdit, SIGNAL( textChanged( QString ) ), this, SLOT( loadUrl( QString ) ) );
+    connect( mLineEdit, SIGNAL( textChanged( QString ) ), this, SLOT( valueChanged( QString ) ) );
+  }
 }
 
 void QgsWebViewWidget::setValue( const QVariant& value )
 {
   if ( mLineEdit )
     mLineEdit->setText( value.toString() );
+
+  loadUrl( value.toString() );
 }
 
 void QgsWebViewWidget::setEnabled( bool enabled )

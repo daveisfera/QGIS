@@ -34,12 +34,12 @@ QVariant QgsUuidWidget::value()
   return v;
 }
 
-QWidget* QgsUuidWidget::createWidget(QWidget* parent)
+QWidget* QgsUuidWidget::createWidget( QWidget* parent )
 {
   return new QLineEdit( parent );
 }
 
-void QgsUuidWidget::initWidget(QWidget* editor)
+void QgsUuidWidget::initWidget( QWidget* editor )
 {
   mLineEdit = qobject_cast<QLineEdit*>( editor );
   mLabel = qobject_cast<QLabel*>( editor );
@@ -47,7 +47,7 @@ void QgsUuidWidget::initWidget(QWidget* editor)
     mLineEdit->setEnabled( false );
 }
 
-void QgsUuidWidget::setValue(const QVariant& value)
+void QgsUuidWidget::setValue( const QVariant& value )
 {
   if ( value.isNull() )
   {
@@ -55,6 +55,8 @@ void QgsUuidWidget::setValue(const QVariant& value)
       mLineEdit->setText( QUuid::createUuid().toString() );
     if ( mLabel )
       mLabel->setText( QUuid::createUuid().toString() );
+
+    valueChanged();
   }
   else
   {

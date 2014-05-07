@@ -64,9 +64,9 @@ QVariant QgsCalendarWidget::value()
   return v;
 }
 
-QWidget* QgsCalendarWidget::createWidget(QWidget* parent)
+QWidget* QgsCalendarWidget::createWidget( QWidget* parent )
 {
-  return new QCalendarWidget( parent );
+  return new QLineEdit( parent );
 }
 
 void QgsCalendarWidget::initWidget( QWidget* editor )
@@ -74,7 +74,6 @@ void QgsCalendarWidget::initWidget( QWidget* editor )
   mCalendarWidget = qobject_cast<QCalendarWidget*>( editor );
   mLineEdit = qobject_cast<QLineEdit*>( editor );
 
-  mLineEdit = qobject_cast<QLineEdit*>( editor );
   if ( !mLineEdit )
   {
     mLineEdit = editor->findChild<QLineEdit*>();
@@ -89,10 +88,10 @@ void QgsCalendarWidget::initWidget( QWidget* editor )
   }
 
   if ( mLineEdit )
-    mLineEdit->setValidator( new QgsFieldValidator(mLineEdit, field(), config( "DateFormat" ).toString() ) );
+    mLineEdit->setValidator( new QgsFieldValidator( mLineEdit, field(), config( "DateFormat" ).toString() ) );
 }
 
-void QgsCalendarWidget::setValue(const QVariant& value)
+void QgsCalendarWidget::setValue( const QVariant& value )
 {
   if ( mCalendarWidget )
     mCalendarWidget->setSelectedDate( value.toDate() );

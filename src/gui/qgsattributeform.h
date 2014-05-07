@@ -28,7 +28,7 @@ class GUI_EXPORT QgsAttributeForm : public QWidget
     Q_OBJECT
 
   public:
-    explicit QgsAttributeForm(QgsVectorLayer* vl, const QgsFeature feature = QgsFeature(), QgsAttributeEditorContext context = QgsAttributeEditorContext(), QWidget *parent = 0 );
+    explicit QgsAttributeForm( QgsVectorLayer* vl, const QgsFeature feature = QgsFeature(), QgsAttributeEditorContext context = QgsAttributeEditorContext(), QWidget *parent = 0 );
 
   signals:
     void attributeChanged( QString attribute, const QVariant& value );
@@ -39,15 +39,19 @@ class GUI_EXPORT QgsAttributeForm : public QWidget
     bool save();
 
   private slots:
-    void onAttributeChanged( QVariant& value );
+    void onAttributeChanged( const QVariant& value );
 
   private:
     void init();
+
+    QWidget* createWidgetFromDef( const QgsAttributeEditorElement* widgetDef, QWidget* parent, QgsVectorLayer* vl, QgsAttributeEditorContext& context, QString& labelText, bool& labelOnTop );
+
     /**
      * Creates widget wrappers for all suitable widgets found.
      * Called once maximally.
      */
-    void initWrappers();
+    void createWrappers();
+    void connectWrappers();
 
     QgsVectorLayer* mLayer;
     QgsFeature mFeature;

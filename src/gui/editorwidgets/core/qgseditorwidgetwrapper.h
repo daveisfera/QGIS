@@ -177,6 +177,18 @@ class GUI_EXPORT QgsEditorWidgetWrapper : public QObject
      */
     virtual void setEnabled( bool enabled );
 
+  protected slots:
+    void valueChanged( const QString& value );
+    void valueChanged( int value );
+    void valueChanged( double value );
+    void valueChanged( bool value );
+    void valueChanged( qlonglong value );
+
+    /**
+     * Will call the value() method to determine the emitted value
+     */
+    void valueChanged();
+
   private:
     QgsEditorWidgetConfig mConfig;
     QWidget* mWidget;

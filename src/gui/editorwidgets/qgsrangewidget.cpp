@@ -71,7 +71,7 @@ void QgsRangeWidget::initWidget( QWidget* editor )
     mDoubleSpinBox->setMinimum( config( "Min" ).toDouble() );
     mDoubleSpinBox->setMaximum( config( "Max" ).toDouble() );
     mDoubleSpinBox->setSingleStep( config( "Step" ).toDouble() );
-    connect( mDoubleSpinBox, SIGNAL( valueChanged( double ) ), this, SLOT( onDoubleValueChanged( double ) ) );
+    connect( mDoubleSpinBox, SIGNAL( valueChanged( double ) ), this, SLOT( valueChanged( double ) ) );
   }
 
   if ( mIntSpinBox )
@@ -79,7 +79,7 @@ void QgsRangeWidget::initWidget( QWidget* editor )
     mIntSpinBox->setMinimum( config( "Min" ).toInt() );
     mIntSpinBox->setMaximum( config( "Max" ).toInt() );
     mIntSpinBox->setSingleStep( config( "Step" ).toInt() );
-    connect( mIntSpinBox, SIGNAL( valueChanged( int ) ), this, SLOT( onIntValueChanged( int ) ) );
+    connect( mIntSpinBox, SIGNAL( valueChanged( int ) ), this, SLOT( valueChanged( int ) ) );
   }
 
   if ( mDial )
@@ -87,7 +87,7 @@ void QgsRangeWidget::initWidget( QWidget* editor )
     mDial->setMinimum( config( "Min" ).toInt() );
     mDial->setMaximum( config( "Max" ).toInt() );
     mDial->setSingleStep( config( "Step" ).toInt() );
-    connect( mDial, SIGNAL( valueChanged( int ) ), this, SLOT( onIntValueChanged( int ) ) );
+    connect( mDial, SIGNAL( valueChanged( int ) ), this, SLOT( valueChanged( int ) ) );
   }
 
   if ( mSlider )
@@ -95,7 +95,7 @@ void QgsRangeWidget::initWidget( QWidget* editor )
     mSlider->setMinimum( config( "Min" ).toInt() );
     mSlider->setMaximum( config( "Max" ).toInt() );
     mSlider->setSingleStep( config( "Step" ).toInt() );
-    connect( mSlider, SIGNAL( valueChanged( int ) ), this, SLOT( onIntValueChanged( int ) ) );
+    connect( mSlider, SIGNAL( valueChanged( int ) ), this, SLOT( valueChanged( int ) ) );
   }
 
 }
@@ -145,12 +145,3 @@ void QgsRangeWidget::setValue( const QVariant& value )
   }
 }
 
-void QgsRangeWidget::onIntValueChanged( int value )
-{
-  emit valueChanged( QVariant( value ) );
-}
-
-void QgsRangeWidget::onDoubleValueChanged( double value )
-{
-  emit valueChanged( QVariant( value ) );
-}

@@ -17,6 +17,7 @@
 
 #include "qgseditorwidgetregistry.h"
 #include "qgsattributeeditor.h"
+#include "qgsrelationeditor.h"
 
 #include <QDir>
 #include <QFileInfo>
@@ -28,9 +29,9 @@
 #include <QUiLoader>
 
 QgsAttributeForm::QgsAttributeForm( QgsVectorLayer* vl, const QgsFeature feature, QgsAttributeEditorContext context, QWidget* parent )
-  : QWidget( parent )
-  , mLayer( vl )
-  , mContext( context )
+    : QWidget( parent )
+    , mLayer( vl )
+    , mContext( context )
 {
   init();
   setFeature( feature );
@@ -40,7 +41,7 @@ void QgsAttributeForm::changeAttribute( const QString& field, const QVariant& va
 {
   Q_FOREACH( QgsEditorWidgetWrapper* eww, mWidgets )
   {
-    if( eww->field().name() == field )
+    if ( eww->field().name() == field )
     {
       eww->setValue( value );
     }
@@ -104,11 +105,11 @@ bool QgsAttributeForm::save()
   return true;
 }
 
-void QgsAttributeForm::onAttributeChanged( QVariant& value )
+void QgsAttributeForm::onAttributeChanged( const QVariant& value )
 {
   QgsEditorWidgetWrapper* eww = qobject_cast<QgsEditorWidgetWrapper*>( sender() );
 
-  Q_ASSERT ( eww );
+  Q_ASSERT( eww );
 
   emit attributeChanged( eww->field().name(), value );
 }
@@ -140,7 +141,7 @@ void QgsAttributeForm::init()
       formWidget = loader.load( &file, this );
       layout()->addWidget( formWidget );
       file.close();
-      initWrappers();
+      createWrappers();
     }
   }
 
@@ -150,7 +151,7 @@ void QgsAttributeForm::init()
     QTabWidget* tabWidget = new QTabWidget( this );
     layout()->addWidget( tabWidget );
 
-    Q_FOREACH ( const QgsAttributeEditorElement *widgDef, mLayer->attributeEditorElements() )
+    Q_FOREACH( const QgsAttributeEditorElement *widgDef, mLayer->attributeEditorElements() )
     {
       QWidget* tabPage = new QWidget( tabWidget );
 
@@ -161,14 +162,13 @@ void QgsAttributeForm::init()
       {
         QString dummy1;
         bool dummy2;
-        tabPageLayout->addWidget( QgsAttributeEditor::createWidgetFromDef( widgDef, tabPage, mLayer, mFeature, mContext, dummy1, dummy2 ) );
+        tabPageLayout->addWidget( createWidgetFromDef( widgDef, tabPage, mLayer, mContext, dummy1, dummy2 ) );
       }
       else
       {
         QgsDebugMsg( "No support for fields in attribute editor on top level" );
       }
     }
-    initWrappers();
     formWidget = tabWidget;
   }
 
@@ -203,9 +203,122 @@ void QgsAttributeForm::init()
       }
     }
   }
+
+  connectWrappers();
 }
 
-void QgsAttributeForm::initWrappers()
+QWidget* QgsAttributeForm::createWidgetFromDef( const QgsAttributeEditorElement* widgetDef, QWidget* parent, QgsVectorLayer* vl, QgsAttributeEditorContext& context, QString& labelText, bool& labelOnTop )
+{
+  QWidget *newWidget = 0;
+
+  switch ( widgetDef->type() )
+  {
+    case QgsAttributeEditorElement::AeTypeField:
+    {
+      const QgsAttributeEditorField* fieldDef = dynamic_cast<const QgsAttributeEditorField*>( widgetDef );
+      int fldIdx = fieldDef->idx();
+      if ( fldIdx < vl->pendingFields().count() && fldIdx >= 0 )
+      {
+        const QString widgetType = mLayer->editorWidgetV2( fldIdx );
+        const QgsEditorWidgetConfig widgetConfig = mLayer->editorWidgetV2Config( fldIdx );
+
+        QgsEditorWidgetWrapper* eww = QgsEditorWidgetRegistry::instance()->create( widgetType, mLayer, fldIdx, widgetConfig, 0, this );
+        newWidget = eww->widget();
+        mWidgets.append( eww );
+      }
+
+      labelOnTop = mLayer->labelOnTop( fieldDef->idx() );
+      labelText = mLayer->attributeDisplayName( fieldDef->idx() );
+      break;
+    }
+
+    case QgsAttributeEditorElement::AeTypeRelation:
+    {
+      const QgsAttributeEditorRelation* relDef = dynamic_cast<const QgsAttributeEditorRelation*>( widgetDef );
+
+      // TODO: Make relationeditor newstyle
+      // newWidget = QgsRelationEditorWidget::createRelationEditor( relDef->relation(), feat, context );
+      labelText = QString::null;
+      labelOnTop = true;
+      break;
+    }
+
+    case QgsAttributeEditorElement::AeTypeContainer:
+    {
+      const QgsAttributeEditorContainer* container = dynamic_cast<const QgsAttributeEditorContainer*>( widgetDef );
+      QWidget* myContainer;
+
+      if ( container->isGroupBox() )
+      {
+        QGroupBox* groupBox = new QGroupBox( parent );
+        groupBox->setTitle( container->name() );
+        myContainer = groupBox;
+        newWidget = myContainer;
+      }
+      else
+      {
+        QScrollArea *scrollArea = new QScrollArea( parent );
+
+        myContainer = new QWidget( scrollArea );
+
+        scrollArea->setWidget( myContainer );
+        scrollArea->setWidgetResizable( true );
+        scrollArea->setFrameShape( QFrame::NoFrame );
+
+        newWidget = scrollArea;
+      }
+
+      QGridLayout* gbLayout = new QGridLayout( myContainer );
+      myContainer->setLayout( gbLayout );
+
+      int index = 0;
+
+      QList<QgsAttributeEditorElement*> children = container->children();
+
+      Q_FOREACH( QgsAttributeEditorElement* childDef, children )
+      {
+        QString labelText;
+        bool labelOnTop;
+        QWidget* editor = createWidgetFromDef( childDef, myContainer, vl, context, labelText, labelOnTop );
+
+        if ( labelText == QString::null )
+        {
+          gbLayout->addWidget( editor, index, 0, 1, 2 );
+        }
+        else
+        {
+          QLabel* mypLabel = new QLabel( labelText );
+          if ( labelOnTop )
+          {
+            gbLayout->addWidget( mypLabel, index, 0, 1, 2 );
+            ++index;
+            gbLayout->addWidget( editor, index, 0, 1 , 2 );
+          }
+          else
+          {
+            gbLayout->addWidget( mypLabel, index, 0 );
+            gbLayout->addWidget( editor, index, 1 );
+          }
+        }
+
+        ++index;
+      }
+      gbLayout->addItem( new QSpacerItem( 0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding ), index , 0 );
+
+      labelText = QString::null;
+      labelOnTop = true;
+      break;
+    }
+
+    default:
+      QgsDebugMsg( "Unknown attribute editor widget type encountered..." );
+      break;
+  }
+
+  return newWidget;
+}
+
+void QgsAttributeForm::createWrappers()
 {
   Q_FOREACH( const QgsField& field, mLayer->pendingFields().toList() )
   {
@@ -215,12 +328,16 @@ void QgsAttributeForm::initWrappers()
     const QgsEditorWidgetConfig widgetConfig = mLayer->editorWidgetV2Config( idx );
 
     QList<QWidget*> editors = findChildren<QWidget*>( field.name() );
-    Q_FOREACH( QWidget* editor, editors)
+    Q_FOREACH( QWidget* editor, editors )
     {
       QgsEditorWidgetWrapper* eww = QgsEditorWidgetRegistry::instance()->create( widgetType, mLayer, idx, widgetConfig, editor, this );
-      connect( eww, SIGNAL( valueChanged( const QVariant& ) ), this, SLOT( onAttributeChanged( const QVariant& ) ) );
       mWidgets.append( eww );
     }
   }
 }
 
+void QgsAttributeForm::connectWrappers()
+{
+  Q_FOREACH( QgsEditorWidgetWrapper* eww, mWidgets )
+  connect( eww, SIGNAL( valueChanged( const QVariant& ) ), this, SLOT( onAttributeChanged( const QVariant& ) ) );
+}

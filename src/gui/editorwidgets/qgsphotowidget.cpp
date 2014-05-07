@@ -69,7 +69,7 @@ QVariant QgsPhotoWidget::value()
   return v;
 }
 
-QWidget* QgsPhotoWidget::createWidget(QWidget* parent)
+QWidget* QgsPhotoWidget::createWidget( QWidget* parent )
 {
   QWidget* container = new QWidget( parent );
   QGridLayout* layout = new QGridLayout( container );
@@ -103,7 +103,7 @@ void QgsPhotoWidget::initWidget( QWidget* editor )
   }
 
   mButton = container->findChild<QPushButton*>( "FileChooserButton" );
-  if ( !mButton)
+  if ( !mButton )
     mButton = container->findChild<QPushButton*>();
 
   mPhotoLabel = container->findChild<QLabel*>( "PhotoLabel" );
@@ -114,7 +114,10 @@ void QgsPhotoWidget::initWidget( QWidget* editor )
     connect( mButton, SIGNAL( clicked() ), this, SLOT( selectFileName() ) );
 
   if ( mLineEdit )
-    connect( mLineEdit, SIGNAL( textChanged(QString)), this, SLOT( loadPixmap(QString) ) );
+  {
+    connect( mLineEdit, SIGNAL( textChanged( QString ) ), this, SLOT( valueChanged( QString ) ) );
+    connect( mLineEdit, SIGNAL( textChanged( QString ) ), this, SLOT( loadPixmap( QString ) ) );
+  }
 }
 
 void QgsPhotoWidget::setValue( const QVariant& value )

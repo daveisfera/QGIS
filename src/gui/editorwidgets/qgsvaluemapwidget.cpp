@@ -50,6 +50,7 @@ void QgsValueMapWidget::initWidget( QWidget* editor )
       mComboBox->addItem( it.key(), it.value() );
       ++it;
     }
+    connect( mComboBox, SIGNAL( currentIndexChanged( int ) ), this, SLOT( valueChanged() ) );
   }
 }
 

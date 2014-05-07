@@ -71,6 +71,9 @@ void QgsFileNameWidget::initWidget( QWidget* editor )
     connect( mPushButton, SIGNAL( clicked() ), this, SLOT( selectFileName() ) );
 
   mLabel = qobject_cast<QLabel*>( editor );
+
+  if ( mLineEdit )
+    connect( mLineEdit, SIGNAL( textChanged( QString ) ), this, SLOT( valueChanged( QString ) ) );
 }
 
 void QgsFileNameWidget::setValue( const QVariant& value )

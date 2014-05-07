@@ -104,3 +104,33 @@ void QgsEditorWidgetWrapper::setEnabled( bool enabled )
     mWidget->setEnabled( enabled );
   }
 }
+
+void QgsEditorWidgetWrapper::valueChanged( const QString& value )
+{
+  emit valueChanged( QVariant( value ) );
+}
+
+void QgsEditorWidgetWrapper::valueChanged( int value )
+{
+  emit valueChanged( QVariant( value ) );
+}
+
+void QgsEditorWidgetWrapper::valueChanged( double value )
+{
+  emit valueChanged( QVariant( value ) );
+}
+
+void QgsEditorWidgetWrapper::valueChanged( bool value )
+{
+  emit valueChanged( QVariant( value ) );
+}
+
+void QgsEditorWidgetWrapper::valueChanged( qlonglong value )
+{
+  emit valueChanged( QVariant( value ) );
+}
+
+void QgsEditorWidgetWrapper::valueChanged()
+{
+  emit valueChanged( value() );
+}

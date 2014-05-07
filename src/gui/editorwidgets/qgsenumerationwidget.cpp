@@ -52,6 +52,7 @@ void QgsEnumerationWidget::initWidget( QWidget* editor )
     {
       mComboBox->addItem( s, s );
     }
+    connect( mComboBox, SIGNAL( currentIndexChanged( int ) ), this, SLOT( valueChanged() ) );
   }
 }
 
@@ -62,3 +63,4 @@ void QgsEnumerationWidget::setValue( const QVariant& value )
     mComboBox->setCurrentIndex( mComboBox->findData( value ) );
   }
 }
+

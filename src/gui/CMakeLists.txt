@@ -73,8 +73,6 @@ editorwidgets/qgsfilenamewidget.cpp
 editorwidgets/qgsfilenamewidgetfactory.cpp
 editorwidgets/qgshiddenwidget.cpp
 editorwidgets/qgshiddenwidgetfactory.cpp
-editorwidgets/qgsimmutablewidget.cpp
-editorwidgets/qgsimmutablewidgetfactory.cpp
 editorwidgets/qgslineeditwidget.cpp
 editorwidgets/qgslineeditwidgetfactory.cpp
 editorwidgets/qgsphotoconfigdlg.cpp
@@ -270,7 +268,6 @@ editorwidgets/qgsenumerationconfigdlg.h
 editorwidgets/qgsenumerationwidget.h
 editorwidgets/qgsfilenamewidget.h
 editorwidgets/qgshiddenwidget.h
-editorwidgets/qgsimmutablewidget.h
 editorwidgets/qgslineeditwidget.h
 editorwidgets/qgsphotoconfigdlg.h
 editorwidgets/qgsphotowidget.h
@@ -474,8 +471,6 @@ editorwidgets/qgsfilenamewidget.h
 editorwidgets/qgsfilenamewidgetfactory.h
 editorwidgets/qgshiddenwidget.h
 editorwidgets/qgshiddenwidgetfactory.h
-editorwidgets/qgsimmutablewidget.h
-editorwidgets/qgsimmutablewidgetfactory.h
 editorwidgets/qgslineeditwidget.h
 editorwidgets/qgslineeditwidgetfactory.h
 editorwidgets/qgsphotoconfigdlg.h

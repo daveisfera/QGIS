@@ -31,17 +31,22 @@ QVariant QgsTextEditWidget::value()
   return v;
 }
 
-QWidget*QgsTextEditWidget::createWidget(QWidget* parent)
+QWidget*QgsTextEditWidget::createWidget( QWidget* parent )
 {
   return new QTextEdit( parent );
 }
 
-void QgsTextEditWidget::initWidget(QWidget* editor)
+void QgsTextEditWidget::initWidget( QWidget* editor )
 {
   mTextEdit = qobject_cast<QTextEdit*>( editor );
+
+  if ( mTextEdit )
+  {
+    connect( mTextEdit, SIGNAL( textChanged() ), this, SLOT( valueChanged() ) );
+  }
 }
 
-void QgsTextEditWidget::setValue(const QVariant& value)
+void QgsTextEditWidget::setValue( const QVariant& value )
 {
   if ( mTextEdit )
     mTextEdit->setHtml( value.toString() );

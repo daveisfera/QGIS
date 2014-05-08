@@ -18,14 +18,15 @@
 #include <QComboBox>
 #include <QPainter>
 
-#include "qgsfeatureselectionmodel.h"
-#include "qgsattributetableview.h"
-#include "qgsattributetablemodel.h"
-#include "qgsattributetablefiltermodel.h"
-#include "qgsattributetabledelegate.h"
-#include "qgsvectordataprovider.h"
 #include "qgsattributeeditor.h"
+#include "qgsattributetabledelegate.h"
+#include "qgsattributetablefiltermodel.h"
+#include "qgsattributetablemodel.h"
+#include "qgsattributetableview.h"
+#include "qgseditorwidgetregistry.h"
+#include "qgsfeatureselectionmodel.h"
 #include "qgslogger.h"
+#include "qgsvectordataprovider.h"
 
 
 
@@ -56,7 +57,11 @@ QWidget *QgsAttributeTableDelegate::createEditor(
 
   int fieldIdx = index.model()->data( index, QgsAttributeTableModel::FieldIndexRole ).toInt();
 
-  QWidget *w = QgsAttributeEditor::createAttributeEditor( parent, 0, vl, fieldIdx, index.model()->data( index, Qt::EditRole ) );
+  QString widgetType = vl->editorWidgetV2( fieldIdx );
+  QgsEditorWidgetConfig cfg = vl->editorWidgetV2Config( fieldIdx );
+  QgsEditorWidgetWrapper* eww = QgsEditorWidgetRegistry::instance()->create( widgetType, vl, fieldIdx, cfg, 0, parent );
+  eww->setValue( index.model()->data( index, Qt::EditRole ) );
+  QWidget* w = eww->widget();
 
   w->setAutoFillBackground( true );
 

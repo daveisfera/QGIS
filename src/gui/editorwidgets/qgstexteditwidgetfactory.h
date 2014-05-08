@@ -27,6 +27,13 @@ class QgsTextEditWidgetFactory : public QgsEditorWidgetFactory
   public:
     QgsEditorWidgetWrapper* create(QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent) const;
     QgsEditorConfigWidget* configWidget(QgsVectorLayer* vl, int fieldIdx, QWidget* parent) const;
+
+    // QgsEditorWidgetFactory interface
+  public:
+    void writeConfig( const QgsEditorWidgetConfig& config, QDomElement& configElement, QDomDocument& doc, const QgsVectorLayer* layer, int fieldIdx );
+
+  private:
+    QgsEditorWidgetConfig readConfig( const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx );
 };
 
 #endif // QGSTEXTEDITWIDGETFACTORY_H

@@ -73,8 +73,6 @@ editorwidgets/qgsfilenamewidget.cpp
 editorwidgets/qgsfilenamewidgetfactory.cpp
 editorwidgets/qgshiddenwidget.cpp
 editorwidgets/qgshiddenwidgetfactory.cpp
-editorwidgets/qgslineeditwidget.cpp
-editorwidgets/qgslineeditwidgetfactory.cpp
 editorwidgets/qgsphotoconfigdlg.cpp
 editorwidgets/qgsphotowidget.cpp
 editorwidgets/qgsphotowidgetfactory.cpp
@@ -84,6 +82,7 @@ editorwidgets/qgsrangewidgetfactory.cpp
 editorwidgets/qgsrelationreferencefactory.cpp
 editorwidgets/qgsrelationreferencewidget.cpp
 editorwidgets/qgsrelreferenceconfigdlg.cpp
+editorwidgets/qgstexteditconfigdlg.cpp
 editorwidgets/qgstexteditwidget.cpp
 editorwidgets/qgstexteditwidgetfactory.cpp
 editorwidgets/qgsuniquevaluesconfigdlg.cpp
@@ -268,13 +267,13 @@ editorwidgets/qgsenumerationconfigdlg.h
 editorwidgets/qgsenumerationwidget.h
 editorwidgets/qgsfilenamewidget.h
 editorwidgets/qgshiddenwidget.h
-editorwidgets/qgslineeditwidget.h
 editorwidgets/qgsphotoconfigdlg.h
 editorwidgets/qgsphotowidget.h
 editorwidgets/qgsrangeconfigdlg.h
 editorwidgets/qgsrangewidget.h
 editorwidgets/qgsrelationreferencewidget.h
 editorwidgets/qgsrelreferenceconfigdlg.h
+editorwidgets/qgstexteditconfigdlg.h
 editorwidgets/qgstexteditwidget.h
 editorwidgets/qgsuniquevaluesconfigdlg.h
 editorwidgets/qgsuniquevaluewidget.h
@@ -471,8 +470,6 @@ editorwidgets/qgsfilenamewidget.h
 editorwidgets/qgsfilenamewidgetfactory.h
 editorwidgets/qgshiddenwidget.h
 editorwidgets/qgshiddenwidgetfactory.h
-editorwidgets/qgslineeditwidget.h
-editorwidgets/qgslineeditwidgetfactory.h
 editorwidgets/qgsphotoconfigdlg.h
 editorwidgets/qgsphotowidget.h
 editorwidgets/qgsphotowidgetfactory.h
@@ -482,6 +479,7 @@ editorwidgets/qgsrangewidgetfactory.h
 editorwidgets/qgsrelationreferencefactory.h
 editorwidgets/qgsrelationreferencewidget.h
 editorwidgets/qgsrelreferenceconfigdlg.h
+editorwidgets/qgstexteditconfigdlg.h
 editorwidgets/qgstexteditwidget.h
 editorwidgets/qgstexteditwidgetfactory.h
 editorwidgets/qgsuniquevaluesconfigdlg.h

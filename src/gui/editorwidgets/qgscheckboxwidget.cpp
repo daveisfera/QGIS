@@ -28,6 +28,10 @@ QVariant QgsCheckboxWidget::value()
   if ( mGroupBox )
     v = mGroupBox->isChecked() ? config( "CheckedState" ) : config( "UncheckedState" );
 
+  if ( mCheckBox )
+    v = mCheckBox->isChecked() ? config( "CheckedState" ) : config( "UncheckedState" );
+
+
   return v;
 }
 

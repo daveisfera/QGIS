@@ -18,6 +18,32 @@
 #include "qgsmaplayerregistry.h"
 #include "qgsvectorlayer.h"
 
+// Alias as we can't use special characters in Q_FOREACH macro
+typedef QPair < QVariant, QString > QVariantStringPair;
+
+bool orderByKeyLessThan( const QVariantStringPair& p1, const QVariantStringPair& p2 )
+{
+  switch( p1.first.type() )
+  {
+    case QVariant::String:
+      return p1.first.toString() < p2.first.toString();
+      break;
+
+    case QVariant::Double:
+      return p1.first.toDouble() < p2.first.toDouble();
+      break;
+
+    default:
+      return p1.first.toInt() < p2.first.toInt();
+      break;
+  }
+}
+
+bool orderByValueLessThan( const QVariantStringPair& p1, const QVariantStringPair& p2 )
+{
+  return p1.second < p2.second;
+}
+
 QgsValueRelationWidget::QgsValueRelationWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent )
     :  QgsEditorWidgetWrapper( vl, fieldIdx, editor, parent )
 {
@@ -73,31 +99,21 @@ void QgsValueRelationWidget::initWidget( QWidget* editor )
       mComboBox->addItem( tr( "(no selection)" ), QVariant( field().type() ) );
     }
 
-    for ( QMap<QString, QString>::ConstIterator it = mMap.begin(); it != mMap.end(); it++ )
+    Q_FOREACH( const QVariantStringPair& element, mMap )
     {
-      if ( config( "OrderByValue" ).toBool() )
-        mComboBox->addItem( it.key(), it.value() );
-      else
-        mComboBox->addItem( it.value(), it.key() );
+      mComboBox->addItem( element.second, element.first );
     }
 
     connect( mComboBox, SIGNAL( currentIndexChanged( int ) ), this, SLOT( valueChanged() ) );
   }
   else if ( mListWidget )
   {
-    for ( QMap<QString, QString>::ConstIterator it = mMap.begin(); it != mMap.end(); it++ )
+    Q_FOREACH( const QVariantStringPair& element, mMap )
     {
       QListWidgetItem *item;
-      if ( config( "OrderByValue" ).toBool() )
-      {
-        item = new QListWidgetItem( it.key() );
-        item->setData( Qt::UserRole, it.value() );
-      }
-      else
-      {
-        item = new QListWidgetItem( it.value() );
-        item->setData( Qt::UserRole, it.key() );
-      }
+      item = new QListWidgetItem( element.second );
+      item->setData( Qt::UserRole, element.first );
+
       mListWidget->addItem( item );
     }
     connect( mListWidget, SIGNAL( itemChanged( QListWidgetItem* ) ), this, SLOT( valueChanged() ) );
@@ -106,14 +122,12 @@ void QgsValueRelationWidget::initWidget( QWidget* editor )
 
 void QgsValueRelationWidget::initCache()
 {
-  const QgsVectorLayer::ValueRelationData& data = layer()->valueRelation( fieldIdx() );
-
-  mLayer = qobject_cast<QgsVectorLayer*>( QgsMapLayerRegistry::instance()->mapLayer( data.mLayer ) );
+  mLayer = qobject_cast<QgsVectorLayer*>( QgsMapLayerRegistry::instance()->mapLayer( config( "Layer" ).toString() ) );
 
   if ( mLayer )
   {
-    int ki = mLayer->fieldNameIndex( data.mOrderByValue ? data.mValue : data.mKey );
-    int vi = mLayer->fieldNameIndex( data.mOrderByValue ? data.mKey : data.mValue );
+    int ki = mLayer->fieldNameIndex( config( "Key" ).toString() );
+    int vi = mLayer->fieldNameIndex( config( "Value" ).toString() );
 
     QgsExpression *e = 0;
     if ( !config( "FilterExpression" ).toString().isEmpty() )
@@ -135,7 +149,7 @@ void QgsValueRelationWidget::initCache()
         if ( e->needsGeometry() )
           flags |= QgsFeatureRequest::NoGeometry;
 
-        Q_FOREACH( const QString &field, e->referencedColumns() )
+        Q_FOREACH( const QString& field, e->referencedColumns() )
         {
           int idx = mLayer->fieldNameIndex( field );
           if ( idx < 0 )
@@ -155,8 +169,13 @@ void QgsValueRelationWidget::initCache()
         if ( e && !e->evaluate( &f ).toBool() )
           continue;
 
-        mMap.insert( f.attribute( ki ).toString(), f.attribute( vi ).toString() );
+        mMap.append( QPair<QVariant, QString>( f.attribute( ki ), f.attribute( vi ).toString() ) );
       }
+
+      if ( config( "OrderByValue" ).toBool() )
+        qSort( mMap.begin(), mMap.end(), orderByValueLessThan );
+      else
+        qSort( mMap.begin(), mMap.end(), orderByKeyLessThan );
     }
   }
 }

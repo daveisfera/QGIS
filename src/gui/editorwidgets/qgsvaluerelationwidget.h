@@ -44,7 +44,7 @@ class QgsValueRelationWidget : public QgsEditorWidgetWrapper
     QComboBox* mComboBox;
     QListWidget* mListWidget;
 
-    QMap<QString, QString> mMap;
+    QVector < QPair < QVariant, QString > > mMap;
     QgsVectorLayer* mLayer;
 };
 

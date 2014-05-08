@@ -15,8 +15,9 @@
 
 #include "qgsattributeform.h"
 
-#include "qgseditorwidgetregistry.h"
 #include "qgsattributeeditor.h"
+#include "qgseditorwidgetregistry.h"
+#include "qgspythonrunner.h"
 #include "qgsrelationeditor.h"
 
 #include <QDir>
@@ -28,14 +29,29 @@
 #include <QTabWidget>
 #include <QUiLoader>
 
+int QgsAttributeForm::sFormCounter = 0;
+
 QgsAttributeForm::QgsAttributeForm( QgsVectorLayer* vl, const QgsFeature feature, QgsAttributeEditorContext context, QWidget* parent )
     : QWidget( parent )
     , mLayer( vl )
     , mContext( context )
+    , mFormNr( sFormCounter++ )
     , mIsSaving( false )
 {
   init();
   setFeature( feature );
+}
+
+QgsAttributeForm::~QgsAttributeForm()
+{
+  QString expr = QString( "if locals().has_key('_qgis_featureform_%1'): del _qgis_featureform_%1\n" ).arg( mFormNr );
+  QgsPythonRunner::run( expr );
+
+  if ( !mFeatureFormVarName.isEmpty() )
+  {
+    QString expr = QString( "if locals().has_key('%1'): del %1\n" ).arg( mFeatureFormVarName );
+    QgsPythonRunner::run( expr );
+  }
 }
 
 void QgsAttributeForm::changeAttribute( const QString& field, const QVariant& value )
@@ -86,9 +102,12 @@ bool QgsAttributeForm::save()
 
     Q_FOREACH( QgsEditorWidgetWrapper* eww, mWidgets )
     {
-      if ( src[eww->fieldIdx()] != eww->value() )
+      QVariant dstVar = dst[eww->fieldIdx()];
+      QVariant srcVar = eww->value();
+      if ( dstVar != srcVar )
       {
         dst[eww->fieldIdx()] = eww->value();
+
         doUpdate = true;
       }
     }
@@ -241,6 +260,60 @@ void QgsAttributeForm::init()
   connect( mLayer, SIGNAL( beforeModifiedCheck() ), this, SLOT( save() ) );
   connect( mLayer, SIGNAL(editingStarted()), this, SLOT(synchronizeEnabledState()) );
   connect( mLayer, SIGNAL(editingStopped()), this, SLOT(synchronizeEnabledState()) );
+}
+
+void QgsAttributeForm::initPython()
+{
+  // Init Python
+  if ( !mLayer->editFormInit().isEmpty() )
+  {
+    QString module = mLayer->editFormInit();
+
+    int pos = module.lastIndexOf( "." );
+    if ( pos >= 0 )
+    {
+      QgsPythonRunner::run( QString( "import %1" ).arg( module.left( pos ) ) );
+    }
+
+    /* Reload the module if the DEBUGMODE switch has been set in the module.
+If set to False you have to reload QGIS to reset it to True due to Python
+module caching */
+    QString reload = QString( "if hasattr(%1,'DEBUGMODE') and %1.DEBUGMODE:"
+                              " reload(%1)" ).arg( module.left( pos ) );
+
+    QgsPythonRunner::run( reload );
+
+    QString form = QString( "_qgis_featureform_%1 = sip.wrapinstance( %2, QtGui.QDialog )" )
+                    .arg( mFormNr )
+                    .arg(( unsigned long ) this );
+
+    QString layer = QString( "_qgis_layer_%1 = sip.wrapinstance( %2, qgis.core.QgsVectorLayer )" )
+                    .arg( mLayer->id() )
+                    .arg(( unsigned long ) mLayer );
+
+    // Generate the unique ID of this feature. We used to use feature ID but some providers
+    // return a ID that is an invalid python variable when we have new unsaved features.
+    QDateTime dt = QDateTime::currentDateTime();
+    QString featurevarname = QString( "_qgis_feature_%1" ).arg( dt.toString( "yyyyMMddhhmmsszzz" ) );
+    QString feature = QString( "%1 = sip.wrapinstance( %2, qgis.core.QgsFeature )" )
+                      .arg( featurevarname )
+                      .arg(( unsigned long ) &mFeature );
+
+    QgsPythonRunner::run( form );
+    QgsPythonRunner::run( feature );
+    QgsPythonRunner::run( layer );
+
+    mFeatureFormVarName = QString( "_qgis_feature_form_%1" ).arg( dt.toString( "yyyyMMddhhmmsszzz" ) );
+    QString expr = QString( "%5 = %1(_qgis_featureform_%2, _qgis_layer_%3, %4)" )
+                   .arg( mLayer->editFormInit() )
+                   .arg( mFormNr )
+                   .arg( mLayer->id() )
+                   .arg( featurevarname )
+                   .arg( mFeatureFormVarName );
+
+    QgsDebugMsg( QString( "running featureForm init: %1" ).arg( expr ) );
+    QgsPythonRunner::run( expr );
+  }
 }
 
 QWidget* QgsAttributeForm::createWidgetFromDef( const QgsAttributeEditorElement* widgetDef, QWidget* parent, QgsVectorLayer* vl, QgsAttributeEditorContext& context, QString& labelText, bool& labelOnTop )

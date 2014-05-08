@@ -263,7 +263,6 @@
 
 // Editor widgets
 #include "qgseditorwidgetregistry.h"
-#include "qgslineeditwidgetfactory.h"
 #include "qgsclassificationwidgetwrapperfactory.h"
 #include "qgsrangewidgetfactory.h"
 #include "qgsuniquevaluewidgetfactory.h"
@@ -612,7 +611,6 @@ QgisApp::QgisApp( QSplashScreen *splash, bool restorePlugins, QWidget * parent, 
   QgsEditorWidgetRegistry* editorWidgetRegistry = QgsEditorWidgetRegistry::instance();
   QgsAttributeEditorContext context;
   context.setVectorLayerTools( vectorLayerTools() );
-  editorWidgetRegistry->registerWidget( "LineEdit", new QgsLineEditWidgetFactory( tr( "Line edit" ) ) );
   editorWidgetRegistry->registerWidget( "Classification", new QgsClassificationWidgetWrapperFactory( tr( "Classification" ) ) );
   editorWidgetRegistry->registerWidget( "Range", new QgsRangeWidgetFactory( tr( "Range" ) ) );
   editorWidgetRegistry->registerWidget( "UniqueValues", new QgsUniqueValueWidgetFactory( tr( "Unique Values" ) ) );

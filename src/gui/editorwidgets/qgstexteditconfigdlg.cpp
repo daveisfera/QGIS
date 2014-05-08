@@ -1,7 +1,7 @@
 /***************************************************************************
-    qgslineeditwidgetfactory.cpp
+    qgstexteditconfigdlg.cpp
      --------------------------------------
-    Date                 : 5.1.2014
+    Date                 : 8.5.2014
     Copyright            : (C) 2014 Matthias Kuhn
     Email                : matthias dot kuhn at gmx dot ch
  ***************************************************************************
@@ -13,21 +13,27 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "qgslineeditwidgetfactory.h"
-#include "qgslineeditwidget.h"
-#include "qgsdummyconfigdlg.h"
+#include "qgstexteditconfigdlg.h"
 
-QgsLineEditWidgetFactory::QgsLineEditWidgetFactory( const QString& name )
-    : QgsEditorWidgetFactory( name )
+QgsTextEditConfigDlg::QgsTextEditConfigDlg(QgsVectorLayer* vl, int fieldIdx, QWidget* parent)
+  : QgsEditorConfigWidget( vl, fieldIdx, parent )
 {
+  setupUi(this);
 }
 
-QgsEditorWidgetWrapper* QgsLineEditWidgetFactory::create( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent ) const
+
+QgsEditorWidgetConfig QgsTextEditConfigDlg::config()
 {
-  return new QgsLineEditWidget( vl, fieldIdx, editor, parent );
+  QgsEditorWidgetConfig cfg;
+
+  cfg.insert( "IsMultiline", mIsMultiline->isChecked() );
+  cfg.insert( "UseHtml", mUseHtml->isChecked() );
+
+  return cfg;
 }
 
-QgsEditorConfigWidget* QgsLineEditWidgetFactory::configWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* parent ) const
+void QgsTextEditConfigDlg::setConfig( const QgsEditorWidgetConfig& config )
 {
-  return new QgsDummyConfigDlg( vl, fieldIdx, parent, QObject::tr( "Simple edit box. This is the default editation widget." ) );
+  mIsMultiline->setChecked( config.value( "IsMultiline" ).toBool() );
+  mUseHtml->setChecked( config.value( "UseHtml" ).toBool() );
 }

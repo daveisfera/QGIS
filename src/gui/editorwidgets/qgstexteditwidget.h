@@ -18,6 +18,8 @@
 
 #include "qgseditorwidgetwrapper.h"
 
+#include <QLineEdit>
+#include <QPlainTextEdit>
 #include <QTextEdit>
 
 class QgsTextEditWidget : public QgsEditorWidgetWrapper
@@ -39,6 +41,10 @@ class QgsTextEditWidget : public QgsEditorWidgetWrapper
 
   private:
     QTextEdit* mTextEdit;
+    QPlainTextEdit* mPlainTextEdit;
+    QLineEdit* mLineEdit;
+
+    QVariant mUnmodifiedValue;
 };
 
 #endif // QGSTEXTEDITWIDGET_H

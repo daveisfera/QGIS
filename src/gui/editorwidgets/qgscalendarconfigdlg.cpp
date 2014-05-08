@@ -16,7 +16,7 @@
 #include "qgscalendarconfigdlg.h"
 
 QgsCalendarConfigDlg::QgsCalendarConfigDlg(QgsVectorLayer* vl, int fieldIdx, QWidget *parent )
-  :    QgsEditorConfigWidget( vl, fieldIdx, parent )
+  : QgsEditorConfigWidget( vl, fieldIdx, parent )
 {
   setupUi( this );
 }

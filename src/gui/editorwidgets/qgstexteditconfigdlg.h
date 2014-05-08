@@ -1,7 +1,7 @@
 /***************************************************************************
-    qgslineeditwidget.h
+    qgstexteditconfigdlg.h
      --------------------------------------
-    Date                 : 5.1.2014
+    Date                 : 8.5.2014
     Copyright            : (C) 2014 Matthias Kuhn
     Email                : matthias dot kuhn at gmx dot ch
  ***************************************************************************
@@ -13,40 +13,24 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef QGSLINEEDITWIDGET_H
-#define QGSLINEEDITWIDGET_H
+#ifndef QGSTEXTEDITCONFIGDLG_H
+#define QGSTEXTEDITCONFIGDLG_H
 
-#include "qgseditorwidgetwrapper.h"
+#include "ui_qgstexteditconfigdlg.h"
 
-#include <QLineEdit>
-#include <QTextEdit>
-#include <QPlainTextEdit>
-#include <QComboBox>
+#include "qgseditorconfigwidget.h"
 
-class QgsLineEditWidget : public QgsEditorWidgetWrapper
+class QgsTextEditConfigDlg : public QgsEditorConfigWidget, private Ui::QgsTextEditConfigDlg
 {
     Q_OBJECT
+
   public:
-    explicit QgsLineEditWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* editor = 0, QWidget* parent = 0 );
+    explicit QgsTextEditConfigDlg( QgsVectorLayer* vl, int fieldIdx, QWidget *parent = 0 );
 
-  signals:
-
-    // QgsEditorWidgetWrapper interface
+    // QgsEditorConfigWidget interface
   public:
-    QVariant value();
-
-  protected:
-    QWidget* createWidget( QWidget* parent );
-    void initWidget( QWidget* editor );
-
-  public slots:
-    void setValue( const QVariant& value );
-
-  private:
-    QLineEdit* mLineEdit;
-    QTextEdit* mTextEdit;
-    QPlainTextEdit* mPlainTextEdit;
-    QComboBox* mComboBox;
+    QgsEditorWidgetConfig config();
+    void setConfig(const QgsEditorWidgetConfig& config);
 };
 
-#endif // QGSLINEEDITWIDGET_H
+#endif // QGSTEXTEDITCONFIGDLG_H

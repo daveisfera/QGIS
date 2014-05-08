@@ -16,7 +16,7 @@
 #include "qgstexteditwidgetfactory.h"
 
 #include "qgstexteditwidget.h"
-#include "qgsdummyconfigdlg.h"
+#include "qgstexteditconfigdlg.h"
 
 QgsTextEditWidgetFactory::QgsTextEditWidgetFactory( const QString& name )
     : QgsEditorWidgetFactory( name )
@@ -30,5 +30,29 @@ QgsEditorWidgetWrapper* QgsTextEditWidgetFactory::create(QgsVectorLayer* vl, int
 
 QgsEditorConfigWidget* QgsTextEditWidgetFactory::configWidget(QgsVectorLayer* vl, int fieldIdx, QWidget* parent) const
 {
-  return new QgsDummyConfigDlg( vl, fieldIdx, parent, QObject::tr( "A text edit field that accepts multiple lines will be used." ) );
+  return new QgsTextEditConfigDlg( vl, fieldIdx, parent );
+}
+
+
+void QgsTextEditWidgetFactory::writeConfig( const QgsEditorWidgetConfig& config, QDomElement& configElement, QDomDocument& doc, const QgsVectorLayer* layer, int fieldIdx )
+{
+  Q_UNUSED( doc )
+  Q_UNUSED( layer )
+  Q_UNUSED( fieldIdx )
+
+  configElement.setAttribute( "IsMultiline", config.value( "IsMultiline", false ).toBool() );
+  configElement.setAttribute( "UseHtml", config.value( "UseHtml", false ).toBool() );
+}
+
+QgsEditorWidgetConfig QgsTextEditWidgetFactory::readConfig( const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx )
+{
+  Q_UNUSED( layer )
+  Q_UNUSED( fieldIdx )
+
+  QgsEditorWidgetConfig cfg;
+
+  cfg.insert( "IsMultiline", configElement.attribute( "IsMultiline", "0" ) == "1" );
+  cfg.insert( "UseHtml", configElement.attribute( "UseHtml", "0" ) == "1" );
+
+  return cfg;
 }

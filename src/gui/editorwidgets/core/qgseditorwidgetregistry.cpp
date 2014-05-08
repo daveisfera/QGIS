@@ -152,7 +152,7 @@ QString QgsEditorWidgetRegistry::readLegacyConfig( QgsVectorLayer* vl, const QDo
 
   QgsVectorLayer::EditType editType = ( QgsVectorLayer::EditType ) editTypeElement.attribute( "type" ).toInt();
 
-  QString widgetType = "LineEdit"; // Fallback
+  QString widgetType = "TextEdit"; // Fallback
 
   switch ( editType )
   {
@@ -270,7 +270,8 @@ QString QgsEditorWidgetRegistry::readLegacyConfig( QgsVectorLayer* vl, const QDo
 
     case QgsVectorLayer::Immutable:
     {
-      widgetType = "LineEdit";
+      widgetType = "TextEdit";
+      cfg.insert( "IsMultiline", false );
       vl->setFieldEditable( vl->pendingFields().fieldNameIndex( name ), false );
       break;
     }
@@ -284,12 +285,15 @@ QString QgsEditorWidgetRegistry::readLegacyConfig( QgsVectorLayer* vl, const QDo
     case QgsVectorLayer::LineEdit:
     {
       widgetType = "LineEdit";
+      cfg.insert( "IsMultiline", false );
       break;
     }
 
     case QgsVectorLayer::TextEdit:
     {
       widgetType = "TextEdit";
+      cfg.insert( "IsMultiline", true );
+      cfg.insert( "UseHtml", false );
       break;
     }
 

@@ -2141,7 +2141,7 @@ void QgsVectorLayer::addAttributeEditorWidget( QgsAttributeEditorElement* data )
 
 const QString QgsVectorLayer::editorWidgetV2( int fieldIdx )
 {
-  return mEditorWidgetV2Types.value( fieldIdx, "LineEdit" );
+  return mEditorWidgetV2Types.value( fieldIdx, "TextEdit" );
 }
 
 const QgsEditorWidgetConfig QgsVectorLayer::editorWidgetV2Config( int fieldIdx )

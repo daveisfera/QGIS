@@ -29,6 +29,9 @@ class GUI_EXPORT QgsAttributeForm : public QWidget
 
   public:
     explicit QgsAttributeForm( QgsVectorLayer* vl, const QgsFeature feature = QgsFeature(), QgsAttributeEditorContext context = QgsAttributeEditorContext(), QWidget *parent = 0 );
+    ~QgsAttributeForm();
+
+    const QgsFeature& feature() { return mFeature; }
 
   signals:
     void attributeChanged( QString attribute, const QVariant& value );
@@ -45,6 +48,8 @@ class GUI_EXPORT QgsAttributeForm : public QWidget
   private:
     void init();
 
+    void initPython();
+
     QWidget* createWidgetFromDef( const QgsAttributeEditorElement* widgetDef, QWidget* parent, QgsVectorLayer* vl, QgsAttributeEditorContext& context, QString& labelText, bool& labelOnTop );
 
     /**
@@ -58,6 +63,11 @@ class GUI_EXPORT QgsAttributeForm : public QWidget
     QgsFeature mFeature;
     QList<QgsEditorWidgetWrapper*> mWidgets;
     QgsAttributeEditorContext mContext;
+
+    // Variables below are used for python
+    static int sFormCounter;
+    int mFormNr;
+    QString mFeatureFormVarName;
 
     //! Set to true while saving to prevent recursive saves
     bool mIsSaving;

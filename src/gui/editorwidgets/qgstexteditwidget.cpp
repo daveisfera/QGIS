@@ -22,31 +22,83 @@ QgsTextEditWidget::QgsTextEditWidget( QgsVectorLayer* vl, int fieldIdx, QWidget*
 
 QVariant QgsTextEditWidget::value()
 {
-  QVariant v;
+  QVariant v = mUnmodifiedValue;
 
-  if ( mTextEdit )
-    v = mTextEdit->toHtml();
+  if ( mTextEdit && mTextEdit->document()->isModified() )
+  {
+    if ( config( "UseHtml" ).toBool() )
+    {
+      v = mTextEdit->toHtml();
+    }
+    else
+    {
+      v = mTextEdit->toPlainText();
+    }
+  }
+
+  if ( mPlainTextEdit && mPlainTextEdit->document()->isModified() )
+  {
+    v = mPlainTextEdit->toPlainText();
+  }
+
+  if ( mLineEdit )
+  {
+    v = mLineEdit->text();
+  }
 
   return v;
 }
 
-QWidget*QgsTextEditWidget::createWidget( QWidget* parent )
+QWidget* QgsTextEditWidget::createWidget( QWidget* parent )
 {
-  return new QTextEdit( parent );
+  if ( config( "IsMultiline" ).toBool() )
+  {
+    if ( config( "UseHtml" ).toBool() )
+    {
+      return new QTextEdit( parent );
+    }
+    else
+    {
+      return new QPlainTextEdit( parent );
+    }
+  }
+  else
+  {
+    return new QLineEdit( parent );
+  }
 }
 
 void QgsTextEditWidget::initWidget( QWidget* editor )
 {
   mTextEdit = qobject_cast<QTextEdit*>( editor );
+  mPlainTextEdit = qobject_cast<QPlainTextEdit*>( editor );
+  mLineEdit = qobject_cast<QLineEdit*>( editor );
 
   if ( mTextEdit )
-  {
     connect( mTextEdit, SIGNAL( textChanged() ), this, SLOT( valueChanged() ) );
-  }
+
+  if ( mPlainTextEdit )
+    connect( mPlainTextEdit, SIGNAL( textChanged() ), this, SLOT( valueChanged() ) );
+
+  if ( mLineEdit )
+    connect( mLineEdit, SIGNAL(textChanged(QString)), this, SLOT( valueChanged(QString)) );
 }
 
 void QgsTextEditWidget::setValue( const QVariant& value )
 {
   if ( mTextEdit )
-    mTextEdit->setHtml( value.toString() );
+  {
+    if ( config( "UseHtml" ).toBool() )
+      mTextEdit->setHtml( value.toString() );
+    else
+      mTextEdit->setPlainText( value.toString() );
+  }
+
+  if ( mPlainTextEdit )
+    mPlainTextEdit->setPlainText( value.toString() );
+
+  if ( mLineEdit )
+    mLineEdit->setText( value.toString() );
+
+  mUnmodifiedValue = value;
 }

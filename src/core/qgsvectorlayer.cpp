@@ -2598,6 +2598,7 @@ bool QgsVectorLayer::setReadOnly( bool readonly )
 
 bool QgsVectorLayer::isModified() const
 {
+  emit beforeModifiedCheck();
   return mEditBuffer && mEditBuffer->isModified();
 }
 

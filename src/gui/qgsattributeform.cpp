@@ -32,6 +32,7 @@ QgsAttributeForm::QgsAttributeForm( QgsVectorLayer* vl, const QgsFeature feature
     : QWidget( parent )
     , mLayer( vl )
     , mContext( context )
+    , mIsSaving( false )
 {
   init();
   setFeature( feature );
@@ -55,21 +56,25 @@ void QgsAttributeForm::setFeature( const QgsFeature& feature )
 
   Q_FOREACH( QgsEditorWidgetWrapper* eww, mWidgets )
   {
-    if ( feature.isValid() )
+    if ( mFeature.isValid() )
     {
-      eww->setEnabled( true );
-      eww->setValue( feature.attribute( eww->field().name() ) );
+      eww->setValue( mFeature.attribute( eww->field().name() ) );
     }
     else
     {
-      eww->setValue( QVariant( QVariant::Int ) );
-      eww->setEnabled( false );
+      eww->setValue( QVariant( QVariant::String ) );
     }
   }
+
+  synchronizeEnabledState();
 }
 
 bool QgsAttributeForm::save()
 {
+  if ( mIsSaving )
+    return true;
+  mIsSaving = true;
+
   bool success = true;
 
   if ( mFeature.isValid() )
@@ -101,11 +106,18 @@ bool QgsAttributeForm::save()
       }
 
       if ( success )
+      {
         mLayer->endEditCommand();
+        mFeature.setAttributes( dst );
+      }
       else
+      {
         mLayer->destroyEditCommand();
+      }
     }
   }
+
+  mIsSaving = false;
 
   return success;
 }
@@ -117,6 +129,21 @@ void QgsAttributeForm::onAttributeChanged( const QVariant& value )
   Q_ASSERT( eww );
 
   emit attributeChanged( eww->field().name(), value );
+}
+
+void QgsAttributeForm::synchronizeEnabledState()
+{
+  Q_FOREACH( QgsEditorWidgetWrapper* eww, mWidgets )
+  {
+    if ( mFeature.isValid() && mLayer->isEditable() )
+    {
+      eww->setEnabled( true );
+    }
+    else
+    {
+      eww->setEnabled( false );
+    }
+  }
 }
 
 void QgsAttributeForm::init()
@@ -182,7 +209,7 @@ void QgsAttributeForm::init()
   if ( !formWidget )
   {
     formWidget = new QWidget( this );
-    QFormLayout* formLayout = new QFormLayout( this );
+    QFormLayout* formLayout = new QFormLayout( formWidget );
     formWidget->setLayout( formLayout );
     layout()->addWidget( formWidget );
 
@@ -210,6 +237,10 @@ void QgsAttributeForm::init()
   }
 
   connectWrappers();
+
+  connect( mLayer, SIGNAL( beforeModifiedCheck() ), this, SLOT( save() ) );
+  connect( mLayer, SIGNAL(editingStarted()), this, SLOT(synchronizeEnabledState()) );
+  connect( mLayer, SIGNAL(editingStopped()), this, SLOT(synchronizeEnabledState()) );
 }
 
 QWidget* QgsAttributeForm::createWidgetFromDef( const QgsAttributeEditorElement* widgetDef, QWidget* parent, QgsVectorLayer* vl, QgsAttributeEditorContext& context, QString& labelText, bool& labelOnTop )

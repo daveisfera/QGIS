@@ -1464,6 +1464,9 @@ class CORE_EXPORT QgsVectorLayer : public QgsMapLayer
     /** This signal is emitted when modifications has been done on layer */
     void layerModified();
 
+    /** Is emitted, when layer is checked for modifications. Use for last-minute additions */
+    void beforeModifiedCheck() const;
+
     /** Is emitted, when editing on this layer has started*/
     void editingStarted();
 

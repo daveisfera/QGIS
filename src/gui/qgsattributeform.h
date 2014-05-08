@@ -40,6 +40,7 @@ class GUI_EXPORT QgsAttributeForm : public QWidget
 
   private slots:
     void onAttributeChanged( const QVariant& value );
+    void synchronizeEnabledState();
 
   private:
     void init();
@@ -57,6 +58,9 @@ class GUI_EXPORT QgsAttributeForm : public QWidget
     QgsFeature mFeature;
     QList<QgsEditorWidgetWrapper*> mWidgets;
     QgsAttributeEditorContext mContext;
+
+    //! Set to true while saving to prevent recursive saves
+    bool mIsSaving;
 };
 
 #endif // QGSATTRIBUTEFORM_H

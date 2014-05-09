@@ -17,6 +17,9 @@
 #define QGSVALUERELATIONWIDGETFACTORY_H
 
 #include "qgseditorwidgetfactory.h"
+#include "qgsvaluerelationwidget.h"
+
+#include <QMap>
 
 class QgsValueRelationWidgetFactory : public QgsEditorWidgetFactory
 {
@@ -25,10 +28,12 @@ class QgsValueRelationWidgetFactory : public QgsEditorWidgetFactory
 
     // QgsEditorWidgetFactory interface
   public:
-    QgsEditorWidgetWrapper* create(QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent) const;
-    QgsEditorConfigWidget* configWidget(QgsVectorLayer* vl, int fieldIdx, QWidget* parent) const;
-    QgsEditorWidgetConfig readConfig(const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx);
-    void writeConfig(const QgsEditorWidgetConfig& config, QDomElement& configElement, QDomDocument& doc, const QgsVectorLayer* layer, int fieldIdx);
+    QgsEditorWidgetWrapper* create( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent ) const;
+    QgsEditorConfigWidget* configWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* parent ) const;
+    QgsEditorWidgetConfig readConfig( const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx );
+    void writeConfig( const QgsEditorWidgetConfig& config, QDomElement& configElement, QDomDocument& doc, const QgsVectorLayer* layer, int fieldIdx );
+    QString representValue( QgsVectorLayer* vl, int fieldIdx, const QgsEditorWidgetConfig& config, const QVariant& cache, const QVariant& value ) const;
+    QVariant createCache( QgsVectorLayer* vl, int fieldIdx, const QgsEditorWidgetConfig& config );
 };
 
 #endif // QGSVALUERELATIONWIDGETFACTORY_H

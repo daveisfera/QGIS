@@ -240,7 +240,7 @@ void QgsDualView::on_mFeatureList_currentEditSelectionChanged( const QgsFeature 
   if ( !feat.isValid() )
     return;
 
-  if ( mAttributeForm->save() )
+  if ( !mLayerCache->layer()->isEditable() || mAttributeForm->save() )
   {
     mAttributeForm->setFeature( feat );
     setCurrentEditSelection( QgsFeatureIds() << feat.id() );

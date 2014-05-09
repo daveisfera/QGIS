@@ -15,6 +15,8 @@
 
 #include "qgseditorwidgetfactory.h"
 
+#include <QSettings>
+
 QgsEditorWidgetFactory::QgsEditorWidgetFactory( const QString& name )
     : mName( name )
 {
@@ -41,6 +43,34 @@ void QgsEditorWidgetFactory::writeConfig( const QgsEditorWidgetConfig& config, Q
   Q_UNUSED( doc );
   Q_UNUSED( layer );
   Q_UNUSED( fieldIdx );
+}
+
+QString QgsEditorWidgetFactory::representValue( QgsVectorLayer* vl, int fieldIdx, const QgsEditorWidgetConfig& config, const QVariant& cache, const QVariant& value ) const
+{
+  Q_UNUSED( vl )
+  Q_UNUSED( fieldIdx )
+  Q_UNUSED( config )
+  Q_UNUSED( cache )
+  Q_UNUSED( value )
+
+  if ( value.isNull() )
+  {
+    QSettings settings;
+    return settings.value( "qgis/nullValue", "NULL" ).toString();
+  }
+  else
+  {
+    return value.toString();
+  }
+}
+
+QVariant QgsEditorWidgetFactory::createCache( QgsVectorLayer* vl, int fieldIdx, const QgsEditorWidgetConfig& config )
+{
+  Q_UNUSED( vl )
+  Q_UNUSED( fieldIdx )
+  Q_UNUSED( config )
+
+  return QVariant();
 }
 
 QgsEditorWidgetConfig QgsEditorWidgetFactory::readConfig( const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx )

@@ -60,26 +60,11 @@ QWidget *QgsAttributeTableDelegate::createEditor(
   QString widgetType = vl->editorWidgetV2( fieldIdx );
   QgsEditorWidgetConfig cfg = vl->editorWidgetV2Config( fieldIdx );
   QgsEditorWidgetWrapper* eww = QgsEditorWidgetRegistry::instance()->create( widgetType, vl, fieldIdx, cfg, 0, parent );
-  eww->setValue( index.model()->data( index, Qt::EditRole ) );
   QWidget* w = eww->widget();
 
   w->setAutoFillBackground( true );
 
-  if ( parent )
-  {
-    QgsAttributeTableView *tv = dynamic_cast<QgsAttributeTableView *>( parent->parentWidget() );
-    w->setMinimumWidth( tv->columnWidth( index.column() ) );
-
-    if ( vl->editType( fieldIdx ) == QgsVectorLayer::FileName ||
-         vl->editType( fieldIdx ) == QgsVectorLayer::Calendar )
-    {
-      QLineEdit *le = w->findChild<QLineEdit*>();
-      le->adjustSize();
-      w->setMinimumHeight( le->height()*2 ); // FIXME: there must be a better way to do this
-    }
-  }
-
-  w->setEnabled( vl->fieldEditable( fieldIdx ) );
+  eww->setEnabled( vl->fieldEditable( fieldIdx ) );
 
   return w;
 }
@@ -95,22 +80,27 @@ void QgsAttributeTableDelegate::setModelData( QWidget *editor, QAbstractItemMode
   QVariant oldValue = model->data( index, Qt::EditRole );
 
   QVariant newValue;
-  if ( !QgsAttributeEditor::retrieveValue( editor, vl, fieldIdx, newValue ) )
+  QgsEditorWidgetWrapper* eww =  editor->property( "EWV2Wrapper" ).value<QgsEditorWidgetWrapper*>();
+  if ( !eww )
     return;
 
-  vl->beginEditCommand( tr( "Attribute changed" ) );
-  vl->changeAttributeValue( fid, fieldIdx, newValue, oldValue );
-  vl->endEditCommand();
+  newValue = eww->value();
+
+  if ( oldValue != newValue && newValue.isValid() )
+  {
+    vl->beginEditCommand( tr( "Attribute changed" ) );
+    vl->changeAttributeValue( fid, fieldIdx, newValue, oldValue );
+    vl->endEditCommand();
+  }
 }
 
 void QgsAttributeTableDelegate::setEditorData( QWidget *editor, const QModelIndex &index ) const
 {
-  QgsVectorLayer *vl = layer( index.model() );
-  if ( vl == NULL )
+  QgsEditorWidgetWrapper* eww =  editor->property( "EWV2Wrapper" ).value<QgsEditorWidgetWrapper*>();
+  if ( !eww )
     return;
 
-  int fieldIdx = index.model()->data( index, QgsAttributeTableModel::FieldIndexRole ).toInt();
-  QgsAttributeEditor::setValue( editor, vl, fieldIdx, index.model()->data( index, Qt::EditRole ) );
+  eww->setValue( index.model()->data( index, Qt::EditRole ) );
 }
 
 void QgsAttributeTableDelegate::setFeatureSelectionModel( QgsFeatureSelectionModel *featureSelectionModel )
@@ -125,6 +115,12 @@ void QgsAttributeTableDelegate::paint( QPainter * painter,
   QgsFeatureId fid = index.model()->data( index, QgsAttributeTableModel::FeatureIdRole ).toLongLong();
 
   QStyleOptionViewItem myOpt = option;
+
+  if ( index.model()->data( index, Qt::EditRole ).isNull() )
+  {
+    myOpt.font.setItalic( true );
+    myOpt.palette.setColor( QPalette::Text, QColor( "gray" ) );
+  }
 
   if ( mFeatureSelectionModel->isSelected( fid ) )
     myOpt.state |= QStyle::State_Selected;

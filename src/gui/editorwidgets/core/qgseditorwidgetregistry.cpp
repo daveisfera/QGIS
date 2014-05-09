@@ -70,9 +70,14 @@ QString QgsEditorWidgetRegistry::name( const QString& widgetId )
   return QString();
 }
 
-const QMap<QString, QgsEditorWidgetFactory*> QgsEditorWidgetRegistry::factories()
+const QMap<QString, QgsEditorWidgetFactory*>& QgsEditorWidgetRegistry::factories()
 {
   return mWidgetFactories;
+}
+
+QgsEditorWidgetFactory* QgsEditorWidgetRegistry::factory( const QString& widgetId )
+{
+  return mWidgetFactories.value( widgetId );
 }
 
 bool QgsEditorWidgetRegistry::registerWidget( const QString& widgetId, QgsEditorWidgetFactory* widgetFactory )

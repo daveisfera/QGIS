@@ -33,18 +33,16 @@ class QgsTextEditWidget : public QgsEditorWidgetWrapper
     QVariant value();
 
   protected:
-    QWidget*createWidget(QWidget* parent);
-    void initWidget(QWidget* editor);
+    QWidget*createWidget( QWidget* parent );
+    void initWidget( QWidget* editor );
 
   public slots:
-    void setValue(const QVariant& value);
+    void setValue( const QVariant& value );
 
   private:
     QTextEdit* mTextEdit;
     QPlainTextEdit* mPlainTextEdit;
     QLineEdit* mLineEdit;
-
-    QVariant mUnmodifiedValue;
 };
 
 #endif // QGSTEXTEDITWIDGET_H

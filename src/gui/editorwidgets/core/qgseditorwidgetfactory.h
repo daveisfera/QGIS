@@ -110,6 +110,29 @@ class GUI_EXPORT QgsEditorWidgetFactory
      */
     inline bool supportsField( QgsVectorLayer* vl, int fieldIdx ) { return isFieldSupported( vl, fieldIdx ); }
 
+    /**
+     * Create a pretty String representation of the value.
+     *
+     * @param vl        The vector layer.
+     * @param fieldIdx  The index of the field.
+     * @param config    The editor widget config.
+     * @param value     The value to represent.
+     *
+     * @return By default the string representation of the provided value.
+     */
+    virtual QString representValue( QgsVectorLayer* vl, int fieldIdx, const QgsEditorWidgetConfig& config, const QVariant& cache, const QVariant& value ) const;
+
+    /**
+     * Create a cache for a given field.
+     *
+     * @param vl        The vector layer.
+     * @param fieldIdx  The index of the field.
+     * @param config    The editor widget config.
+     *
+     * @return The default implementation returns an invalid QVariant
+     */
+    virtual QVariant createCache( QgsVectorLayer* vl, int fieldIdx, const QgsEditorWidgetConfig& config );
+
   private:
     /**
      * Read the config from an XML file and map it to a proper {@link QgsEditorWidgetConfig}.

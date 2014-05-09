@@ -15,15 +15,15 @@
 
 #include "qgsvaluerelationwidget.h"
 
+#include "qgsfield.h"
 #include "qgsmaplayerregistry.h"
+#include "qgsvaluerelationwidgetfactory.h"
 #include "qgsvectorlayer.h"
 
-// Alias as we can't use special characters in Q_FOREACH macro
-typedef QPair < QVariant, QString > QVariantStringPair;
-
-bool orderByKeyLessThan( const QVariantStringPair& p1, const QVariantStringPair& p2 )
+bool orderByKeyLessThan( const QgsValueRelationWidget::ValueRelationItem& p1
+                         , const QgsValueRelationWidget::ValueRelationItem& p2 )
 {
-  switch( p1.first.type() )
+  switch ( p1.first.type() )
   {
     case QVariant::String:
       return p1.first.toString() < p2.first.toString();
@@ -39,7 +39,8 @@ bool orderByKeyLessThan( const QVariantStringPair& p1, const QVariantStringPair&
   }
 }
 
-bool orderByValueLessThan( const QVariantStringPair& p1, const QVariantStringPair& p2 )
+bool orderByValueLessThan( const QgsValueRelationWidget::ValueRelationItem& p1
+                           , const QgsValueRelationWidget::ValueRelationItem& p2 )
 {
   return p1.second < p2.second;
 }
@@ -55,7 +56,13 @@ QVariant QgsValueRelationWidget::value()
   QVariant v;
 
   if ( mComboBox )
-    v = mComboBox->itemData( mComboBox->currentIndex() );
+  {
+    int cbxIdx = mComboBox->currentIndex();
+    if ( cbxIdx > -1 )
+    {
+      v = mComboBox->itemData( mComboBox->currentIndex() );
+    }
+  }
 
   if ( mListWidget )
   {
@@ -87,7 +94,7 @@ QWidget* QgsValueRelationWidget::createWidget( QWidget* parent )
 
 void QgsValueRelationWidget::initWidget( QWidget* editor )
 {
-  initCache();
+  mCache = createCache( config() );
 
   mComboBox = qobject_cast<QComboBox*>( editor );
   mListWidget = qobject_cast<QListWidget*>( editor );
@@ -99,7 +106,7 @@ void QgsValueRelationWidget::initWidget( QWidget* editor )
       mComboBox->addItem( tr( "(no selection)" ), QVariant( field().type() ) );
     }
 
-    Q_FOREACH( const QVariantStringPair& element, mMap )
+    Q_FOREACH( const ValueRelationItem& element, mCache )
     {
       mComboBox->addItem( element.second, element.first );
     }
@@ -108,7 +115,7 @@ void QgsValueRelationWidget::initWidget( QWidget* editor )
   }
   else if ( mListWidget )
   {
-    Q_FOREACH( const QVariantStringPair& element, mMap )
+    Q_FOREACH( const ValueRelationItem& element, mCache )
     {
       QListWidgetItem *item;
       item = new QListWidgetItem( element.second );
@@ -117,66 +124,6 @@ void QgsValueRelationWidget::initWidget( QWidget* editor )
       mListWidget->addItem( item );
     }
     connect( mListWidget, SIGNAL( itemChanged( QListWidgetItem* ) ), this, SLOT( valueChanged() ) );
-  }
-}
-
-void QgsValueRelationWidget::initCache()
-{
-  mLayer = qobject_cast<QgsVectorLayer*>( QgsMapLayerRegistry::instance()->mapLayer( config( "Layer" ).toString() ) );
-
-  if ( mLayer )
-  {
-    int ki = mLayer->fieldNameIndex( config( "Key" ).toString() );
-    int vi = mLayer->fieldNameIndex( config( "Value" ).toString() );
-
-    QgsExpression *e = 0;
-    if ( !config( "FilterExpression" ).toString().isEmpty() )
-    {
-      e = new QgsExpression( config( "FilterExpression" ).toString() );
-      if ( e->hasParserError() || !e->prepare( mLayer->pendingFields() ) )
-        ki = -1;
-    }
-
-    if ( ki >= 0 && vi >= 0 )
-    {
-      QSet<int> attributes;
-      attributes << ki << vi;
-
-      QgsFeatureRequest::Flags flags = QgsFeatureRequest::NoGeometry;
-
-      if ( e )
-      {
-        if ( e->needsGeometry() )
-          flags |= QgsFeatureRequest::NoGeometry;
-
-        Q_FOREACH( const QString& field, e->referencedColumns() )
-        {
-          int idx = mLayer->fieldNameIndex( field );
-          if ( idx < 0 )
-            continue;
-          attributes << idx;
-        }
-      }
-
-      QgsFeatureIterator fit = mLayer->getFeatures(
-                                 QgsFeatureRequest()
-                                 .setFlags( flags )
-                                 .setSubsetOfAttributes( attributes.toList() )
-                               );
-      QgsFeature f;
-      while ( fit.nextFeature( f ) )
-      {
-        if ( e && !e->evaluate( &f ).toBool() )
-          continue;
-
-        mMap.append( QPair<QVariant, QString>( f.attribute( ki ), f.attribute( vi ).toString() ) );
-      }
-
-      if ( config( "OrderByValue" ).toBool() )
-        qSort( mMap.begin(), mMap.end(), orderByValueLessThan );
-      else
-        qSort( mMap.begin(), mMap.end(), orderByKeyLessThan );
-    }
   }
 }
 
@@ -205,3 +152,71 @@ void QgsValueRelationWidget::setValue( const QVariant& value )
   }
 }
 
+
+QgsValueRelationWidget::ValueRelationCache QgsValueRelationWidget::createCache( const QgsEditorWidgetConfig& config )
+{
+  ValueRelationCache cache;
+
+  QgsVectorLayer* layer = qobject_cast<QgsVectorLayer*>( QgsMapLayerRegistry::instance()->mapLayer( config.value( "Layer" ).toString() ) );
+
+  if ( layer )
+  {
+    int ki = layer->fieldNameIndex( config.value( "Key" ).toString() );
+    int vi = layer->fieldNameIndex( config.value( "Value" ).toString() );
+
+    QgsExpression *e = 0;
+    if ( !config.value( "FilterExpression" ).toString().isEmpty() )
+    {
+      e = new QgsExpression( config.value( "FilterExpression" ).toString() );
+      if ( e->hasParserError() || !e->prepare( layer->pendingFields() ) )
+        ki = -1;
+    }
+
+    if ( ki >= 0 && vi >= 0 )
+    {
+      QSet<int> attributes;
+      attributes << ki << vi;
+
+      QgsFeatureRequest::Flags flags = QgsFeatureRequest::NoGeometry;
+
+      if ( e )
+      {
+        if ( e->needsGeometry() )
+          flags |= QgsFeatureRequest::NoGeometry;
+
+        Q_FOREACH( const QString& field, e->referencedColumns() )
+        {
+          int idx = layer->fieldNameIndex( field );
+          if ( idx < 0 )
+            continue;
+          attributes << idx;
+        }
+      }
+
+      QgsFeatureIterator fit = layer->getFeatures(
+                                 QgsFeatureRequest()
+                                 .setFlags( flags )
+                                 .setSubsetOfAttributes( attributes.toList() )
+                               );
+      QgsFeature f;
+      while ( fit.nextFeature( f ) )
+      {
+        if ( e && !e->evaluate( &f ).toBool() )
+          continue;
+
+        cache.append( ValueRelationItem( f.attribute( ki ), f.attribute( vi ).toString() ) );
+      }
+    }
+  }
+
+  if ( config.value( "OrderByValue" ).toBool() )
+  {
+    qSort( cache.begin(), cache.end(), orderByValueLessThan );
+  }
+  else
+  {
+    qSort( cache.begin(), cache.end(), orderByKeyLessThan );
+  }
+
+  return cache;
+}

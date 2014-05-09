@@ -89,6 +89,7 @@ bool QgsAttributeForm::save()
 {
   if ( mIsSaving )
     return true;
+
   mIsSaving = true;
 
   bool success = true;
@@ -104,7 +105,7 @@ bool QgsAttributeForm::save()
     {
       QVariant dstVar = dst[eww->fieldIdx()];
       QVariant srcVar = eww->value();
-      if ( dstVar != srcVar )
+      if ( dstVar != srcVar && srcVar.isValid() )
       {
         dst[eww->fieldIdx()] = eww->value();
 
@@ -118,7 +119,7 @@ bool QgsAttributeForm::save()
 
       for ( int i = 0; i < dst.count(); ++i )
       {
-        if ( dst[i] == src[i] )
+        if ( dst[i] == src[i] || !src[i].isValid() )
           continue;
 
         success &= mLayer->changeAttributeValue( mFeature.id(), i, dst[i], src[i] );
@@ -258,8 +259,8 @@ void QgsAttributeForm::init()
   connectWrappers();
 
   connect( mLayer, SIGNAL( beforeModifiedCheck() ), this, SLOT( save() ) );
-  connect( mLayer, SIGNAL(editingStarted()), this, SLOT(synchronizeEnabledState()) );
-  connect( mLayer, SIGNAL(editingStopped()), this, SLOT(synchronizeEnabledState()) );
+  connect( mLayer, SIGNAL( editingStarted() ), this, SLOT( synchronizeEnabledState() ) );
+  connect( mLayer, SIGNAL( editingStopped() ), this, SLOT( synchronizeEnabledState() ) );
 }
 
 void QgsAttributeForm::initPython()
@@ -276,16 +277,16 @@ void QgsAttributeForm::initPython()
     }
 
     /* Reload the module if the DEBUGMODE switch has been set in the module.
-If set to False you have to reload QGIS to reset it to True due to Python
-module caching */
+    If set to False you have to reload QGIS to reset it to True due to Python
+    module caching */
     QString reload = QString( "if hasattr(%1,'DEBUGMODE') and %1.DEBUGMODE:"
                               " reload(%1)" ).arg( module.left( pos ) );
 
     QgsPythonRunner::run( reload );
 
     QString form = QString( "_qgis_featureform_%1 = sip.wrapinstance( %2, QtGui.QDialog )" )
-                    .arg( mFormNr )
-                    .arg(( unsigned long ) this );
+                   .arg( mFormNr )
+                   .arg(( unsigned long ) this );
 
     QString layer = QString( "_qgis_layer_%1 = sip.wrapinstance( %2, qgis.core.QgsVectorLayer )" )
                     .arg( mLayer->id() )
@@ -297,7 +298,7 @@ module caching */
     QString featurevarname = QString( "_qgis_feature_%1" ).arg( dt.toString( "yyyyMMddhhmmsszzz" ) );
     QString feature = QString( "%1 = sip.wrapinstance( %2, qgis.core.QgsFeature )" )
                       .arg( featurevarname )
-                      .arg(( unsigned long ) &mFeature );
+                      .arg(( unsigned long ) & mFeature );
 
     QgsPythonRunner::run( form );
     QgsPythonRunner::run( feature );

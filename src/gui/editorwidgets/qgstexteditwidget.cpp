@@ -15,6 +15,10 @@
 
 #include "qgstexteditwidget.h"
 
+#include "qgsfield.h"
+
+#include <QSettings>
+
 QgsTextEditWidget::QgsTextEditWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent )
     :  QgsEditorWidgetWrapper( vl, fieldIdx, editor, parent )
 {
@@ -22,7 +26,8 @@ QgsTextEditWidget::QgsTextEditWidget( QgsVectorLayer* vl, int fieldIdx, QWidget*
 
 QVariant QgsTextEditWidget::value()
 {
-  QVariant v = mUnmodifiedValue;
+  QSettings settings;
+  QVariant v;
 
   if ( mTextEdit && mTextEdit->document()->isModified() )
   {
@@ -44,6 +49,11 @@ QVariant QgsTextEditWidget::value()
   if ( mLineEdit )
   {
     v = mLineEdit->text();
+  }
+
+  if ( v.toString() == settings.value( "qgis/nullValue", "NULL" ).toString() )
+  {
+    v = QVariant( field().type() );
   }
 
   return v;
@@ -81,7 +91,7 @@ void QgsTextEditWidget::initWidget( QWidget* editor )
     connect( mPlainTextEdit, SIGNAL( textChanged() ), this, SLOT( valueChanged() ) );
 
   if ( mLineEdit )
-    connect( mLineEdit, SIGNAL(textChanged(QString)), this, SLOT( valueChanged(QString)) );
+    connect( mLineEdit, SIGNAL( textChanged( QString ) ), this, SLOT( valueChanged( QString ) ) );
 }
 
 void QgsTextEditWidget::setValue( const QVariant& value )
@@ -99,6 +109,4 @@ void QgsTextEditWidget::setValue( const QVariant& value )
 
   if ( mLineEdit )
     mLineEdit->setText( value.toString() );
-
-  mUnmodifiedValue = value;
 }

@@ -19,6 +19,7 @@
 #include "qgsnetworkaccessmanager.h"
 
 #include <QGridLayout>
+#include <QFileDialog>
 
 QgsWebViewWidget::QgsWebViewWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent )
     :  QgsEditorWidgetWrapper( vl, fieldIdx, editor, parent )
@@ -119,4 +120,20 @@ void QgsWebViewWidget::setEnabled( bool enabled )
 
   if ( mButton )
     mButton->setEnabled( enabled );
+}
+
+void QgsWebViewWidget::selectFileName()
+{
+  QString text;
+
+  if ( mLineEdit )
+    text = mLineEdit->text();
+
+  QString fileName = QFileDialog::getOpenFileName( mLineEdit, tr( "Select a file" ), QFileInfo( text ).absolutePath() );
+
+  if ( fileName.isNull() )
+    return;
+
+  if ( mLineEdit )
+    mLineEdit->setText( QDir::toNativeSeparators( fileName ) );
 }

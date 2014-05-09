@@ -29,21 +29,30 @@ QgsEditorWidgetWrapper* QgsWebViewWidgetFactory::create( QgsVectorLayer* vl, int
   return new QgsWebViewWidget( vl, fieldIdx, editor, parent );
 }
 
-QgsEditorConfigWidget* QgsWebViewWidgetFactory::configWidget(QgsVectorLayer* vl, int fieldIdx, QWidget* parent) const
+QgsEditorConfigWidget* QgsWebViewWidgetFactory::configWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* parent ) const
 {
   return new QgsWebViewWidgetConfigDlg( vl, fieldIdx, parent );
 }
 
-QgsEditorWidgetConfig QgsWebViewWidgetFactory::readConfig(const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx)
+QgsEditorWidgetConfig QgsWebViewWidgetFactory::readConfig( const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx )
 {
+  Q_UNUSED( layer )
+  Q_UNUSED( fieldIdx )
+
   QgsEditorWidgetConfig cfg;
 
   cfg.insert( "Height", configElement.attribute( "Height", 0 ).toInt() );
   cfg.insert( "Width", configElement.attribute( "Width", 0 ).toInt() );
+
+  return cfg;
 }
 
-void QgsWebViewWidgetFactory::writeConfig(const QgsEditorWidgetConfig& config, QDomElement& configElement, QDomDocument& doc, const QgsVectorLayer* layer, int fieldIdx)
+void QgsWebViewWidgetFactory::writeConfig( const QgsEditorWidgetConfig& config, QDomElement& configElement, QDomDocument& doc, const QgsVectorLayer* layer, int fieldIdx )
 {
+  Q_UNUSED( doc )
+  Q_UNUSED( layer )
+  Q_UNUSED( fieldIdx )
+
   configElement.setAttribute( "Height", config.value( "Height", 0 ).toString() );
   configElement.setAttribute( "Width", config.value( "Width", 0 ).toString() );
 }

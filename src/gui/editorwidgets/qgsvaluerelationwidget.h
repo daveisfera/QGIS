@@ -21,9 +21,16 @@
 #include <QComboBox>
 #include <QListWidget>
 
+class QgsValueRelationWidgetFactory;
+
 class QgsValueRelationWidget : public QgsEditorWidgetWrapper
 {
     Q_OBJECT
+
+  public:
+    typedef QPair < QVariant, QString > ValueRelationItem;
+    typedef QVector < ValueRelationItem > ValueRelationCache;
+
   public:
     explicit QgsValueRelationWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* editor = 0, QWidget* parent = 0 );
 
@@ -33,19 +40,23 @@ class QgsValueRelationWidget : public QgsEditorWidgetWrapper
     QVariant value();
 
   protected:
-    QWidget* createWidget(QWidget* parent);
-    void initWidget(QWidget* editor);
-    void initCache();
+    QWidget* createWidget( QWidget* parent );
+    void initWidget( QWidget* editor );
+    static ValueRelationCache createCache( const QgsEditorWidgetConfig& config );
 
   public slots:
-    void setValue(const QVariant& value);
+    void setValue( const QVariant& value );
 
   private:
     QComboBox* mComboBox;
     QListWidget* mListWidget;
 
-    QVector < QPair < QVariant, QString > > mMap;
+    ValueRelationCache mCache;
     QgsVectorLayer* mLayer;
+
+    friend class QgsValueRelationWidgetFactory;
 };
+
+Q_DECLARE_METATYPE( QgsValueRelationWidget::ValueRelationCache )
 
 #endif // QGSVALUERELATIONWIDGET_H

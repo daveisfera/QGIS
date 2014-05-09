@@ -53,6 +53,9 @@ class GUI_EXPORT QgsEditorWidgetWrapper : public QObject
      * Will be used to access the widget's value. Read the value from the widget and
      * return it properly formatted to be saved in the attribute.
      *
+     * If an invalid variant is returned this will be interpreted as no change.
+     * Be sure to return a NULL QVariant if it should be set to NULL.
+     *
      * @return The current value the widget represents
      */
     virtual QVariant value() = 0;

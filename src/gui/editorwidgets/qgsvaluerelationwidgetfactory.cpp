@@ -15,26 +15,35 @@
 
 #include "qgsvaluerelationwidgetfactory.h"
 
-#include "qgsvaluerelationwidget.h"
+#include "qgsfeatureiterator.h"
+#include "qgslogger.h"
+#include "qgsmaplayerregistry.h"
 #include "qgsvaluerelationconfigdlg.h"
+#include "qgsvaluerelationwidgetfactory.h"
+#include "qgsvectorlayer.h"
+
+#include <QSettings>
 
 QgsValueRelationWidgetFactory::QgsValueRelationWidgetFactory( const QString& name )
     :  QgsEditorWidgetFactory( name )
 {
 }
 
-QgsEditorWidgetWrapper* QgsValueRelationWidgetFactory::create(QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent) const
+QgsEditorWidgetWrapper* QgsValueRelationWidgetFactory::create( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent ) const
 {
   return new QgsValueRelationWidget( vl, fieldIdx, editor, parent );
 }
 
-QgsEditorConfigWidget* QgsValueRelationWidgetFactory::configWidget(QgsVectorLayer* vl, int fieldIdx, QWidget* parent) const
+QgsEditorConfigWidget* QgsValueRelationWidgetFactory::configWidget( QgsVectorLayer* vl, int fieldIdx, QWidget* parent ) const
 {
   return new QgsValueRelationConfigDlg( vl, fieldIdx, parent );
 }
 
-QgsEditorWidgetConfig QgsValueRelationWidgetFactory::readConfig(const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx)
+QgsEditorWidgetConfig QgsValueRelationWidgetFactory::readConfig( const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx )
 {
+  Q_UNUSED( layer )
+  Q_UNUSED( fieldIdx )
+
   QgsEditorWidgetConfig cfg;
 
   cfg.insert( "Layer", configElement.attribute( "Layer" ) );
@@ -47,8 +56,12 @@ QgsEditorWidgetConfig QgsValueRelationWidgetFactory::readConfig(const QDomElemen
   return cfg;
 }
 
-void QgsValueRelationWidgetFactory::writeConfig(const QgsEditorWidgetConfig& config, QDomElement& configElement, QDomDocument& doc, const QgsVectorLayer* layer, int fieldIdx)
+void QgsValueRelationWidgetFactory::writeConfig( const QgsEditorWidgetConfig& config, QDomElement& configElement, QDomDocument& doc, const QgsVectorLayer* layer, int fieldIdx )
 {
+  Q_UNUSED( doc )
+  Q_UNUSED( layer )
+  Q_UNUSED( fieldIdx )
+
   configElement.setAttribute( "Layer", config.value( "Layer" ).toString() );
   configElement.setAttribute( "Key", config.value( "Key" ).toString() );
   configElement.setAttribute( "Value", config.value( "Value" ).toString() );
@@ -56,3 +69,63 @@ void QgsValueRelationWidgetFactory::writeConfig(const QgsEditorWidgetConfig& con
   configElement.setAttribute( "OrderByValue", config.value( "OrderByValue" ).toBool() );
   configElement.setAttribute( "AllowMulti", config.value( "AllowMulti" ).toBool() );
 }
+
+QString QgsValueRelationWidgetFactory::representValue( QgsVectorLayer* vl, int fieldIdx, const QgsEditorWidgetConfig& config, const QVariant& cache, const QVariant& value ) const
+{
+  Q_UNUSED( vl )
+  Q_UNUSED( fieldIdx )
+
+  QgsValueRelationWidget::ValueRelationCache vrCache;
+
+  if ( cache.isValid() )
+  {
+    vrCache = cache.value<QgsValueRelationWidget::ValueRelationCache>();
+  }
+  else
+  {
+    vrCache = QgsValueRelationWidget::createCache( config );
+  }
+
+  if ( config.value( "AllowMulti" ).toBool() )
+  {
+    QStringList keyList = value.toString().remove( QChar( '{' ) ).remove( QChar( '}' ) ).split( "," );
+    QStringList valueList;
+
+    Q_FOREACH( const QgsValueRelationWidget::ValueRelationItem& item, vrCache )
+    {
+      if ( keyList.contains( item.first.toString() ) )
+      {
+        valueList << item.second;
+      }
+    }
+
+    return valueList.join( ", " ).prepend( '{' ).append( '}' ) ;
+  }
+  else
+  {
+    if ( value.isNull() )
+    {
+      QSettings settings;
+      return settings.value( "qgis/nullValue", "NULL" ).toString();
+    }
+
+    Q_FOREACH( const QgsValueRelationWidget::ValueRelationItem& item, vrCache )
+    {
+      if ( item.first == value )
+      {
+        return item.second;
+      }
+    }
+  }
+
+  return QString( "(%1)" ).arg( value.toString() );
+}
+
+QVariant QgsValueRelationWidgetFactory::createCache( QgsVectorLayer* vl, int fieldIdx, const QgsEditorWidgetConfig& config )
+{
+  Q_UNUSED( vl )
+  Q_UNUSED( fieldIdx )
+
+  return QVariant::fromValue<QgsValueRelationWidget::ValueRelationCache>( QgsValueRelationWidget::createCache( config ) );
+}
+

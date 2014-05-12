@@ -36,6 +36,9 @@ QgsEditorConfigWidget* QgsPhotoWidgetFactory::configWidget(QgsVectorLayer* vl, i
 
 QgsEditorWidgetConfig QgsPhotoWidgetFactory::readConfig(const QDomElement& configElement, QgsVectorLayer* layer, int fieldIdx)
 {
+  Q_UNUSED( layer )
+  Q_UNUSED( fieldIdx )
+
   QgsEditorWidgetConfig cfg;
 
   cfg.insert( "Height", configElement.attribute( "Height", 0 ).toInt() );
@@ -44,6 +47,10 @@ QgsEditorWidgetConfig QgsPhotoWidgetFactory::readConfig(const QDomElement& confi
 
 void QgsPhotoWidgetFactory::writeConfig(const QgsEditorWidgetConfig& config, QDomElement& configElement, QDomDocument& doc, const QgsVectorLayer* layer, int fieldIdx)
 {
+  Q_UNUSED( doc )
+  Q_UNUSED( layer )
+  Q_UNUSED( fieldIdx )
+
   configElement.setAttribute( "Height", config.value( "Height", 0 ).toString() );
   configElement.setAttribute( "Width", config.value( "Width", 0 ).toString() );
 }

@@ -236,12 +236,14 @@ void QgsDualView::initModels( QgsMapCanvas* mapCanvas, const QgsFeatureRequest& 
   mFeatureListModel = new QgsFeatureListModel( mFilterModel, mFilterModel );
 }
 
+void QgsDualView::on_mFeatureList_aboutToChangeEditSelection( bool& ok )
+{
+  if ( !mAttributeForm->save() )
+    ok = false;
+}
+
 void QgsDualView::on_mFeatureList_currentEditSelectionChanged( const QgsFeature &feat )
 {
-  // Invalid feature? Strange: bail out
-  if ( !feat.isValid() )
-    return;
-
   if ( !mLayerCache->layer()->isEditable() || mAttributeForm->save() )
   {
     mAttributeForm->setFeature( feat );

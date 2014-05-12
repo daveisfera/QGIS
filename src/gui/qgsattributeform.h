@@ -60,7 +60,20 @@ class GUI_EXPORT QgsAttributeForm : public QWidget
     void changeAttribute( const QString& field, const QVariant& value );
     void setFeature( const QgsFeature& feature );
     bool save();
-    void accept();
+    /**
+     * Alias for save()
+     *
+     * @deprecated
+     */
+    Q_DECL_DEPRECATED void accept() { save(); }
+
+    /**
+     * Alias for resetValues()
+     *
+     * @deprecated
+     */
+    Q_DECL_DEPRECATED void reject() { resetValues(); }
+
     void resetValues();
 
   private slots:

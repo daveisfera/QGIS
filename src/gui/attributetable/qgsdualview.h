@@ -178,6 +178,9 @@ class GUI_EXPORT QgsDualView : public QStackedWidget, private Ui::QgsDualViewBas
     void filterChanged();
 
   private slots:
+
+    void on_mFeatureList_aboutToChangeEditSelection( bool& ok );
+
     /**
      * Changes the currently visible feature within the attribute editor
      *

@@ -74,6 +74,8 @@ void QgsDualView::init( QgsVectorLayer* layer, QgsMapCanvas* mapCanvas, const Qg
   mAttributeEditorScrollArea->layout()->addWidget( mAttributeForm );
   mAttributeEditorScrollArea->setWidget( mAttributeForm );
 
+  mAttributeForm->hideButtonBox();
+
   connect( mAttributeForm, SIGNAL( attributeChanged( QString, QVariant ) ), this, SLOT( featureFormAttributeChanged() ) );
 
   columnBoxInit();

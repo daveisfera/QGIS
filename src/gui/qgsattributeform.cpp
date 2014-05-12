@@ -25,6 +25,7 @@
 #include <QFormLayout>
 #include <QGridLayout>
 #include <QLabel>
+#include <QPushButton>
 #include <QScrollArea>
 #include <QTabWidget>
 #include <QUiLoader>
@@ -44,14 +45,17 @@ QgsAttributeForm::QgsAttributeForm( QgsVectorLayer* vl, const QgsFeature feature
 
 QgsAttributeForm::~QgsAttributeForm()
 {
-  QString expr = QString( "if locals().has_key('_qgis_featureform_%1'): del _qgis_featureform_%1\n" ).arg( mFormNr );
-  QgsPythonRunner::run( expr );
+  cleanPython();
+}
 
-  if ( !mFeatureFormVarName.isEmpty() )
-  {
-    QString expr = QString( "if locals().has_key('%1'): del %1\n" ).arg( mFeatureFormVarName );
-    QgsPythonRunner::run( expr );
-  }
+void QgsAttributeForm::hideButtonBox()
+{
+  mButtonBox->hide();
+}
+
+void QgsAttributeForm::showButtonBox()
+{
+  mButtonBox->show();
 }
 
 void QgsAttributeForm::changeAttribute( const QString& field, const QVariant& value )
@@ -70,19 +74,11 @@ void QgsAttributeForm::setFeature( const QgsFeature& feature )
 {
   mFeature = feature;
 
-  Q_FOREACH( QgsEditorWidgetWrapper* eww, mWidgets )
-  {
-    if ( mFeature.isValid() )
-    {
-      eww->setValue( mFeature.attribute( eww->field().name() ) );
-    }
-    else
-    {
-      eww->setValue( QVariant( QVariant::String ) );
-    }
-  }
+  resetValues();
 
   synchronizeEnabledState();
+
+  initPython();
 }
 
 bool QgsAttributeForm::save()
@@ -93,6 +89,12 @@ bool QgsAttributeForm::save()
   mIsSaving = true;
 
   bool success = true;
+
+  emit beforeSave( success );
+
+  // Somebody wants to prevent this form from saving
+  if ( !success )
+    return false;
 
   if ( mFeature.isValid() )
   {
@@ -142,6 +144,26 @@ bool QgsAttributeForm::save()
   return success;
 }
 
+void QgsAttributeForm::accept()
+{
+  save();
+}
+
+void QgsAttributeForm::resetValues()
+{
+  Q_FOREACH( QgsEditorWidgetWrapper* eww, mWidgets )
+  {
+    if ( mFeature.isValid() )
+    {
+      eww->setValue( mFeature.attribute( eww->field().name() ) );
+    }
+    else
+    {
+      eww->setValue( QVariant( QVariant::String ) );
+    }
+  }
+}
+
 void QgsAttributeForm::onAttributeChanged( const QVariant& value )
 {
   QgsEditorWidgetWrapper* eww = qobject_cast<QgsEditorWidgetWrapper*>( sender() );
@@ -164,6 +186,10 @@ void QgsAttributeForm::synchronizeEnabledState()
       eww->setEnabled( false );
     }
   }
+
+  QPushButton* okButton = mButtonBox->button( QDialogButtonBox::Ok );
+  if ( okButton )
+    okButton->setEnabled( mFeature.isValid() && mLayer->isEditable() );
 }
 
 void QgsAttributeForm::init()
@@ -256,15 +282,40 @@ void QgsAttributeForm::init()
     }
   }
 
+  mButtonBox = findChild<QDialogButtonBox*>();
+
+  if ( !mButtonBox )
+  {
+    mButtonBox = new QDialogButtonBox( QDialogButtonBox::Ok | QDialogButtonBox::Cancel );
+    layout()->addWidget( mButtonBox );
+  }
+
   connectWrappers();
+
+  connect( mButtonBox, SIGNAL( accepted() ), this, SLOT( accept() ) );
+  connect( mButtonBox, SIGNAL( rejected() ), this, SLOT( resetValues() ) );
 
   connect( mLayer, SIGNAL( beforeModifiedCheck() ), this, SLOT( save() ) );
   connect( mLayer, SIGNAL( editingStarted() ), this, SLOT( synchronizeEnabledState() ) );
   connect( mLayer, SIGNAL( editingStopped() ), this, SLOT( synchronizeEnabledState() ) );
 }
 
+void QgsAttributeForm::cleanPython()
+{
+  QString expr = QString( "if locals().has_key('_qgis_featureform_%1'): del _qgis_featureform_%1\n" ).arg( mFormNr );
+  QgsPythonRunner::run( expr );
+
+  if ( !mPyFormVarName.isEmpty() )
+  {
+    QString expr = QString( "if locals().has_key('%1'): del %1\n" ).arg( mPyFormVarName );
+    QgsPythonRunner::run( expr );
+  }
+}
+
 void QgsAttributeForm::initPython()
 {
+  cleanPython();
+
   // Init Python
   if ( !mLayer->editFormInit().isEmpty() )
   {
@@ -284,7 +335,7 @@ void QgsAttributeForm::initPython()
 
     QgsPythonRunner::run( reload );
 
-    QString form = QString( "_qgis_featureform_%1 = sip.wrapinstance( %2, QtGui.QDialog )" )
+    QString form = QString( "_qgis_featureform_%1 = sip.wrapinstance( %2, qgis.gui.QgsAttributeForm )" )
                    .arg( mFormNr )
                    .arg(( unsigned long ) this );
 
@@ -304,13 +355,13 @@ void QgsAttributeForm::initPython()
     QgsPythonRunner::run( feature );
     QgsPythonRunner::run( layer );
 
-    mFeatureFormVarName = QString( "_qgis_feature_form_%1" ).arg( dt.toString( "yyyyMMddhhmmsszzz" ) );
+    mPyFormVarName = QString( "_qgis_feature_form_%1" ).arg( dt.toString( "yyyyMMddhhmmsszzz" ) );
     QString expr = QString( "%5 = %1(_qgis_featureform_%2, _qgis_layer_%3, %4)" )
                    .arg( mLayer->editFormInit() )
                    .arg( mFormNr )
                    .arg( mLayer->id() )
                    .arg( featurevarname )
-                   .arg( mFeatureFormVarName );
+                   .arg( mPyFormVarName );
 
     QgsDebugMsg( QString( "running featureForm init: %1" ).arg( expr ) );
     QgsPythonRunner::run( expr );

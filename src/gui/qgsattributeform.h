@@ -22,6 +22,7 @@
 #include "qgsattributeeditorcontext.h"
 
 #include <QWidget>
+#include <QDialogButtonBox>
 
 class GUI_EXPORT QgsAttributeForm : public QWidget
 {
@@ -33,13 +34,34 @@ class GUI_EXPORT QgsAttributeForm : public QWidget
 
     const QgsFeature& feature() { return mFeature; }
 
+    void hideButtonBox();
+
+    void showButtonBox();
+
   signals:
+    /**
+     * Notifies about changes of attributes
+     *
+     * @param attribute The name of the attribute that changed.
+     * @param value     The new value of the attribute.
+     */
     void attributeChanged( QString attribute, const QVariant& value );
+
+    /**
+     * Will be emitted before the feature is saved. Use this signal to perform sanity checks.
+     * You can set the parameter ok to false to notify the form that you don't want it to be saved.
+     * If you want the form to be saved, leave the parameter untouched.
+     *
+     * @param ok  Set this parameter to false if you don't want the form to be saved
+     */
+    void beforeSave( bool& ok );
 
   public slots:
     void changeAttribute( const QString& field, const QVariant& value );
     void setFeature( const QgsFeature& feature );
     bool save();
+    void accept();
+    void resetValues();
 
   private slots:
     void onAttributeChanged( const QVariant& value );
@@ -47,6 +69,8 @@ class GUI_EXPORT QgsAttributeForm : public QWidget
 
   private:
     void init();
+
+    void cleanPython();
 
     void initPython();
 
@@ -63,11 +87,12 @@ class GUI_EXPORT QgsAttributeForm : public QWidget
     QgsFeature mFeature;
     QList<QgsEditorWidgetWrapper*> mWidgets;
     QgsAttributeEditorContext mContext;
+    QDialogButtonBox* mButtonBox;
 
     // Variables below are used for python
     static int sFormCounter;
     int mFormNr;
-    QString mFeatureFormVarName;
+    QString mPyFormVarName;
 
     //! Set to true while saving to prevent recursive saves
     bool mIsSaving;

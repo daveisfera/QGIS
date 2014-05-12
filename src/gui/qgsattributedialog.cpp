@@ -25,20 +25,28 @@
 
 
 QgsAttributeDialog::QgsAttributeDialog( QgsVectorLayer* vl, QgsFeature* thepFeature, bool featureOwner, QgsDistanceArea myDa, QWidget* parent, bool showDialogButtons )
-  : QObject( parent )
-  , mHighlight( 0 )
+    : QObject( parent )
+    , mHighlight( 0 )
 {
   QgsAttributeEditorContext context;
   init( vl, thepFeature, context, parent );
+
+  if ( !showDialogButtons )
+    mAttributeForm->hideButtonBox();
+
   if ( featureOwner )
     delete thepFeature;
 }
 
 QgsAttributeDialog::QgsAttributeDialog( QgsVectorLayer* vl, QgsFeature* thepFeature, bool featureOwner, QWidget* parent, bool showDialogButtons, QgsAttributeEditorContext context )
-  : QObject( parent )
-  , mHighlight( 0 )
+    : QObject( parent )
+    , mHighlight( 0 )
 {
   init( vl, thepFeature, context, parent );
+
+  if ( !showDialogButtons )
+    mAttributeForm->hideButtonBox();
+
   if ( featureOwner )
     delete thepFeature;
 }
@@ -139,4 +147,7 @@ void QgsAttributeDialog::init( QgsVectorLayer* layer, QgsFeature* feature, QgsAt
   mDialog->layout()->setMargin( 0 );
   mAttributeForm = new QgsAttributeForm( layer, *feature, context, parent );
   mDialog->layout()->addWidget( mAttributeForm );
+  QDialogButtonBox* buttonBox = mAttributeForm->findChild<QDialogButtonBox*>();
+  connect( buttonBox, SIGNAL( rejected() ), mDialog, SLOT( close() ) );
+  connect( buttonBox, SIGNAL( accepted()), mDialog, SLOT(close()) );
 }

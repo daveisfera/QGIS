@@ -69,6 +69,8 @@ QWidget *QgsAttributeEditor::createAttributeEditor( QWidget *parent, QWidget *ed
 
 QWidget *QgsAttributeEditor::createAttributeEditor( QWidget *parent, QWidget *editor, QgsVectorLayer *vl, int idx, const QVariant &value, QMap<int, QWidget*> &proxyWidgets )
 {
+  Q_UNUSED( proxyWidgets )
+
   QgsAttributeEditorContext context;
 
   return createAttributeEditor( parent, editor, vl, idx, value, context );
@@ -79,7 +81,7 @@ QWidget* QgsAttributeEditor::createAttributeEditor( QWidget* parent, QWidget* ed
   QString widgetType = vl->editorWidgetV2( idx );
   QgsEditorWidgetConfig cfg = vl->editorWidgetV2Config( idx );
 
-  QgsEditorWidgetWrapper* eww = QgsEditorWidgetRegistry::instance()->create( widgetType, vl, idx, cfg, editor, parent );
+  QgsEditorWidgetWrapper* eww = QgsEditorWidgetRegistry::instance()->create( widgetType, vl, idx, cfg, editor, parent, context );
 
   if ( eww )
   {
@@ -94,6 +96,9 @@ QWidget* QgsAttributeEditor::createAttributeEditor( QWidget* parent, QWidget* ed
 
 bool QgsAttributeEditor::retrieveValue( QWidget *editor, QgsVectorLayer *vl, int idx, QVariant &value )
 {
+  Q_UNUSED( vl )
+  Q_UNUSED( idx )
+
   if ( !editor )
     return false;
 
@@ -109,6 +114,9 @@ bool QgsAttributeEditor::retrieveValue( QWidget *editor, QgsVectorLayer *vl, int
 
 bool QgsAttributeEditor::setValue( QWidget *editor, QgsVectorLayer *vl, int idx, const QVariant &value )
 {
+  Q_UNUSED( vl )
+  Q_UNUSED( idx )
+
   if ( !editor )
     return false;
 

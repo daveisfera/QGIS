@@ -54,7 +54,7 @@ class GUI_EXPORT QgsEditorWidgetRegistry : public QObject
      *
      * @return A new widget wrapper
      */
-    QgsEditorWidgetWrapper* create( const QString& widgetId, QgsVectorLayer* vl, int fieldIdx, const QgsEditorWidgetConfig& config, QWidget* editor, QWidget* parent );
+    QgsEditorWidgetWrapper* create( const QString& widgetId, QgsVectorLayer* vl, int fieldIdx, const QgsEditorWidgetConfig& config, QWidget* editor, QWidget* parent, const QgsAttributeEditorContext context = QgsAttributeEditorContext() );
 
     /**
      * Creates a configuration widget
@@ -111,6 +111,7 @@ class GUI_EXPORT QgsEditorWidgetRegistry : public QObject
      * @param layerElem
      */
     void readMapLayer( QgsMapLayer* mapLayer , const QDomElement& layerElem );
+
     /**
      * Read all old-style editor widget configuration from a map node. Will update
      * a project file to the new version on next save
@@ -120,7 +121,7 @@ class GUI_EXPORT QgsEditorWidgetRegistry : public QObject
      *
      * @deprecated
      */
-    Q_DECL_DEPRECATED QString readLegacyConfig( QgsVectorLayer* vl, const QDomElement& editTypeElement , QgsEditorWidgetConfig& cfg );
+    Q_DECL_DEPRECATED const QString readLegacyConfig( QgsVectorLayer* vl, const QDomElement& editTypeElement , QgsEditorWidgetConfig& cfg );
 
     /**
      * Write all the widget config to a layer XML node

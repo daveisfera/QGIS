@@ -30,7 +30,11 @@ class QgsDualView;
 class QgsRelationManager;
 class QgsVectorLayer;
 
-/* \brief create attribute widget for editing */
+/**
+ * \brief create attribute widget for editing
+ *
+ * @deprecated
+ */
 class GUI_EXPORT QgsAttributeEditor : public QObject
 {
     Q_OBJECT
@@ -38,7 +42,10 @@ class GUI_EXPORT QgsAttributeEditor : public QObject
   public:
     QgsAttributeEditor( QObject* parent, QgsVectorLayer* vl = 0, int idx = -1 )
         : QObject( parent )
-    {}
+    {
+      Q_UNUSED( vl )
+      Q_UNUSED( idx )
+    }
     /**
      * Creates or prepares a attribute editor widget
      * @param parent The parent object
@@ -50,7 +57,7 @@ class GUI_EXPORT QgsAttributeEditor : public QObject
      *
      * @deprecated
      */
-    static QWidget* createAttributeEditor( QWidget* parent, QWidget* editor, QgsVectorLayer* vl, int idx, const QVariant &value, QMap<int, QWidget*>& proxyWidgets );
+    static Q_DECL_DEPRECATED QWidget* createAttributeEditor( QWidget* parent, QWidget* editor, QgsVectorLayer* vl, int idx, const QVariant &value, QMap<int, QWidget*>& proxyWidgets );
 
     /**
      * Creates or prepares a attribute editor widget

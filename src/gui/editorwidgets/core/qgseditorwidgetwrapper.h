@@ -24,6 +24,8 @@ class QgsVectorLayer;
 class QgsField;
 
 #include "qgseditorwidgetconfig.h"
+#include "qgsattributeeditorcontext.h"
+#include "qgswidgetwrapper.h"
 
 /**
  * Manages an editor widget
@@ -32,10 +34,11 @@ class QgsField;
  * A wrapper controls one attribute editor widget and is able to create a default
  * widget or use a pre-existent widget. It is able to set the widget to the value implied
  * by a field of a vector layer, or return the value it currently holds. Every time it is changed
- * it has to emit a valueChanged signal (this does not yet mean, that the value is accepted).
+ * it has to emit a valueChanged signal. If it fails to do so, there is no guarantee that the
+ * changed status of the widget will be saved.
  *
  */
-class GUI_EXPORT QgsEditorWidgetWrapper : public QObject
+class GUI_EXPORT QgsEditorWidgetWrapper : public QgsWidgetWrapper
 {
     Q_OBJECT
   public:
@@ -84,6 +87,13 @@ class GUI_EXPORT QgsEditorWidgetWrapper : public QObject
     void setConfig( const QgsEditorWidgetConfig& config );
 
     /**
+     * Set the context in which this widget is shown
+     *
+     * @param context context information
+     */
+    void setContext( const QgsAttributeEditorContext& context );
+
+    /**
      * Use this inside your overriden classes to access the configuration.
      *
      * @param key         The configuration option you want to load
@@ -99,6 +109,13 @@ class GUI_EXPORT QgsEditorWidgetWrapper : public QObject
      * @return The configuration
      */
     const QgsEditorWidgetConfig config();
+
+    /**
+     * Returns information about the context in which this widget is shown
+     *
+     * @return context information
+     */
+    const QgsAttributeEditorContext& context();
 
     /**
      * Access the QgsVectorLayer, you are working on
@@ -181,10 +198,44 @@ class GUI_EXPORT QgsEditorWidgetWrapper : public QObject
     virtual void setEnabled( bool enabled );
 
   protected slots:
+    /**
+     * If you emit to this slot in your implementation, an appropriate change notification
+     * will be broadcasted. Helper for string type widgets.
+     *
+     * @param value The value
+     */
     void valueChanged( const QString& value );
+
+    /**
+     * If you emit to this slot in your implementation, an appropriate change notification
+     * will be broadcasted. Helper for int type widgets.
+     *
+     * @param value The value
+     */
     void valueChanged( int value );
+
+    /**
+     * If you emit to this slot in your implementation, an appropriate change notification
+     * will be broadcasted. Helper for double type widgets.
+     *
+     * @param value The value
+     */
     void valueChanged( double value );
+
+    /**
+     * If you emit to this slot in your implementation, an appropriate change notification
+     * will be broadcasted. Helper for bool type widgets.
+     *
+     * @param value The value
+     */
     void valueChanged( bool value );
+
+    /**
+     * If you emit to this slot in your implementation, an appropriate change notification
+     * will be broadcasted. Helper for longlong type widgets.
+     *
+     * @param value The value
+     */
     void valueChanged( qlonglong value );
 
     /**
@@ -193,6 +244,7 @@ class GUI_EXPORT QgsEditorWidgetWrapper : public QObject
     void valueChanged();
 
   private:
+    QgsAttributeEditorContext mContext;
     QgsEditorWidgetConfig mConfig;
     QWidget* mWidget;
     QWidget* mParent;

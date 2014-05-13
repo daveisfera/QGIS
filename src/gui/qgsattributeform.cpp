@@ -309,7 +309,7 @@ void QgsAttributeForm::init()
       const QgsEditorWidgetConfig widgetConfig = mLayer->editorWidgetV2Config( idx );
 
       // This will also create the widget
-      QgsEditorWidgetWrapper* eww = QgsEditorWidgetRegistry::instance()->create( widgetType, mLayer, idx, widgetConfig, 0, this );
+      QgsEditorWidgetWrapper* eww = QgsEditorWidgetRegistry::instance()->create( widgetType, mLayer, idx, widgetConfig, 0, this, mContext );
       if ( eww )
       {
         mWidgets.append( eww );
@@ -421,7 +421,7 @@ QWidget* QgsAttributeForm::createWidgetFromDef( const QgsAttributeEditorElement*
         const QString widgetType = mLayer->editorWidgetV2( fldIdx );
         const QgsEditorWidgetConfig widgetConfig = mLayer->editorWidgetV2Config( fldIdx );
 
-        QgsEditorWidgetWrapper* eww = QgsEditorWidgetRegistry::instance()->create( widgetType, mLayer, fldIdx, widgetConfig, 0, this );
+        QgsEditorWidgetWrapper* eww = QgsEditorWidgetRegistry::instance()->create( widgetType, mLayer, fldIdx, widgetConfig, 0, this, mContext );
         newWidget = eww->widget();
         mWidgets.append( eww );
       }
@@ -436,7 +436,7 @@ QWidget* QgsAttributeForm::createWidgetFromDef( const QgsAttributeEditorElement*
       const QgsAttributeEditorRelation* relDef = dynamic_cast<const QgsAttributeEditorRelation*>( widgetDef );
 
       // TODO: Make relationeditor newstyle
-      // newWidget = QgsRelationEditorWidget::createRelationEditor( relDef->relation(), feat, context );
+      newWidget = QgsRelationEditorWidget::createRelationEditor( relDef->relation(), feat, context );
       labelText = QString::null;
       labelOnTop = true;
       break;
@@ -529,7 +529,7 @@ void QgsAttributeForm::createWrappers()
     QList<QWidget*> editors = findChildren<QWidget*>( field.name() );
     Q_FOREACH( QWidget* editor, editors )
     {
-      QgsEditorWidgetWrapper* eww = QgsEditorWidgetRegistry::instance()->create( widgetType, mLayer, idx, widgetConfig, editor, this );
+      QgsEditorWidgetWrapper* eww = QgsEditorWidgetRegistry::instance()->create( widgetType, mLayer, idx, widgetConfig, editor, this, mContext );
       mWidgets.append( eww );
     }
   }

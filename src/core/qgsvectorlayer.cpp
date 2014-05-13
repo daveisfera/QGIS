@@ -39,34 +39,35 @@
 
 #include "qgis.h" //for globals
 #include "qgsapplication.h"
+#include "qgsclipper.h"
+#include "qgscoordinatereferencesystem.h"
 #include "qgscoordinatetransform.h"
 #include "qgsdatasourceuri.h"
 #include "qgsfeature.h"
 #include "qgsfeaturerequest.h"
 #include "qgsfield.h"
+#include "qgsgeometrycache.h"
 #include "qgsgeometry.h"
 #include "qgslabel.h"
+#include "qgslegacyhelpers.h"
 #include "qgslogger.h"
-#include "qgsmessagelog.h"
+#include "qgsmaplayerregistry.h"
 #include "qgsmaptopixel.h"
+#include "qgsmessagelog.h"
 #include "qgsogcutils.h"
 #include "qgspoint.h"
+#include "qgsproject.h"
 #include "qgsproviderregistry.h"
 #include "qgsrectangle.h"
 #include "qgsrelationmanager.h"
 #include "qgsrendercontext.h"
-#include "qgscoordinatereferencesystem.h"
 #include "qgsvectordataprovider.h"
-#include "qgsgeometrycache.h"
 #include "qgsvectorlayereditbuffer.h"
 #include "qgsvectorlayereditutils.h"
 #include "qgsvectorlayerfeatureiterator.h"
 #include "qgsvectorlayerjoinbuffer.h"
-#include "qgsvectorlayerundocommand.h"
 #include "qgsvectorlayerrenderer.h"
-#include "qgsmaplayerregistry.h"
-#include "qgsclipper.h"
-#include "qgsproject.h"
+#include "qgsvectorlayerundocommand.h"
 
 #include "qgsrendererv2.h"
 #include "qgssymbolv2.h"
@@ -2609,7 +2610,6 @@ bool QgsVectorLayer::isModified() const
 
 QgsVectorLayer::EditType QgsVectorLayer::editType( int idx )
 {
-
 #if 0
   const QgsFields &fields = pendingFields();
   if ( idx >= 0 && idx < fields.count() && mEditTypes.contains( fields[idx].name() ) )
@@ -2621,11 +2621,12 @@ QgsVectorLayer::EditType QgsVectorLayer::editType( int idx )
 
 void QgsVectorLayer::setEditType( int idx, EditType type )
 {
-#if 0
-  const QgsFields &fields = pendingFields();
-  if ( idx >= 0 && idx < fields.count() )
-    mEditTypes[ fields[idx].name()] = type;
-#endif
+  QgsEditorWidgetConfig cfg;
+
+  const QString widgetType = QgsLegacyHelpers::convertEditType( type, cfg, this, mUpdatedFields[idx].name() );
+
+  setEditorWidgetV2( idx, widgetType );
+  setEditorWidgetV2Config( idx, cfg );
 }
 
 QgsVectorLayer::EditorLayout QgsVectorLayer::editorLayout()

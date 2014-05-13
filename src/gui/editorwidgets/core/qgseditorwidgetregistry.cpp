@@ -15,10 +15,12 @@
 
 #include "qgseditorwidgetregistry.h"
 
+#include "qgsattributeeditorcontext.h"
 #include "qgseditorwidgetfactory.h"
+#include "qgslegacyhelpers.h"
+#include "qgsmessagelog.h"
 #include "qgsproject.h"
 #include "qgsvectorlayer.h"
-#include "qgsmessagelog.h"
 
 QgsEditorWidgetRegistry* QgsEditorWidgetRegistry::instance()
 {
@@ -37,7 +39,7 @@ QgsEditorWidgetRegistry::~QgsEditorWidgetRegistry()
   qDeleteAll( mWidgetFactories.values() );
 }
 
-QgsEditorWidgetWrapper* QgsEditorWidgetRegistry::create( const QString& widgetId, QgsVectorLayer* vl, int fieldIdx, const QgsEditorWidgetConfig& config, QWidget* editor, QWidget* parent )
+QgsEditorWidgetWrapper* QgsEditorWidgetRegistry::create( const QString& widgetId, QgsVectorLayer* vl, int fieldIdx, const QgsEditorWidgetConfig& config, QWidget* editor, QWidget* parent, const QgsAttributeEditorContext context )
 {
   if ( mWidgetFactories.contains( widgetId ) )
   {
@@ -45,6 +47,7 @@ QgsEditorWidgetWrapper* QgsEditorWidgetRegistry::create( const QString& widgetId
     if ( ww )
     {
       ww->setConfig( config );
+      ww->setContext( context );
       return ww;
     }
   }
@@ -151,194 +154,13 @@ void QgsEditorWidgetRegistry::readMapLayer( QgsMapLayer* mapLayer, const QDomEle
   }
 }
 
-QString QgsEditorWidgetRegistry::readLegacyConfig( QgsVectorLayer* vl, const QDomElement& editTypeElement, QgsEditorWidgetConfig& cfg )
+const QString QgsEditorWidgetRegistry::readLegacyConfig( QgsVectorLayer* vl, const QDomElement& editTypeElement, QgsEditorWidgetConfig& cfg )
 {
   QString name = editTypeElement.attribute( "name" );
 
   QgsVectorLayer::EditType editType = ( QgsVectorLayer::EditType ) editTypeElement.attribute( "type" ).toInt();
 
-  QString widgetType = "TextEdit"; // Fallback
-
-  switch ( editType )
-  {
-    case QgsVectorLayer::ValueMap:
-    {
-      widgetType = "ValueMap";
-      QDomNodeList valueMapNodes = editTypeElement.childNodes();
-
-      for ( int j = 0; j < valueMapNodes.size(); j++ )
-      {
-        QDomElement value = valueMapNodes.at( j ).toElement();
-        cfg.insert( value.attribute( "key" ), value.attribute( "value" ) );
-      }
-      break;
-    }
-
-    case QgsVectorLayer::EditRange:
-    {
-      widgetType = "Range";
-      cfg.insert( "Style", "Edit" );
-      cfg.insert( "Min", editTypeElement.attribute( "min" ).toFloat() );
-      cfg.insert( "Max", editTypeElement.attribute( "max" ).toFloat() );
-      cfg.insert( "Step", editTypeElement.attribute( "step" ).toFloat() );
-      break;
-    }
-
-    case QgsVectorLayer::SliderRange:
-    {
-      widgetType = "SliderRange";
-      cfg.insert( "Style", "Slider" );
-      cfg.insert( "Min", editTypeElement.attribute( "min" ).toFloat() );
-      cfg.insert( "Max", editTypeElement.attribute( "max" ).toFloat() );
-      cfg.insert( "Step", editTypeElement.attribute( "step" ).toFloat() );
-      break;
-    }
-
-    case QgsVectorLayer::DialRange:
-    {
-      widgetType = "DialRange";
-      cfg.insert( "Style", "Dial" );
-      cfg.insert( "Min", editTypeElement.attribute( "min" ).toFloat() );
-      cfg.insert( "Max", editTypeElement.attribute( "max" ).toFloat() );
-      cfg.insert( "Step", editTypeElement.attribute( "step" ).toFloat() );
-      break;
-    }
-
-    case QgsVectorLayer::CheckBox:
-    {
-      widgetType = "CheckBox";
-      cfg.insert( "CheckedState", editTypeElement.attribute( "checked" ) );
-      cfg.insert( "UncheckedState", editTypeElement.attribute( "unchecked" ) );
-      break;
-    }
-
-    case QgsVectorLayer::ValueRelation:
-    {
-      widgetType = "ValueRelation";
-      cfg.insert( "AllowNull", editTypeElement.attribute( "allowNull" ) == "true" );
-      cfg.insert( "OrderByValue", editTypeElement.attribute( "orderByValue" ) == "true" );
-      cfg.insert( "AllowMulti", editTypeElement.attribute( "allowMulti", "false" ) == "true" );
-      QString filterExpression;
-      if ( editTypeElement.hasAttribute( "filterAttributeColumn" ) &&
-           editTypeElement.hasAttribute( "filterAttributeValue" ) )
-      {
-        filterExpression = QString( "\"%1\"='%2'" )
-                           .arg( editTypeElement.attribute( "filterAttributeColumn" ) )
-                           .arg( editTypeElement.attribute( "filterAttributeValue" ) );
-      }
-      else
-      {
-        filterExpression  = editTypeElement.attribute( "filterExpression", QString::null );
-      }
-      cfg.insert( "FilterExpression", filterExpression );
-      cfg.insert( "Layer", editTypeElement.attribute( "layer" ) );
-      cfg.insert( "Key", editTypeElement.attribute( "key" ) );
-      cfg.insert( "Value", editTypeElement.attribute( "value" ) );
-
-      break;
-    }
-
-    case QgsVectorLayer::Calendar:
-    {
-      widgetType = "Calendar";
-      cfg.insert( "DateFormat", editTypeElement.attribute( "dateFormat" ) );
-      break;
-    }
-
-    case QgsVectorLayer::Photo:
-    {
-      widgetType = "Photo";
-      cfg.insert( "Width", editTypeElement.attribute( "widgetWidth" ).toInt() );
-      cfg.insert( "Height", editTypeElement.attribute( "widgetHeight" ).toInt() );
-      break;
-    }
-
-    case QgsVectorLayer::WebView:
-    {
-      widgetType = "WebView";
-      cfg.insert( "Width", editTypeElement.attribute( "widgetWidth" ).toInt() );
-      cfg.insert( "Height", editTypeElement.attribute( "widgetHeight" ).toInt() );
-      break;
-    }
-
-    case QgsVectorLayer::Classification:
-    {
-      widgetType = "Classification";
-      break;
-    }
-
-    case QgsVectorLayer::FileName:
-    {
-      widgetType = "FileName";
-      break;
-    }
-
-    case QgsVectorLayer::Immutable:
-    {
-      widgetType = "TextEdit";
-      cfg.insert( "IsMultiline", false );
-      vl->setFieldEditable( vl->pendingFields().fieldNameIndex( name ), false );
-      break;
-    }
-
-    case QgsVectorLayer::Hidden:
-    {
-      widgetType = "Hidden";
-      break;
-    }
-
-    case QgsVectorLayer::LineEdit:
-    {
-      widgetType = "LineEdit";
-      cfg.insert( "IsMultiline", false );
-      break;
-    }
-
-    case QgsVectorLayer::TextEdit:
-    {
-      widgetType = "TextEdit";
-      cfg.insert( "IsMultiline", true );
-      cfg.insert( "UseHtml", false );
-      break;
-    }
-
-    case QgsVectorLayer::Enumeration:
-    {
-      widgetType = "Enumeration";
-      break;
-    }
-
-    case QgsVectorLayer::UniqueValues:
-    {
-      widgetType = "UniqueValues";
-      cfg.insert( "Editable", false );
-      break;
-    }
-
-    case QgsVectorLayer::UniqueValuesEditable:
-    {
-      widgetType = "UniqueValues";
-      cfg.insert( "Editable", true );
-      break;
-    }
-
-    case QgsVectorLayer::UuidGenerator:
-    {
-      widgetType = "UuidGenerator";
-      break;
-    }
-
-    case QgsVectorLayer::Color:
-    {
-      widgetType = "Color";
-      break;
-    }
-
-    case QgsVectorLayer::EditorWidgetV2: // Should not land here
-      break;
-  }
-
-  return widgetType;
+  return QgsLegacyHelpers::convertEditType( editType, cfg, vl, name, editTypeElement );
 }
 
 void QgsEditorWidgetRegistry::writeMapLayer( QgsMapLayer* mapLayer, QDomElement& layerElem, QDomDocument& doc )

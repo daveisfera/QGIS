@@ -238,7 +238,7 @@ void QgsDualView::initModels( QgsMapCanvas* mapCanvas, const QgsFeatureRequest& 
 
 void QgsDualView::on_mFeatureList_aboutToChangeEditSelection( bool& ok )
 {
-  if ( !mAttributeForm->save() )
+  if ( mLayerCache->layer()->isEditable() && !mAttributeForm->save() )
     ok = false;
 }
 

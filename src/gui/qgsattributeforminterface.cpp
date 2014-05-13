@@ -18,9 +18,8 @@
 #include "qgsattributeform.h"
 #include "qgsfeature.h"
 
-QgsAttributeFormInterface::QgsAttributeFormInterface(QgsAttributeForm* form, QObject *parent )
-  : QObject(parent)
-  , mForm( form )
+QgsAttributeFormInterface::QgsAttributeFormInterface(QgsAttributeForm* form )
+  : mForm( form )
 {
 }
 

@@ -16,17 +16,13 @@
 #ifndef QGSATTRIBUTEFORMINTERFACE_H
 #define QGSATTRIBUTEFORMINTERFACE_H
 
-#include <QObject>
-
 class QgsAttributeForm;
 class QgsFeature;
 
-class QgsAttributeFormInterface : public QObject
+class QgsAttributeFormInterface
 {
-    Q_OBJECT
-
   public:
-    explicit QgsAttributeFormInterface( QgsAttributeForm* form, QObject *parent = 0 );
+    explicit QgsAttributeFormInterface( QgsAttributeForm* form );
 
     virtual bool acceptChanges();
 

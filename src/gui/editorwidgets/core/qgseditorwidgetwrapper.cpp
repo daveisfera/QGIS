@@ -34,6 +34,7 @@ QWidget* QgsEditorWidgetWrapper::widget()
   {
     mWidget = createWidget( mParent );
     mWidget->setProperty( "EWV2Wrapper", QVariant::fromValue( this ) );
+    mWidget->setObjectName( field().name() );
     initWidget( mWidget );
   }
 

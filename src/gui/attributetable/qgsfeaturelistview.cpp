@@ -168,7 +168,7 @@ void QgsFeatureListView::setEditSelection( const QgsFeatureIds &fids )
     selection.append( QItemSelectionRange( mModel->mapToMaster( mModel->fidToIdx( fid ) ) ) );
   }
 
-  bool ok;
+  bool ok = true;
   emit aboutToChangeEditSelection( ok );
 
   if ( ok )
@@ -177,7 +177,7 @@ void QgsFeatureListView::setEditSelection( const QgsFeatureIds &fids )
 
 void QgsFeatureListView::setEditSelection(const QModelIndex& index, QItemSelectionModel::SelectionFlags command )
 {
-  bool ok;
+  bool ok = true;
   emit aboutToChangeEditSelection( ok );
 
   if ( ok )

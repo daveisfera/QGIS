@@ -24,6 +24,8 @@
 #include <QWidget>
 #include <QDialogButtonBox>
 
+class QgsAttributeFormInterface;
+
 class GUI_EXPORT QgsAttributeForm : public QWidget
 {
     Q_OBJECT
@@ -37,6 +39,14 @@ class GUI_EXPORT QgsAttributeForm : public QWidget
     void hideButtonBox();
 
     void showButtonBox();
+
+    /**
+     * Takes ownership
+     * @param iface
+     */
+    void addInterface( QgsAttributeFormInterface* iface );
+
+    QgsVectorLayer* layer() { return mLayer; }
 
   signals:
     /**
@@ -78,6 +88,9 @@ class GUI_EXPORT QgsAttributeForm : public QWidget
 
   private slots:
     void onAttributeChanged( const QVariant& value );
+    void onAttributeAdded( int idx );
+    void onAttributeDeleted( int idx );
+
     void synchronizeEnabledState();
 
   private:
@@ -101,6 +114,7 @@ class GUI_EXPORT QgsAttributeForm : public QWidget
     QList<QgsEditorWidgetWrapper*> mWidgets;
     QgsAttributeEditorContext mContext;
     QDialogButtonBox* mButtonBox;
+    QList<QgsAttributeFormInterface*> mInterfaces;
 
     // Variables below are used for python
     static int sFormCounter;

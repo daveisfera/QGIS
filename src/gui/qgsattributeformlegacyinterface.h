@@ -1,7 +1,7 @@
 /***************************************************************************
-    qgsattributeforminterface.sip
+    qgsattributeformlegacyinterface.h
      --------------------------------------
-    Date                 : 12.5.2014
+    Date                 : 13.5.2014
     Copyright            : (C) 2014 Matthias Kuhn
     Email                : matthias dot kuhn at gmx dot ch
  ***************************************************************************
@@ -13,21 +13,28 @@
  *                                                                         *
  ***************************************************************************/
 
-class QgsAttributeFormInterface
+#ifndef QGSATTRIBUTEFORMLEGACYINTERFACE_H
+#define QGSATTRIBUTEFORMLEGACYINTERFACE_H
+
+#include <QString>
+
+#include "qgsattributeforminterface.h"
+
+class QgsAttributeFormLegacyInterface : public QgsAttributeFormInterface
 {
-%TypeHeaderCode
-#include <qgsattributeforminterface.h>
-%End
   public:
-    explicit QgsAttributeFormInterface( QgsAttributeForm* form );
+    explicit QgsAttributeFormLegacyInterface( const QString& function, const QString& pyFormName, QgsAttributeForm* form );
+    ~QgsAttributeFormLegacyInterface();
 
-    virtual bool acceptChanges();
+    // QgsAttributeFormInterface interface
+    void featureChanged();
 
-    virtual void initForm();
+    bool acceptChanges();
 
-    virtual void featureChanged();
-
-    QgsAttributeForm* form();
-
-    const QgsFeature& feature();
+  private:
+    QString mPyFunctionName;
+    QString mPyFormVarName;
+    QString mPyLayerVarName;
 };
+
+#endif // QGSATTRIBUTEFORMLEGACYINTERFACE_H

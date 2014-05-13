@@ -20,6 +20,7 @@
 #include "qgspythonrunner.h"
 #include "qgsrelationeditor.h"
 #include "qgsattributeforminterface.h"
+#include "qgsattributeformlegacyinterface.h"
 
 #include <QDir>
 #include <QFileInfo>
@@ -41,12 +42,17 @@ QgsAttributeForm::QgsAttributeForm( QgsVectorLayer* vl, const QgsFeature feature
     , mIsSaving( false )
 {
   init();
+  initPython();
   setFeature( feature );
+
+  connect( vl, SIGNAL(attributeAdded(int)), this, SLOT(onAttributeAdded(int)) );
+  connect( vl, SIGNAL(attributeDeleted(int)), this, SLOT(onAttributeDeleted(int)) );
 }
 
 QgsAttributeForm::~QgsAttributeForm()
 {
   cleanPython();
+  qDeleteAll( mInterfaces );
 }
 
 void QgsAttributeForm::hideButtonBox()
@@ -57,6 +63,11 @@ void QgsAttributeForm::hideButtonBox()
 void QgsAttributeForm::showButtonBox()
 {
   mButtonBox->show();
+}
+
+void QgsAttributeForm::addInterface(QgsAttributeFormInterface* iface)
+{
+  mInterfaces.append( iface );
 }
 
 void QgsAttributeForm::changeAttribute( const QString& field, const QVariant& value )
@@ -79,7 +90,10 @@ void QgsAttributeForm::setFeature( const QgsFeature& feature )
 
   synchronizeEnabledState();
 
-  initPython();
+  Q_FOREACH( QgsAttributeFormInterface* iface, mInterfaces )
+  {
+    iface->featureChanged();
+  }
 }
 
 bool QgsAttributeForm::save()
@@ -169,6 +183,33 @@ void QgsAttributeForm::onAttributeChanged( const QVariant& value )
   emit attributeChanged( eww->field().name(), value );
 }
 
+void QgsAttributeForm::onAttributeAdded( int idx )
+{
+  if ( mFeature.isValid() )
+  {
+    QgsAttributes attrs = mFeature.attributes();
+    Q_ASSERT( attrs.size() == idx );
+    attrs.append( QVariant() );
+    mFeature.setFields( &layer()->pendingFields() );
+    mFeature.setAttributes( attrs );
+  }
+  init();
+  setFeature( mFeature );
+}
+
+void QgsAttributeForm::onAttributeDeleted( int idx )
+{
+  if ( mFeature.isValid() )
+  {
+    QgsAttributes attrs = mFeature.attributes();
+    attrs.remove( idx );
+    mFeature.setFields( &layer()->pendingFields() );
+    mFeature.setAttributes( attrs );
+  }
+  init();
+  setFeature( mFeature );
+}
+
 void QgsAttributeForm::synchronizeEnabledState()
 {
   Q_FOREACH( QgsEditorWidgetWrapper* eww, mWidgets )
@@ -192,11 +233,14 @@ void QgsAttributeForm::init()
 {
   QWidget* formWidget = 0;
 
-  // Todo: Test if calling init twice works...
-  delete this->layout();
-
   qDeleteAll( mWidgets );
   mWidgets.clear();
+
+  while ( QWidget* w = this->findChild<QWidget*>() )
+  {
+    delete w;
+  }
+  delete this->layout();
 
   // Get a layout
   setLayout( new QGridLayout( this ) );
@@ -299,10 +343,7 @@ void QgsAttributeForm::init()
 
 void QgsAttributeForm::cleanPython()
 {
-  QString expr = QString( "if locals().has_key('_qgis_featureform_%1'): del _qgis_featureform_%1\n" ).arg( mFormNr );
-  QgsPythonRunner::run( expr );
-
-  if ( !mPyFormVarName.isEmpty() )
+  if ( !mPyFormVarName.isNull() )
   {
     QString expr = QString( "if locals().has_key('%1'): del %1\n" ).arg( mPyFormVarName );
     QgsPythonRunner::run( expr );
@@ -324,70 +365,44 @@ void QgsAttributeForm::initPython()
       QgsPythonRunner::run( QString( "import %1" ).arg( module.left( pos ) ) );
     }
 
-#if 0
-    QgsPythonRunner::run( "from qgis.gui import QgsAttributeFormInterface" );
-    QgsPythonRunner::run( "import inspect" );
-
-    QString result;
-    QgsPythonRunner::eval( QString( "inspect.isclass(%1)" ).arg(  mLayer->editFormInit() ), result );
-    if ( result == "True" )
-    {
-      QgsPythonRunner::eval( QString( "issubclass(%1, qgis.gui.QgsAttributeFormInterface)" ).arg(  mLayer->editFormInit() ), result );
-      if ( result == "True" )
-      {
-
-      }
-    }
-    else
-    {
-
-    }
-#endif
-
     /* Reload the module if the DEBUGMODE switch has been set in the module.
     If set to False you have to reload QGIS to reset it to True due to Python
     module caching */
     QString reload = QString( "if hasattr(%1,'DEBUGMODE') and %1.DEBUGMODE:"
                               " reload(%1)" ).arg( module.left( pos ) );
 
-
     QgsPythonRunner::run( reload );
 
-    QString form = QString( "_qgis_featureform_%1 = sip.wrapinstance( %2, qgis.gui.QgsAttributeForm )" )
-                   .arg( mFormNr )
+    QgsPythonRunner::run( "import inspect" );
+    QString numArgs;
+    QgsPythonRunner::eval( QString( "len(inspect.getargspec(%1)[0])" ).arg( module ), numArgs );
+
+    mPyFormVarName = QString( "_qgis_featureform_%1" ).arg( mFormNr );
+
+    QString form = QString( "%1 = sip.wrapinstance( %2, qgis.gui.QgsAttributeForm )" )
+                   .arg( mPyFormVarName )
                    .arg(( unsigned long ) this );
 
-    QString layer = QString( "_qgis_layer_%1 = sip.wrapinstance( %2, qgis.core.QgsVectorLayer )" )
-                    .arg( mLayer->id() )
-                    .arg(( unsigned long ) mLayer );
-
-    // Generate the unique ID of this feature. We used to use feature ID but some providers
-    // return a ID that is an invalid python variable when we have new unsaved features.
-    QDateTime dt = QDateTime::currentDateTime();
-    QString featurevarname = QString( "_qgis_feature_%1" ).arg( dt.toString( "yyyyMMddhhmmsszzz" ) );
-    QString feature = QString( "%1 = sip.wrapinstance( %2, qgis.core.QgsFeature )" )
-                      .arg( featurevarname )
-                      .arg(( unsigned long ) & mFeature );
-
     QgsPythonRunner::run( form );
-    QgsPythonRunner::run( feature );
-    QgsPythonRunner::run( layer );
 
-    mPyFormVarName = QString( "_qgis_feature_form_%1" ).arg( dt.toString( "yyyyMMddhhmmsszzz" ) );
-    QString expr = QString( "%1(_qgis_featureform_%2, _qgis_layer_%3, %4)" )
-                   .arg( mLayer->editFormInit() )
-                   .arg( mFormNr )
-                   .arg( mLayer->id() )
-                   .arg( featurevarname );
+    QgsDebugMsg( QString( "running featureForm init: %1" ).arg( mPyFormVarName ) );
 
-    QgsDebugMsg( QString( "running featureForm init: %1" ).arg( expr ) );
+    // Legacy
+    if ( numArgs == "3" )
+    {
+      addInterface( new QgsAttributeFormLegacyInterface( module, mPyFormVarName, this ) );
+    }
+    else
+    {
+      QString expr = QString( "%1(%2)" )
+                     .arg( mLayer->editFormInit() )
+                     .arg( mPyFormVarName );
 
-//    QgsPythonRunner::run( expr );
+      QgsAttributeFormInterface* iface = QgsPythonRunner::evalToSipObject<QgsAttributeFormInterface*>( expr, "QgsAttributeFormInterface" );
 
-    QgsAttributeFormInterface* iface = QgsPythonRunner::evalToSipObject<QgsAttributeFormInterface*>( expr, "QgsAttributeFormInterface" );
-
-    if ( iface )
-      iface->acceptChanges();
+      if ( iface )
+        addInterface( iface );
+    }
   }
 }
 

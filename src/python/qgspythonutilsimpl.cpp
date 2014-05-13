@@ -521,7 +521,7 @@ bool QgsPythonUtilsImpl::evalString( const QString& command, QString& result )
 
 void* QgsPythonUtilsImpl::evalToObject( const QString& command, const QString& siptype )
 {
-  void* result;
+  void* result = 0;
 
   // acquire global interpreter lock to ensure we are in a consistent state
   PyGILState_STATE gstate;
@@ -555,9 +555,12 @@ void* QgsPythonUtilsImpl::evalToObject( const QString& command, const QString& s
 
   Q_ASSERT( td );
 
-  int state = 0;
-  int iserr = 0;
-  result = sipAPI_core->api_convert_to_type( pyObj, td, 0, 0, &state, &iserr );
+  if ( pyObj )
+  {
+    int state = 0;
+    int iserr = 0;
+    result = sipAPI_core->api_convert_to_type( pyObj, td, 0, 0, &state, &iserr );
+  }
 
   // we are done calling python API, release global interpreter lock
   PyGILState_Release( gstate );

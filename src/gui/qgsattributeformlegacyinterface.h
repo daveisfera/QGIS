@@ -29,8 +29,6 @@ class QgsAttributeFormLegacyInterface : public QgsAttributeFormInterface
     // QgsAttributeFormInterface interface
     void featureChanged();
 
-    bool acceptChanges();
-
   private:
     QString mPyFunctionName;
     QString mPyFormVarName;

@@ -70,8 +70,3 @@ void QgsAttributeFormLegacyInterface::featureChanged()
   QString delFeature = QString( "del %1" ).arg( pyFeatureVarName );
   QgsPythonRunner::run( delFeature );
 }
-
-bool QgsAttributeFormLegacyInterface::acceptChanges()
-{
-
-}

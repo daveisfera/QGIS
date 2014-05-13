@@ -2141,12 +2141,17 @@ void QgsVectorLayer::addAttributeEditorWidget( QgsAttributeEditorElement* data )
 
 const QString QgsVectorLayer::editorWidgetV2( int fieldIdx )
 {
-  return mEditorWidgetV2Types.value( fieldIdx, "TextEdit" );
+  return mEditorWidgetV2Types.value( mUpdatedFields[fieldIdx].name(), "TextEdit" );
 }
 
 const QgsEditorWidgetConfig QgsVectorLayer::editorWidgetV2Config( int fieldIdx )
 {
-  return mEditorWidgetV2Configs.value( fieldIdx );
+  return mEditorWidgetV2Configs.value( mUpdatedFields[fieldIdx].name() );
+}
+
+const QgsEditorWidgetConfig QgsVectorLayer::editorWidgetV2Config( const QString& fieldName )
+{
+  return mEditorWidgetV2Configs.value( fieldName );
 }
 
 QString QgsVectorLayer::attributeAlias( int attributeIndex ) const
@@ -2604,6 +2609,7 @@ bool QgsVectorLayer::isModified() const
 
 QgsVectorLayer::EditType QgsVectorLayer::editType( int idx )
 {
+
 #if 0
   const QgsFields &fields = pendingFields();
   if ( idx >= 0 && idx < fields.count() && mEditTypes.contains( fields[idx].name() ) )
@@ -2634,12 +2640,12 @@ void QgsVectorLayer::setEditorLayout( EditorLayout editorLayout )
 
 void QgsVectorLayer::setEditorWidgetV2( int attrIdx, const QString& widgetType )
 {
-  mEditorWidgetV2Types[ attrIdx ] = widgetType;
+  mEditorWidgetV2Types[ mUpdatedFields[ attrIdx ].name() ] = widgetType;
 }
 
-void QgsVectorLayer::setEditorWidgetV2Config( int attrIdx, const QMap<QString, QVariant>& config )
+void QgsVectorLayer::setEditorWidgetV2Config(int attrIdx, const QgsEditorWidgetConfig& config )
 {
-  mEditorWidgetV2Configs[ attrIdx ] = config;
+  mEditorWidgetV2Configs[ mUpdatedFields[ attrIdx ].name() ] = config;
 }
 
 QString QgsVectorLayer::editForm()
@@ -2667,66 +2673,30 @@ void QgsVectorLayer::setEditFormInit( QString function )
   mEditFormInit = function;
 }
 
-QMap< QString, QVariant > &QgsVectorLayer::valueMap( int idx )
+QMap< QString, QVariant > QgsVectorLayer::valueMap( int idx )
 {
-  const QgsFields &fields = pendingFields();
-
-  // FIXME: throw an exception!?
-  static QMap< QString, QVariant > invalidMap;
-  if ( idx < 0 || idx >= fields.count() )
-  {
-    QgsDebugMsg( QString( "field %1 not found" ).arg( idx ) );
-    return invalidMap;
-  }
-  QString fieldName = fields[idx].name();
-
-  if ( !mValueMaps.contains( fieldName ) )
-    mValueMaps[fieldName] = QMap<QString, QVariant>();
-
-  return mValueMaps[fieldName];
+  return editorWidgetV2Config( idx );
 }
 
-QgsVectorLayer::RangeData &QgsVectorLayer::range( int idx )
+QgsVectorLayer::RangeData QgsVectorLayer::range( int idx )
 {
-  const QgsFields &fields = pendingFields();
-
-  // FIXME: throw an exception!?
-  static QgsVectorLayer::RangeData invalidRange;
-  if ( idx < 0 || idx >= fields.count() )
-  {
-    QgsDebugMsg( QString( "field %1 not found" ).arg( idx ) );
-    return invalidRange;
-  }
-  QString fieldName = fields[idx].name();
-
-  if ( !mRanges.contains( fieldName ) )
-    mRanges[fieldName] = RangeData();
-
-  return mRanges[fieldName];
+  const QgsEditorWidgetConfig cfg = editorWidgetV2Config( idx );
+  return RangeData(
+        cfg.value( "Min" ),
+        cfg.value( "Max" ),
+        cfg.value( "Step" )
+        );
 }
 
-QString &QgsVectorLayer::dateFormat( int idx )
+QString QgsVectorLayer::dateFormat( int idx )
 {
-  const QgsFields &fields = pendingFields();
-
-  QString fieldName = fields[idx].name();
-
-  if ( !mDateFormats.contains( fieldName ) )
-    mDateFormats[fieldName] = "yyyy-MM-dd";
-
-  return mDateFormats[fieldName];
+  return editorWidgetV2Config( idx ).value( "DateFormat" ).toString();
 }
 
-QSize &QgsVectorLayer::widgetSize( int idx )
+QSize QgsVectorLayer::widgetSize( int idx )
 {
-  const QgsFields &fields = pendingFields();
-
-  QString fieldName = fields[idx].name();
-
-  if ( !mWidgetSize.contains( fieldName ) )
-    mWidgetSize[fieldName] = QSize( 0, 0 );
-
-  return mWidgetSize[fieldName];
+  const QgsEditorWidgetConfig cfg = editorWidgetV2Config( idx );
+  return QSize( cfg.value( "Width" ).toInt(), cfg.value( "Height" ).toInt() );
 }
 
 bool QgsVectorLayer::fieldEditable( int idx )
@@ -2810,18 +2780,10 @@ void QgsVectorLayer::destroyEditCommand()
 
 void QgsVectorLayer::setCheckedState( int idx, QString checked, QString unchecked )
 {
-  const QgsFields &fields = pendingFields();
-  if ( idx >= 0 && idx < fields.count() )
-    mCheckedStates[ fields[idx].name()] = QPair<QString, QString>( checked, unchecked );
-}
-
-QPair<QString, QString> QgsVectorLayer::checkedState( int idx )
-{
-  const QgsFields &fields = pendingFields();
-  if ( idx >= 0 && idx < fields.count() && mCheckedStates.contains( fields[idx].name() ) )
-    return mCheckedStates[ fields[idx].name()];
-  else
-    return QPair<QString, QString>( "1", "0" );
+  QgsEditorWidgetConfig cfg = editorWidgetV2Config( idx );
+  cfg["CheckedState"] = checked;
+  cfg["UncheckedState"] = unchecked;
+  setEditorWidgetV2Config( idx, cfg );
 }
 
 int QgsVectorLayer::fieldNameIndex( const QString& fieldName ) const
@@ -3606,7 +3568,7 @@ void QgsVectorLayer::onRelationsLoaded()
 
 QgsVectorLayer::ValueRelationData QgsVectorLayer::valueRelation( int idx )
 {
-  if ( mEditorWidgetV2Types.value( idx ) == "ValueRelation" )
+  if ( editorWidgetV2( idx ) == "ValueRelation" )
   {
     QgsEditorWidgetConfig cfg = editorWidgetV2Config( idx );
 

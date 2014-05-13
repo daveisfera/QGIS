@@ -80,7 +80,7 @@ void QgsAttributeTableDelegate::setModelData( QWidget *editor, QAbstractItemMode
   QVariant oldValue = model->data( index, Qt::EditRole );
 
   QVariant newValue;
-  QgsEditorWidgetWrapper* eww =  editor->property( "EWV2Wrapper" ).value<QgsEditorWidgetWrapper*>();
+  QgsEditorWidgetWrapper* eww = QgsEditorWidgetWrapper::fromWidget( editor );
   if ( !eww )
     return;
 
@@ -96,7 +96,7 @@ void QgsAttributeTableDelegate::setModelData( QWidget *editor, QAbstractItemMode
 
 void QgsAttributeTableDelegate::setEditorData( QWidget *editor, const QModelIndex &index ) const
 {
-  QgsEditorWidgetWrapper* eww =  editor->property( "EWV2Wrapper" ).value<QgsEditorWidgetWrapper*>();
+  QgsEditorWidgetWrapper* eww =  QgsEditorWidgetWrapper::fromWidget( editor );
   if ( !eww )
     return;
 

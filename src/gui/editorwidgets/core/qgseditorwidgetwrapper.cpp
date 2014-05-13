@@ -83,14 +83,7 @@ QgsField QgsEditorWidgetWrapper::field()
 
 QgsEditorWidgetWrapper* QgsEditorWidgetWrapper::fromWidget( QWidget* widget )
 {
-  QVariant w = widget->property( "EWV2Wrapper" );
-
-  if ( w.isNull() )
-  {
-    return NULL;
-  }
-
-  return w.value<QgsEditorWidgetWrapper*>();
+  return widget->property( "EWV2Wrapper" ).value<QgsEditorWidgetWrapper*>();
 }
 
 void QgsEditorWidgetWrapper::initWidget( QWidget* editor )

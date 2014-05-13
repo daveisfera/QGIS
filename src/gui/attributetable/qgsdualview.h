@@ -159,12 +159,6 @@ class GUI_EXPORT QgsDualView : public QStackedWidget, private Ui::QgsDualViewBas
      */
     bool saveEditChanges();
 
-    /**
-     * Update the shown feature if an attribute changed
-     */
-    void reloadAttribute( const int& attribute );
-
-
   signals:
     /**
      * Is emitted, whenever the display expression is successfully changed

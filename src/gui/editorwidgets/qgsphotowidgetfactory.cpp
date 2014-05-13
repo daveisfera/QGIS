@@ -43,6 +43,8 @@ QgsEditorWidgetConfig QgsPhotoWidgetFactory::readConfig(const QDomElement& confi
 
   cfg.insert( "Height", configElement.attribute( "Height", 0 ).toInt() );
   cfg.insert( "Width", configElement.attribute( "Width", 0 ).toInt() );
+
+  return cfg;
 }
 
 void QgsPhotoWidgetFactory::writeConfig(const QgsEditorWidgetConfig& config, QDomElement& configElement, QDomDocument& doc, const QgsVectorLayer* layer, int fieldIdx)

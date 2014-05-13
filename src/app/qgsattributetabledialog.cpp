@@ -380,7 +380,6 @@ void QgsAttributeTableDialog::on_mOpenFieldCalculator_clicked()
     if ( col >= 0 )
     {
       masterModel->reload( masterModel->index( 0, col ), masterModel->index( masterModel->rowCount() - 1, col ) );
-      mMainView->reloadAttribute( col );
     }
   }
 }

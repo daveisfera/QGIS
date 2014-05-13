@@ -369,11 +369,6 @@ void QgsDualView::featureFormAttributeChanged()
   mFeatureList->setCurrentFeatureEdited( true );
 }
 
-void QgsDualView::reloadAttribute( const int& idx )
-{
-  // TODO: After field calculator: handled automatically??
-}
-
 void QgsDualView::setFilteredFeatures( QgsFeatureIds filteredFeatures )
 {
   mFilterModel->setFilteredFeatures( filteredFeatures );

@@ -64,69 +64,6 @@ class GUI_EXPORT QgsEditorWidgetWrapper : public QgsWidgetWrapper
     virtual QVariant value() = 0;
 
     /**
-     * @brief Access the widget managed by this wrapper
-     *
-     * @return The widget
-     */
-    QWidget* widget();
-
-    /**
-     * @brief Access the widget managed by this wrapper and cast it to a given type
-     * Example: QPushButton* pb = wrapper->widget<QPushButton*>();
-     *
-     * @return The widget as template type or NULL, if it cannot be cast to this type.
-     */
-    template <class T>
-    T* widget() { return dynamic_cast<T>( mWidget ); }
-
-    /**
-     * Will set the config of this wrapper to the specified config.
-     *
-     * @param config The config for this wrapper
-     */
-    void setConfig( const QgsEditorWidgetConfig& config );
-
-    /**
-     * Set the context in which this widget is shown
-     *
-     * @param context context information
-     */
-    void setContext( const QgsAttributeEditorContext& context );
-
-    /**
-     * Use this inside your overriden classes to access the configuration.
-     *
-     * @param key         The configuration option you want to load
-     * @param defaultVal  Default value
-     *
-     * @return the value assigned to this configuration option
-     */
-    QVariant config( QString key, QVariant defaultVal = QVariant() );
-
-    /**
-     * Returns the whole config
-     *
-     * @return The configuration
-     */
-    const QgsEditorWidgetConfig config();
-
-    /**
-     * Returns information about the context in which this widget is shown
-     *
-     * @return context information
-     */
-    const QgsAttributeEditorContext& context();
-
-    /**
-     * Access the QgsVectorLayer, you are working on
-     *
-     * @return The layer
-     *
-     * @see field()
-     */
-    QgsVectorLayer* layer();
-
-    /**
      * Access the field index.
      *
      * @return The index of the field you are working on
@@ -151,27 +88,6 @@ class GUI_EXPORT QgsEditorWidgetWrapper : public QgsWidgetWrapper
      */
     static QgsEditorWidgetWrapper* fromWidget( QWidget* widget );
 
-  protected:
-    /**
-     * This method should create a new widget with the provided parent. This will only be called
-     * if the form did not already provide a widget, so it is not guaranteed to be called!
-     * You should not do initialisation stuff, which also has to be done for custom editor
-     * widgets inside this method. Things like filling comboboxes and assigning other data which
-     * will also be used to make widgets on forms created in the QtDesigner usable should be assigned
-     * in {@link initWidget(QWidget*)}.
-     *
-     * @param parent You should set this parent on the created widget.
-     * @return A new widget
-     */
-    virtual QWidget* createWidget( QWidget* parent ) = 0;
-
-    /**
-     * This method should initialize the editor widget with runtime data. Fill your comboboxes here.
-     *
-     * @param editor The widget which will represent this attribute editor in a form.
-     */
-    virtual void initWidget( QWidget* editor );
-
   signals:
     /**
      * Emit this signal, whenever the value changed.
@@ -182,20 +98,21 @@ class GUI_EXPORT QgsEditorWidgetWrapper : public QgsWidgetWrapper
 
   public slots:
     /**
+     * Will be called when the feature changes
+     *
+     * Is forwarded to the slot @link{setValue()}
+     *
+     * @param feature The new feature
+     */
+    void setFeature( const QgsFeature& feature );
+
+    /**
      * Is called, when the value of the widget needs to be changed. Update the widget representation
      * to reflect the new value.
      *
      * @param value The new value of the attribute
      */
     virtual void setValue( const QVariant& value ) = 0;
-
-    /**
-     * Is used to enable or disable the edit functionality of the managed widget.
-     * By default this will enable or disable the whole widget
-     *
-     * @param enabled  Enable or Disable?
-     */
-    virtual void setEnabled( bool enabled );
 
   protected slots:
     /**
@@ -244,11 +161,6 @@ class GUI_EXPORT QgsEditorWidgetWrapper : public QgsWidgetWrapper
     void valueChanged();
 
   private:
-    QgsAttributeEditorContext mContext;
-    QgsEditorWidgetConfig mConfig;
-    QWidget* mWidget;
-    QWidget* mParent;
-    QgsVectorLayer* mLayer;
     int mFieldIdx;
 };
 

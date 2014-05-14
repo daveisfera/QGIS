@@ -20,65 +20,9 @@
 #include <QWidget>
 
 QgsEditorWidgetWrapper::QgsEditorWidgetWrapper( QgsVectorLayer* vl, int fieldIdx, QWidget* editor, QWidget* parent )
-    : QObject( parent )
-    , mWidget( editor )
-    , mParent( parent )
-    , mLayer( vl )
+    : QgsWidgetWrapper( vl, editor, parent )
+    , mFieldIdx( fieldIdx )
 {
-  mFieldIdx = fieldIdx;
-}
-
-QWidget* QgsEditorWidgetWrapper::widget()
-{
-  if ( !mWidget )
-  {
-    mWidget = createWidget( mParent );
-    mWidget->setProperty( "EWV2Wrapper", QVariant::fromValue( this ) );
-    mWidget->setObjectName( field().name() );
-    initWidget( mWidget );
-  }
-
-  return mWidget;
-}
-
-void QgsEditorWidgetWrapper::setConfig( const QgsEditorWidgetConfig& config )
-{
-  mConfig = config;
-  // If an editor widget was supplied, we can initialize this now
-  if ( mWidget )
-  {
-    mWidget->setProperty( "EWV2Wrapper", QVariant::fromValue( this ) );
-    initWidget( mWidget );
-  }
-}
-
-void QgsEditorWidgetWrapper::setContext( const QgsAttributeEditorContext& context )
-{
-  mContext = context;
-}
-
-QVariant QgsEditorWidgetWrapper::config( QString key, QVariant defaultVal )
-{
-  if ( mConfig.contains( key ) )
-  {
-    return mConfig[key];
-  }
-  return defaultVal;
-}
-
-const QgsEditorWidgetConfig QgsEditorWidgetWrapper::config()
-{
-  return mConfig;
-}
-
-const QgsAttributeEditorContext&QgsEditorWidgetWrapper::context()
-{
-  return mContext;
-}
-
-QgsVectorLayer* QgsEditorWidgetWrapper::layer()
-{
-  return mLayer;
 }
 
 int QgsEditorWidgetWrapper::fieldIdx()
@@ -88,7 +32,7 @@ int QgsEditorWidgetWrapper::fieldIdx()
 
 QgsField QgsEditorWidgetWrapper::field()
 {
-  return mLayer->pendingFields()[mFieldIdx];
+  return layer()->pendingFields()[mFieldIdx];
 }
 
 QgsEditorWidgetWrapper* QgsEditorWidgetWrapper::fromWidget( QWidget* widget )
@@ -96,17 +40,9 @@ QgsEditorWidgetWrapper* QgsEditorWidgetWrapper::fromWidget( QWidget* widget )
   return widget->property( "EWV2Wrapper" ).value<QgsEditorWidgetWrapper*>();
 }
 
-void QgsEditorWidgetWrapper::initWidget( QWidget* editor )
+void QgsEditorWidgetWrapper::setFeature( const QgsFeature& feature )
 {
-  Q_UNUSED( editor )
-}
-
-void QgsEditorWidgetWrapper::setEnabled( bool enabled )
-{
-  if ( mWidget )
-  {
-    mWidget->setEnabled( enabled );
-  }
+  setValue( feature.attribute( mFieldIdx ) );
 }
 
 void QgsEditorWidgetWrapper::valueChanged( const QString& value )

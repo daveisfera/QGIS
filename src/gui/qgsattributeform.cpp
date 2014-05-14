@@ -16,16 +16,17 @@
 #include "qgsattributeform.h"
 
 #include "qgsattributeeditor.h"
-#include "qgseditorwidgetregistry.h"
-#include "qgspythonrunner.h"
-#include "qgsrelationeditor.h"
 #include "qgsattributeforminterface.h"
 #include "qgsattributeformlegacyinterface.h"
+#include "qgseditorwidgetregistry.h"
+#include "qgspythonrunner.h"
+#include "qgsrelationwidgetwrapper.h"
 
 #include <QDir>
 #include <QFileInfo>
 #include <QFormLayout>
 #include <QGridLayout>
+#include <QGroupBox>
 #include <QLabel>
 #include <QPushButton>
 #include <QScrollArea>
@@ -72,9 +73,10 @@ void QgsAttributeForm::addInterface(QgsAttributeFormInterface* iface)
 
 void QgsAttributeForm::changeAttribute( const QString& field, const QVariant& value )
 {
-  Q_FOREACH( QgsEditorWidgetWrapper* eww, mWidgets )
+  Q_FOREACH( QgsWidgetWrapper* ww, mWidgets )
   {
-    if ( eww->field().name() == field )
+    QgsEditorWidgetWrapper* eww = qobject_cast<QgsEditorWidgetWrapper*>( ww );
+    if ( eww && eww->field().name() == field )
     {
       eww->setValue( value );
     }
@@ -118,15 +120,19 @@ bool QgsAttributeForm::save()
     QgsAttributes src = mFeature.attributes();
     QgsAttributes dst = mFeature.attributes();
 
-    Q_FOREACH( QgsEditorWidgetWrapper* eww, mWidgets )
+    Q_FOREACH( QgsWidgetWrapper* ww, mWidgets )
     {
-      QVariant dstVar = dst[eww->fieldIdx()];
-      QVariant srcVar = eww->value();
-      if ( dstVar != srcVar && srcVar.isValid() )
+      QgsEditorWidgetWrapper* eww = qobject_cast<QgsEditorWidgetWrapper*>( ww );
+      if ( eww  )
       {
-        dst[eww->fieldIdx()] = eww->value();
+        QVariant dstVar = dst[eww->fieldIdx()];
+        QVariant srcVar = eww->value();
+        if ( dstVar != srcVar && srcVar.isValid() )
+        {
+          dst[eww->fieldIdx()] = eww->value();
 
-        doUpdate = true;
+          doUpdate = true;
+        }
       }
     }
 
@@ -161,16 +167,9 @@ bool QgsAttributeForm::save()
 
 void QgsAttributeForm::resetValues()
 {
-  Q_FOREACH( QgsEditorWidgetWrapper* eww, mWidgets )
+  Q_FOREACH( QgsWidgetWrapper* ww, mWidgets )
   {
-    if ( mFeature.isValid() )
-    {
-      eww->setValue( mFeature.attribute( eww->field().name() ) );
-    }
-    else
-    {
-      eww->setValue( QVariant( QVariant::String ) );
-    }
+    ww->setFeature( mFeature );
   }
 }
 
@@ -212,15 +211,15 @@ void QgsAttributeForm::onAttributeDeleted( int idx )
 
 void QgsAttributeForm::synchronizeEnabledState()
 {
-  Q_FOREACH( QgsEditorWidgetWrapper* eww, mWidgets )
+  Q_FOREACH( QgsWidgetWrapper* ww, mWidgets )
   {
     if ( mFeature.isValid() && mLayer->isEditable() )
     {
-      eww->setEnabled( true );
+      ww->setEnabled( true );
     }
     else
     {
-      eww->setEnabled( false );
+      ww->setEnabled( false );
     }
   }
 
@@ -436,7 +435,10 @@ QWidget* QgsAttributeForm::createWidgetFromDef( const QgsAttributeEditorElement*
       const QgsAttributeEditorRelation* relDef = dynamic_cast<const QgsAttributeEditorRelation*>( widgetDef );
 
       // TODO: Make relationeditor newstyle
-      newWidget = QgsRelationEditorWidget::createRelationEditor( relDef->relation(), feat, context );
+      QgsRelationWidgetWrapper* rww = new QgsRelationWidgetWrapper( mLayer, relDef->relation(), 0, this );
+      rww->setContext( context );
+      newWidget = rww->widget();
+      mWidgets.append( rww );
       labelText = QString::null;
       labelOnTop = true;
       break;
@@ -537,6 +539,11 @@ void QgsAttributeForm::createWrappers()
 
 void QgsAttributeForm::connectWrappers()
 {
-  Q_FOREACH( QgsEditorWidgetWrapper* eww, mWidgets )
-  connect( eww, SIGNAL( valueChanged( const QVariant& ) ), this, SLOT( onAttributeChanged( const QVariant& ) ) );
+  Q_FOREACH( QgsWidgetWrapper* ww, mWidgets )
+  {
+    QgsEditorWidgetWrapper* eww = qobject_cast<QgsEditorWidgetWrapper*>( ww );
+
+    if ( eww )
+      connect( eww, SIGNAL( valueChanged( const QVariant& ) ), this, SLOT( onAttributeChanged( const QVariant& ) ) );
+  }
 }

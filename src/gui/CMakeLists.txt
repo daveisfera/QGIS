@@ -54,6 +54,7 @@ editorwidgets/core/qgseditorconfigwidget.cpp
 editorwidgets/core/qgseditorwidgetfactory.cpp
 editorwidgets/core/qgseditorwidgetregistry.cpp
 editorwidgets/core/qgseditorwidgetwrapper.cpp
+editorwidgets/core/qgswidgetwrapper.cpp
 
 editorwidgets/qgscalendarconfigdlg.cpp
 editorwidgets/qgscalendarwidget.cpp
@@ -79,6 +80,7 @@ editorwidgets/qgsphotowidgetfactory.cpp
 editorwidgets/qgsrangeconfigdlg.cpp
 editorwidgets/qgsrangewidget.cpp
 editorwidgets/qgsrangewidgetfactory.cpp
+editorwidgets/qgsrelationwidgetwrapper.cpp
 editorwidgets/qgsrelationreferencefactory.cpp
 editorwidgets/qgsrelationreferencewidget.cpp
 editorwidgets/qgsrelreferenceconfigdlg.cpp
@@ -98,6 +100,7 @@ editorwidgets/qgsvaluerelationwidget.cpp
 editorwidgets/qgsvaluerelationwidgetfactory.cpp
 editorwidgets/qgswebviewconfigdlg.cpp
 editorwidgets/qgswebviewwidget.cpp
+editorwidgets/qgswebviewwidgetfactory.cpp
 editorwidgets/qgswebviewwidgetfactory.cpp
 
 
@@ -258,6 +261,7 @@ attributetable/qgsvectorlayerselectionmanager.h
 editorwidgets/core/qgseditorconfigwidget.h
 editorwidgets/core/qgseditorwidgetregistry.h
 editorwidgets/core/qgseditorwidgetwrapper.h
+editorwidgets/core/qgswidgetwrapper.h
 editorwidgets/qgscalendarconfigdlg.h
 editorwidgets/qgscalendarwidget.h
 editorwidgets/qgscheckboxconfigdlg.h
@@ -274,6 +278,7 @@ editorwidgets/qgsphotowidget.h
 editorwidgets/qgsrangeconfigdlg.h
 editorwidgets/qgsrangewidget.h
 editorwidgets/qgsrelationreferencewidget.h
+editorwidgets/qgsrelationwidgetwrapper.h
 editorwidgets/qgsrelreferenceconfigdlg.h
 editorwidgets/qgstexteditconfigdlg.h
 editorwidgets/qgstexteditwidget.h
@@ -455,6 +460,7 @@ editorwidgets/core/qgseditorconfigwidget.h
 editorwidgets/core/qgseditorwidgetfactory.h
 editorwidgets/core/qgseditorwidgetregistry.h
 editorwidgets/core/qgseditorwidgetwrapper.h
+editorwidgets/core/qgswidgetwrapper.h
 
 editorwidgets/qgscalendarconfigdlg.h
 editorwidgets/qgscalendarwidget.h
@@ -482,6 +488,7 @@ editorwidgets/qgsrangewidget.h
 editorwidgets/qgsrangewidgetfactory.h
 editorwidgets/qgsrelationreferencefactory.h
 editorwidgets/qgsrelationreferencewidget.h
+editorwidgets/qgsrelationwidgetwrapper.h
 editorwidgets/qgsrelreferenceconfigdlg.h
 editorwidgets/qgstexteditconfigdlg.h
 editorwidgets/qgstexteditwidget.h

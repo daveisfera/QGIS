@@ -111,7 +111,7 @@ class GUI_EXPORT QgsAttributeForm : public QWidget
 
     QgsVectorLayer* mLayer;
     QgsFeature mFeature;
-    QList<QgsEditorWidgetWrapper*> mWidgets;
+    QList<QgsWidgetWrapper*> mWidgets;
     QgsAttributeEditorContext mContext;
     QDialogButtonBox* mButtonBox;
     QList<QgsAttributeFormInterface*> mInterfaces;

@@ -2610,13 +2610,7 @@ bool QgsVectorLayer::isModified() const
 
 QgsVectorLayer::EditType QgsVectorLayer::editType( int idx )
 {
-#if 0
-  const QgsFields &fields = pendingFields();
-  if ( idx >= 0 && idx < fields.count() && mEditTypes.contains( fields[idx].name() ) )
-    return mEditTypes[ fields[idx].name()];
-  else
-    return LineEdit;
-#endif
+  return QgsLegacyHelpers::convertEditType( editorWidgetV2( idx ), this, mUpdatedFields[ idx ].name() );
 }
 
 void QgsVectorLayer::setEditType( int idx, EditType type )

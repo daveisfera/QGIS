@@ -23,7 +23,8 @@
 class QgsLegacyHelpers
 {
   public:
-    static const QString convertEditType(QgsVectorLayer::EditType editType, QgsEditorWidgetConfig& cfg, QgsVectorLayer* vl, const QString& name, const QDomElement editTypeElement = QDomElement() );
+    Q_DECL_DEPRECATED static const QString convertEditType( QgsVectorLayer::EditType editType, QgsEditorWidgetConfig& cfg, QgsVectorLayer* vl, const QString& name, const QDomElement editTypeElement = QDomElement() );
+    Q_DECL_DEPRECATED static QgsVectorLayer::EditType convertEditType( const QString& editType, const QgsEditorWidgetConfig& cfg, QgsVectorLayer* vl, const QString& name );
 
   private:
     QgsLegacyHelpers()

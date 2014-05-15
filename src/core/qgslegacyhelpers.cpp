@@ -203,3 +203,56 @@ const QString QgsLegacyHelpers::convertEditType( QgsVectorLayer::EditType editTy
   return widgetType;
 }
 
+QgsVectorLayer::EditType QgsLegacyHelpers::convertEditType( const QString& editType, const QgsEditorWidgetConfig& cfg, QgsVectorLayer* vl, const QString& name )
+{
+  int idx = vl->fieldNameIndex( name );
+
+  if ( !vl->fieldEditable( idx ) )
+  {
+    return QgsVectorLayer::Immutable;
+  }
+
+  if ( !vl->fieldEditable())
+
+  if ( editType == "ValueMap" )
+  {
+    return QgsVectorLayer::ValueMap;
+  }
+
+  if ( editType == "TextEdit" )
+  {
+    if ( cfg.value( "IsMultiline" ).toBool() )
+    {
+      return QgsVectorLayer::TextEdit;
+    }
+    else
+    {
+      return QgsVectorLayer::LineEdit;
+    }
+  }
+
+  if ( editType == "Range" )
+  {
+    if ( cfg.)
+  }
+
+  UniqueValues,
+  UniqueValuesEditable,
+  ValueMap,
+  Classification,
+  EditRange,
+  SliderRange,
+  CheckBox,       /**< @note added in 1.4 */
+  FileName,
+  Enumeration,
+  Immutable,      /**< The attribute value should not be changed in the attribute form */
+  Hidden,         /**< The attribute value should not be shown in the attribute form @note added in 1.4 */
+  Calendar,       /**< calendar widget @note added in 1.5 */
+  DialRange,      /**< dial range @note added in 1.5 */
+  ValueRelation,  /**< value map from an table @note added in 1.8 */
+  UuidGenerator,  /**< uuid generator - readonly and automatically intialized @note added in 1.9 */
+  Photo,          /**< phote widget @note added in 1.9 */
+  WebView,        /**< webview widget @note added in 1.9 */
+  Color,          /**< color @note added in 1.9 */
+  EditorWidgetV2, /**< modularized edit widgets @note added in 2.1 */
+}

@@ -551,7 +551,7 @@ Qt::ItemFlags QgsAttributeTableModel::flags( const QModelIndex &index ) const
   Qt::ItemFlags flags = QAbstractItemModel::flags( index );
 
   if ( layer()->isEditable() &&
-       layer()->editType( mAttributes[ index.column()] ) != QgsVectorLayer::Immutable )
+       layer()->fieldEditable( mAttributes[ index.column()] ) )
     flags |= Qt::ItemIsEditable;
 
   return flags;

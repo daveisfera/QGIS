@@ -131,7 +131,11 @@ void QgsEditorWidgetRegistry::readMapLayer( QgsMapLayer* mapLayer, const QDomEle
     QgsEditorWidgetConfig cfg;
 
     if ( hasLegacyType && editType != QgsVectorLayer::EditorWidgetV2 )
+    {
+      Q_NOWARN_DEPRECATED_PUSH
       ewv2Type = readLegacyConfig( vectorLayer, editTypeElement, cfg );
+      Q_NOWARN_DEPRECATED_POP
+    }
     else
       ewv2Type = editTypeElement.attribute( "widgetv2type" );
 
@@ -160,7 +164,9 @@ const QString QgsEditorWidgetRegistry::readLegacyConfig( QgsVectorLayer* vl, con
 
   QgsVectorLayer::EditType editType = ( QgsVectorLayer::EditType ) editTypeElement.attribute( "type" ).toInt();
 
+  Q_NOWARN_DEPRECATED_PUSH
   return QgsLegacyHelpers::convertEditType( editType, cfg, vl, name, editTypeElement );
+  Q_NOWARN_DEPRECATED_POP
 }
 
 void QgsEditorWidgetRegistry::writeMapLayer( QgsMapLayer* mapLayer, QDomElement& layerElem, QDomDocument& doc )

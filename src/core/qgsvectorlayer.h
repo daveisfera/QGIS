@@ -1112,7 +1112,16 @@ class CORE_EXPORT QgsVectorLayer : public QgsMapLayer
      *
      * @return The id for the editor widget or a NULL string if not applicable
      */
-    const QString editorWidgetV2( int fieldIdx );
+    const QString editorWidgetV2( int fieldIdx ) const;
+
+    /**
+     * Get the id for the editor widget used to represent the field at the given index
+     *
+     * @param fieldName  The name of the field
+     *
+     * @return The id for the editor widget or a NULL string if not applicable
+     */
+    const QString editorWidgetV2( const QString& fieldName ) const;
 
     /**
      * Get the configuration for the editor widget used to represent the field at the given index
@@ -1121,7 +1130,7 @@ class CORE_EXPORT QgsVectorLayer : public QgsMapLayer
      *
      * @return The configuration for the editor widget or an empty config if the field does not exist
      */
-    const QgsEditorWidgetConfig editorWidgetV2Config( int fieldIdx );
+    const QgsEditorWidgetConfig editorWidgetV2Config( int fieldIdx ) const;
 
     /**
      * Get the configuration for the editor widget used to represent the field at the given index
@@ -1130,7 +1139,7 @@ class CORE_EXPORT QgsVectorLayer : public QgsMapLayer
      *
      * @return The configuration for the editor widget or an empty config if the field does not exist
      */
-    const QgsEditorWidgetConfig editorWidgetV2Config( const QString& fieldName );
+    const QgsEditorWidgetConfig editorWidgetV2Config( const QString& fieldName ) const;
 
     /**
      * Returns a list of tabs holding groups and fields

@@ -195,6 +195,8 @@ class APP_EXPORT QgsIdentifyResultsDialog: public QDialog, private Ui::QgsIdenti
     void mapLayerActionDestroyed();
 
   private:
+    QString representValue( QgsVectorLayer* vlayer, const QString& fieldName, const QVariant& value );
+
     enum ItemDataRole
     {
       GetFeatureInfoUrlRole = Qt::UserRole + 10
@@ -204,6 +206,7 @@ class APP_EXPORT QgsIdentifyResultsDialog: public QDialog, private Ui::QgsIdenti
     QMap<QTreeWidgetItem *, QgsHighlight * > mHighlights;
     QgsMapCanvas *mCanvas;
     QList<QgsFeature> mFeatures;
+    QMap< QString, QMap< QString, QVariant > > mWidgetCaches;
 
     QgsMapLayer *layer( QTreeWidgetItem *item );
     QgsVectorLayer *vectorLayer( QTreeWidgetItem *item );

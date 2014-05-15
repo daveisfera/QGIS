@@ -2140,17 +2140,22 @@ void QgsVectorLayer::addAttributeEditorWidget( QgsAttributeEditorElement* data )
   mAttributeEditorElements.append( data );
 }
 
-const QString QgsVectorLayer::editorWidgetV2( int fieldIdx )
+const QString QgsVectorLayer::editorWidgetV2( int fieldIdx ) const
 {
   return mEditorWidgetV2Types.value( mUpdatedFields[fieldIdx].name(), "TextEdit" );
 }
 
-const QgsEditorWidgetConfig QgsVectorLayer::editorWidgetV2Config( int fieldIdx )
+const QString QgsVectorLayer::editorWidgetV2( const QString& fieldName ) const
+{
+  return mEditorWidgetV2Types.value( fieldName, "TextEdit" );
+}
+
+const QgsEditorWidgetConfig QgsVectorLayer::editorWidgetV2Config( int fieldIdx ) const
 {
   return mEditorWidgetV2Configs.value( mUpdatedFields[fieldIdx].name() );
 }
 
-const QgsEditorWidgetConfig QgsVectorLayer::editorWidgetV2Config( const QString& fieldName )
+const QgsEditorWidgetConfig QgsVectorLayer::editorWidgetV2Config( const QString& fieldName ) const
 {
   return mEditorWidgetV2Configs.value( fieldName );
 }
@@ -2610,14 +2615,18 @@ bool QgsVectorLayer::isModified() const
 
 QgsVectorLayer::EditType QgsVectorLayer::editType( int idx )
 {
+  Q_NOWARN_DEPRECATED_PUSH
   return QgsLegacyHelpers::convertEditType( editorWidgetV2( idx ), editorWidgetV2Config( idx ), this, mUpdatedFields[ idx ].name() );
+  Q_NOWARN_DEPRECATED_POP
 }
 
 void QgsVectorLayer::setEditType( int idx, EditType type )
 {
   QgsEditorWidgetConfig cfg;
 
+  Q_NOWARN_DEPRECATED_PUSH
   const QString widgetType = QgsLegacyHelpers::convertEditType( type, cfg, this, mUpdatedFields[idx].name() );
+  Q_NOWARN_DEPRECATED_POP
 
   setEditorWidgetV2( idx, widgetType );
   setEditorWidgetV2Config( idx, cfg );

@@ -53,15 +53,8 @@ QString QgsEditorWidgetFactory::representValue( QgsVectorLayer* vl, int fieldIdx
   Q_UNUSED( cache )
   Q_UNUSED( value )
 
-  if ( value.isNull() )
-  {
-    QSettings settings;
-    return settings.value( "qgis/nullValue", "NULL" ).toString();
-  }
-  else
-  {
-    return value.toString();
-  }
+  const QgsField &fld = vl->pendingFields().at( fieldIdx );
+  return fld.displayString( value );
 }
 
 QVariant QgsEditorWidgetFactory::createCache( QgsVectorLayer* vl, int fieldIdx, const QgsEditorWidgetConfig& config )

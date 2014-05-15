@@ -2610,7 +2610,7 @@ bool QgsVectorLayer::isModified() const
 
 QgsVectorLayer::EditType QgsVectorLayer::editType( int idx )
 {
-  return QgsLegacyHelpers::convertEditType( editorWidgetV2( idx ), this, mUpdatedFields[ idx ].name() );
+  return QgsLegacyHelpers::convertEditType( editorWidgetV2( idx ), editorWidgetV2Config( idx ), this, mUpdatedFields[ idx ].name() );
 }
 
 void QgsVectorLayer::setEditType( int idx, EditType type )

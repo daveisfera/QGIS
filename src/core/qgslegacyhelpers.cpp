@@ -212,7 +212,10 @@ QgsVectorLayer::EditType QgsLegacyHelpers::convertEditType( const QString& editT
     return QgsVectorLayer::Immutable;
   }
 
-  if ( !vl->fieldEditable())
+  if ( editType == "Hidden" )
+  {
+    return QgsVectorLayer::Hidden;
+  }
 
   if ( editType == "ValueMap" )
   {
@@ -233,26 +236,77 @@ QgsVectorLayer::EditType QgsLegacyHelpers::convertEditType( const QString& editT
 
   if ( editType == "Range" )
   {
-    if ( cfg.)
+    if ( cfg.value( "Style" ).toString() == "SliderRange" )
+    {
+      return QgsVectorLayer::SliderRange;
+    }
+    else if (  cfg.value( "Style" ).toString() == "DialRange"  )
+    {
+      return QgsVectorLayer::DialRange;
+    }
+    else
+    {
+      return QgsVectorLayer::EditRange;
+    }
   }
 
-  UniqueValues,
-  UniqueValuesEditable,
-  ValueMap,
-  Classification,
-  EditRange,
-  SliderRange,
-  CheckBox,       /**< @note added in 1.4 */
-  FileName,
-  Enumeration,
-  Immutable,      /**< The attribute value should not be changed in the attribute form */
-  Hidden,         /**< The attribute value should not be shown in the attribute form @note added in 1.4 */
-  Calendar,       /**< calendar widget @note added in 1.5 */
-  DialRange,      /**< dial range @note added in 1.5 */
-  ValueRelation,  /**< value map from an table @note added in 1.8 */
-  UuidGenerator,  /**< uuid generator - readonly and automatically intialized @note added in 1.9 */
-  Photo,          /**< phote widget @note added in 1.9 */
-  WebView,        /**< webview widget @note added in 1.9 */
-  Color,          /**< color @note added in 1.9 */
-  EditorWidgetV2, /**< modularized edit widgets @note added in 2.1 */
+  if ( editType == "UuidGenerator" )
+  {
+    return QgsVectorLayer::UuidGenerator;
+  }
+
+  if ( editType == "UniqueValues" )
+  {
+    if ( cfg.value( "Editable" ).toBool() )
+    {
+      return QgsVectorLayer::UniqueValuesEditable;
+    }
+    else
+    {
+      return QgsVectorLayer::UniqueValues;
+
+    }
+  }
+
+  if ( editType == "Classification" )
+  {
+    return QgsVectorLayer::Classification;
+  }
+
+  if ( editType == "CheckBox" )
+  {
+    return QgsVectorLayer::CheckBox;
+  }
+
+  if ( editType == "Calendar" )
+  {
+    return QgsVectorLayer::Calendar;
+  }
+
+  if ( editType == "FileName" )
+  {
+    return QgsVectorLayer::FileName;
+  }
+
+  if ( editType == "WebView" )
+  {
+    return QgsVectorLayer::WebView;
+  }
+
+  if ( editType == "Photo" )
+  {
+    return QgsVectorLayer::Photo;
+  }
+
+  if ( editType == "Color" )
+  {
+    return QgsVectorLayer::Color;
+  }
+
+  if ( editType == "Enumeration" )
+  {
+    return QgsVectorLayer::Enumeration;
+  }
+
+  return QgsVectorLayer::EditorWidgetV2;
 }

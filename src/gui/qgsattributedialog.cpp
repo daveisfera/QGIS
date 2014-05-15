@@ -29,6 +29,7 @@ QgsAttributeDialog::QgsAttributeDialog( QgsVectorLayer* vl, QgsFeature* thepFeat
     , mHighlight( 0 )
 {
   QgsAttributeEditorContext context;
+  context.setDistanceArea( myDa );
   init( vl, thepFeature, context, parent );
 
   if ( !showDialogButtons )

@@ -18,7 +18,7 @@
 
 #include "qgseditorwidgetfactory.h"
 
-class QgsUuidWidgetFactory : public QgsEditorWidgetFactory
+class GUI_EXPORT QgsUuidWidgetFactory : public QgsEditorWidgetFactory
 {
   public:
     explicit QgsUuidWidgetFactory( const QString& name );

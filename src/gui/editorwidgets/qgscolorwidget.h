@@ -20,7 +20,7 @@
 
 #include "qgscolorbutton.h"
 
-class QgsColorWidget : public QgsEditorWidgetWrapper
+class GUI_EXPORT  QgsColorWidget : public QgsEditorWidgetWrapper
 {
     Q_OBJECT
   public:

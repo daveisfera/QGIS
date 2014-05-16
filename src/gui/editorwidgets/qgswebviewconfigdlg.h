@@ -20,7 +20,7 @@
 
 #include "qgseditorconfigwidget.h"
 
-class QgsWebViewWidgetConfigDlg : public QgsEditorConfigWidget, private Ui::QgsWebViewWidgetConfigDlgBase
+class GUI_EXPORT QgsWebViewWidgetConfigDlg : public QgsEditorConfigWidget, private Ui::QgsWebViewWidgetConfigDlgBase
 {
     Q_OBJECT
 

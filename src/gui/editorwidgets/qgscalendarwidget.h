@@ -22,7 +22,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 
-class QgsCalendarWidget : public QgsEditorWidgetWrapper
+class GUI_EXPORT QgsCalendarWidget : public QgsEditorWidgetWrapper
 {
     Q_OBJECT
   public:

@@ -18,7 +18,7 @@
 
 #include "qgseditorwidgetfactory.h"
 
-class QgsClassificationWidgetWrapperFactory : public QgsEditorWidgetFactory
+class GUI_EXPORT QgsClassificationWidgetWrapperFactory : public QgsEditorWidgetFactory
 {
   public:
     explicit QgsClassificationWidgetWrapperFactory( const QString& name );

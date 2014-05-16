@@ -20,7 +20,7 @@
 
 #include <QComboBox>
 
-class QgsValueMapWidget : public QgsEditorWidgetWrapper
+class GUI_EXPORT QgsValueMapWidget : public QgsEditorWidgetWrapper
 {
     Q_OBJECT
   public:

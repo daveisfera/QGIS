@@ -21,7 +21,7 @@
 #include <QLineEdit>
 #include <QLabel>
 
-class QgsUuidWidget : public QgsEditorWidgetWrapper
+class GUI_EXPORT QgsUuidWidget : public QgsEditorWidgetWrapper
 {
     Q_OBJECT
   public:

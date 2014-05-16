@@ -20,7 +20,7 @@
 
 #include "qgseditorconfigwidget.h"
 
-class QgsCheckBoxConfigDlg : public QgsEditorConfigWidget, private Ui::QgsCheckBoxConfigDlgBase
+class GUI_EXPORT QgsCheckBoxConfigDlg : public QgsEditorConfigWidget, private Ui::QgsCheckBoxConfigDlgBase
 {
     Q_OBJECT
 

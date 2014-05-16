@@ -20,7 +20,7 @@
 
 #include <QComboBox>
 
-class QgsEnumerationWidget : public QgsEditorWidgetWrapper
+class GUI_EXPORT QgsEnumerationWidget : public QgsEditorWidgetWrapper
 {
     Q_OBJECT
   public:

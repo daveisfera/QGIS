@@ -20,7 +20,7 @@
 
 #include <QComboBox>
 
-class QgsClassificationWidget : public QgsEditorWidgetWrapper
+class GUI_EXPORT QgsClassificationWidget : public QgsEditorWidgetWrapper
 {
     Q_OBJECT
   public:

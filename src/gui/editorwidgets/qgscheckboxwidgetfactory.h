@@ -18,7 +18,7 @@
 
 #include "qgseditorwidgetfactory.h"
 
-class QgsCheckboxWidgetFactory : public QgsEditorWidgetFactory
+class GUI_EXPORT QgsCheckboxWidgetFactory : public QgsEditorWidgetFactory
 {
   public:
     explicit QgsCheckboxWidgetFactory( const QString& name );

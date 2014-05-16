@@ -18,7 +18,7 @@
 
 #include "qgseditorwidgetfactory.h"
 
-class QgsRangeWidgetFactory : public QgsEditorWidgetFactory
+class GUI_EXPORT QgsRangeWidgetFactory : public QgsEditorWidgetFactory
 {
   public:
     QgsRangeWidgetFactory( QString name );

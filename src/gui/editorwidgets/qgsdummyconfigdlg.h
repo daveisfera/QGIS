@@ -19,7 +19,7 @@
 #include "ui_qgsdummyconfigdlgbase.h"
 #include "qgseditorconfigwidget.h"
 
-class QgsDummyConfigDlg : public QgsEditorConfigWidget, private Ui::QgsDummyConfigDlgBase
+class GUI_EXPORT QgsDummyConfigDlg : public QgsEditorConfigWidget, private Ui::QgsDummyConfigDlgBase
 {
     Q_OBJECT
 

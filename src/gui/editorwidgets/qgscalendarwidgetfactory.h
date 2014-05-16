@@ -18,7 +18,7 @@
 
 #include "qgseditorwidgetfactory.h"
 
-class QgsCalendarWidgetFactory : public QgsEditorWidgetFactory
+class GUI_EXPORT QgsCalendarWidgetFactory : public QgsEditorWidgetFactory
 {
   public:
     QgsCalendarWidgetFactory( QString name );

@@ -20,7 +20,7 @@
 
 #include "qgseditorconfigwidget.h"
 
-class QgsValueMapConfigDlg : public QgsEditorConfigWidget, private Ui::QgsValueMapWidget
+class GUI_EXPORT QgsValueMapConfigDlg : public QgsEditorConfigWidget, private Ui::QgsValueMapWidget
 {
     Q_OBJECT
 

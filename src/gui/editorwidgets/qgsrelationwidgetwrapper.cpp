@@ -39,9 +39,10 @@ void QgsRelationWidgetWrapper::setFeature( const QgsFeature& feature )
   widget()->layout()->addWidget( mRelationWidget );
 }
 
-
 void QgsRelationWidgetWrapper::initWidget(QWidget* editor)
 {
   if ( !editor->layout() )
     editor->setLayout( new QGridLayout( editor ) );
+
+  editor->setStyleSheet( "background-color: red;" );
 }

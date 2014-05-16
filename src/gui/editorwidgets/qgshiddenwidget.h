@@ -18,7 +18,7 @@
 
 #include "qgseditorwidgetwrapper.h"
 
-class QgsHiddenWidget : public QgsEditorWidgetWrapper
+class GUI_EXPORT QgsHiddenWidget : public QgsEditorWidgetWrapper
 {
     Q_OBJECT
   public:

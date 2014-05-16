@@ -21,7 +21,7 @@
 #include <QComboBox>
 #include <QLineEdit>
 
-class QgsUniqueValuesWidget : public QgsEditorWidgetWrapper
+class GUI_EXPORT QgsUniqueValuesWidget : public QgsEditorWidgetWrapper
 {
     Q_OBJECT
   public:

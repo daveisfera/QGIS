@@ -22,7 +22,7 @@
 #include <QPlainTextEdit>
 #include <QTextEdit>
 
-class QgsTextEditWidget : public QgsEditorWidgetWrapper
+class GUI_EXPORT QgsTextEditWidget : public QgsEditorWidgetWrapper
 {
     Q_OBJECT
   public:

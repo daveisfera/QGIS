@@ -20,7 +20,7 @@
 
 #include "qgseditorconfigwidget.h"
 
-class QgsPhotoConfigDlg : public QgsEditorConfigWidget, private Ui::QgsPhotoConfigDlgBase
+class GUI_EXPORT QgsPhotoConfigDlg : public QgsEditorConfigWidget, private Ui::QgsPhotoConfigDlgBase
 {
     Q_OBJECT
 

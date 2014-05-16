@@ -22,7 +22,7 @@
 #include <QPushButton>
 #include <QLabel>
 
-class QgsFileNameWidget : public QgsEditorWidgetWrapper
+class GUI_EXPORT QgsFileNameWidget : public QgsEditorWidgetWrapper
 {
     Q_OBJECT
   public:

@@ -21,7 +21,7 @@
 #include <QCheckBox>
 #include <QGroupBox>
 
-class QgsCheckboxWidget : public QgsEditorWidgetWrapper
+class GUI_EXPORT QgsCheckboxWidget : public QgsEditorWidgetWrapper
 {
     Q_OBJECT
   public:

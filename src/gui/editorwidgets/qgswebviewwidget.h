@@ -22,7 +22,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 
-class QgsWebViewWidget : public QgsEditorWidgetWrapper
+class GUI_EXPORT QgsWebViewWidget : public QgsEditorWidgetWrapper
 {
     Q_OBJECT
   public:

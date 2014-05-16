@@ -20,7 +20,7 @@
 
 #include "qgseditorconfigwidget.h"
 
-class QgsCalendarConfigDlg : public QgsEditorConfigWidget, private Ui::QgsCalendarConfigDlgBase
+class GUI_EXPORT QgsCalendarConfigDlg : public QgsEditorConfigWidget, private Ui::QgsCalendarConfigDlgBase
 {
     Q_OBJECT
 

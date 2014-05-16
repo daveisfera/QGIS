@@ -21,7 +21,7 @@
 
 #include <QMap>
 
-class QgsValueRelationWidgetFactory : public QgsEditorWidgetFactory
+class GUI_EXPORT QgsValueRelationWidgetFactory : public QgsEditorWidgetFactory
 {
   public:
     explicit QgsValueRelationWidgetFactory( const QString& name );

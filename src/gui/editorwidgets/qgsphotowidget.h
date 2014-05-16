@@ -22,7 +22,7 @@
 #include <QPushButton>
 #include <QLineEdit>
 
-class QgsPhotoWidget : public QgsEditorWidgetWrapper
+class GUI_EXPORT QgsPhotoWidget : public QgsEditorWidgetWrapper
 {
     Q_OBJECT
   public:

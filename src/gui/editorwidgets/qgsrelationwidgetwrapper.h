@@ -20,7 +20,7 @@
 
 class QgsRelationEditorWidget;
 
-class QgsRelationWidgetWrapper : public QgsWidgetWrapper
+class GUI_EXPORT QgsRelationWidgetWrapper : public QgsWidgetWrapper
 {
     Q_OBJECT
 

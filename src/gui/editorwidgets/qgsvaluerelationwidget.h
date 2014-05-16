@@ -23,7 +23,7 @@
 
 class QgsValueRelationWidgetFactory;
 
-class QgsValueRelationWidget : public QgsEditorWidgetWrapper
+class GUI_EXPORT QgsValueRelationWidget : public QgsEditorWidgetWrapper
 {
     Q_OBJECT
 

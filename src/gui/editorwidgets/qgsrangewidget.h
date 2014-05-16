@@ -24,7 +24,7 @@
 #include "qgsdial.h"
 #include "qgsslider.h"
 
-class QgsRangeWidget : public QgsEditorWidgetWrapper
+class GUI_EXPORT QgsRangeWidget : public QgsEditorWidgetWrapper
 {
     Q_OBJECT
   public:

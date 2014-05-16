@@ -19,7 +19,7 @@
 class QgsAttributeForm;
 class QgsFeature;
 
-class QgsAttributeFormInterface
+class GUI_EXPORT QgsAttributeFormInterface
 {
   public:
     explicit QgsAttributeFormInterface( QgsAttributeForm* form );

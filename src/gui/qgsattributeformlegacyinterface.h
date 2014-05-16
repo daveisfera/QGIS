@@ -20,7 +20,7 @@
 
 #include "qgsattributeforminterface.h"
 
-class QgsAttributeFormLegacyInterface : public QgsAttributeFormInterface
+class GUI_EXPORT QgsAttributeFormLegacyInterface : public QgsAttributeFormInterface
 {
   public:
     explicit QgsAttributeFormLegacyInterface( const QString& function, const QString& pyFormName, QgsAttributeForm* form );

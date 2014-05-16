@@ -21,6 +21,7 @@
 #include "qgseditorwidgetregistry.h"
 #include "qgspythonrunner.h"
 #include "qgsrelationwidgetwrapper.h"
+#include "qgsproject.h"
 
 #include <QDir>
 #include <QFileInfo>
@@ -319,6 +320,14 @@ void QgsAttributeForm::init()
         formLayout->addRow( new QLabel( fieldName ), new QLabel( QString( "<p style=\"color: red; font-style: italic;\">Failed to create widget with type '%1'</p>" ).arg( widgetType ) ) );
       }
     }
+
+    Q_FOREACH( const QgsRelation& rel, QgsProject::instance()->relationManager()->referencedRelations( mLayer ) )
+    {
+      QgsRelationWidgetWrapper* rww = new QgsRelationWidgetWrapper( mLayer, rel, 0, this );
+      rww->setContext( mContext );
+      formLayout->addRow( rww->widget() );
+      mWidgets.append( rww );
+    }
   }
 
   mButtonBox = findChild<QDialogButtonBox*>();
@@ -434,7 +443,6 @@ QWidget* QgsAttributeForm::createWidgetFromDef( const QgsAttributeEditorElement*
     {
       const QgsAttributeEditorRelation* relDef = dynamic_cast<const QgsAttributeEditorRelation*>( widgetDef );
 
-      // TODO: Make relationeditor newstyle
       QgsRelationWidgetWrapper* rww = new QgsRelationWidgetWrapper( mLayer, relDef->relation(), 0, this );
       rww->setContext( context );
       newWidget = rww->widget();

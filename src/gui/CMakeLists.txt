@@ -67,7 +67,6 @@ editorwidgets/qgsclassificationwidgetwrapperfactory.cpp
 editorwidgets/qgscolorwidget.cpp
 editorwidgets/qgscolorwidgetfactory.cpp
 editorwidgets/qgsdummyconfigdlg.cpp
-editorwidgets/qgsenumerationconfigdlg.cpp
 editorwidgets/qgsenumerationwidget.cpp
 editorwidgets/qgsenumerationwidgetfactory.cpp
 editorwidgets/qgsfilenamewidget.cpp
@@ -269,7 +268,6 @@ editorwidgets/qgscheckboxwidget.h
 editorwidgets/qgsclassificationwidget.h
 editorwidgets/qgscolorwidget.h
 editorwidgets/qgsdummyconfigdlg.h
-editorwidgets/qgsenumerationconfigdlg.h
 editorwidgets/qgsenumerationwidget.h
 editorwidgets/qgsfilenamewidget.h
 editorwidgets/qgshiddenwidget.h
@@ -473,7 +471,6 @@ editorwidgets/qgsclassificationwidgetwrapperfactory.h
 editorwidgets/qgscolorwidget.h
 editorwidgets/qgscolorwidgetfactory.h
 editorwidgets/qgsdummyconfigdlg.h
-editorwidgets/qgsenumerationconfigdlg.h
 editorwidgets/qgsenumerationwidget.h
 editorwidgets/qgsenumerationwidgetfactory.h
 editorwidgets/qgsfilenamewidget.h

@@ -19,9 +19,9 @@
 #include "qgsattributeforminterface.h"
 #include "qgsattributeformlegacyinterface.h"
 #include "qgseditorwidgetregistry.h"
+#include "qgsproject.h"
 #include "qgspythonrunner.h"
 #include "qgsrelationwidgetwrapper.h"
-#include "qgsproject.h"
 
 #include <QDir>
 #include <QFileInfo>
@@ -257,6 +257,7 @@ void QgsAttributeForm::init()
       QFileInfo fi( mLayer->editForm() );
       loader.setWorkingDirectory( fi.dir() );
       formWidget = loader.load( &file, this );
+      formWidget->show();
       layout()->addWidget( formWidget );
       file.close();
       createWrappers();

@@ -530,18 +530,38 @@ QWidget* QgsAttributeForm::createWidgetFromDef( const QgsAttributeEditorElement*
 
 void QgsAttributeForm::createWrappers()
 {
-  Q_FOREACH( const QgsField& field, mLayer->pendingFields().toList() )
+  QList<QWidget*> myWidgets = findChildren<QWidget*>();
+  const QList<QgsField> fields = mLayer->pendingFields().toList();
+
+  Q_FOREACH( QWidget* myWidget, myWidgets )
   {
-    int idx = mLayer->pendingFields().fieldNameIndex( field.name() );
-
-    const QString widgetType = mLayer->editorWidgetV2( idx );
-    const QgsEditorWidgetConfig widgetConfig = mLayer->editorWidgetV2Config( idx );
-
-    QList<QWidget*> editors = findChildren<QWidget*>( field.name() );
-    Q_FOREACH( QWidget* editor, editors )
+    // Check the widget's properties for a relation definition
+    QVariant vRel = myWidget->property( "qgisRelation" );
+    if ( vRel.isValid() )
     {
-      QgsEditorWidgetWrapper* eww = QgsEditorWidgetRegistry::instance()->create( widgetType, mLayer, idx, widgetConfig, editor, this, mContext );
-      mWidgets.append( eww );
+      QgsRelationManager* relMgr = QgsProject::instance()->relationManager();
+      QgsRelation relation = relMgr->relation( vRel.toString() );
+      if ( relation.isValid() )
+      {
+        QgsRelationWidgetWrapper* rww = new QgsRelationWidgetWrapper( mLayer, relation, myWidget, this );
+        rww->setContext( mContext );
+        mWidgets.append( rww );
+      }
+    }
+    else
+    {
+      Q_FOREACH( const QgsField& field, fields )
+      {
+        if ( field.name() == myWidget->objectName() )
+        {
+          const QString widgetType = mLayer->editorWidgetV2( field.name() );
+          const QgsEditorWidgetConfig widgetConfig = mLayer->editorWidgetV2Config( field.name() );
+          int idx = mLayer->fieldNameIndex( field.name() );
+
+          QgsEditorWidgetWrapper* eww = QgsEditorWidgetRegistry::instance()->create( widgetType, mLayer, idx, widgetConfig, myWidget, this, mContext );
+          mWidgets.append( eww );
+        }
+      }
     }
   }
 }

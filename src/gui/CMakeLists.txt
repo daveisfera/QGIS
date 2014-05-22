@@ -174,6 +174,7 @@ qgsmaptip.cpp
 qgsmaptool.cpp
 qgsmaptoolemitpoint.cpp
 qgsmaptoolidentify.cpp
+qgsmaptoolidentifyfeature.cpp
 qgsmaptoolpan.cpp
 qgsmaptoolzoom.cpp
 qgsmessagebar.cpp
@@ -358,6 +359,7 @@ qgsmapoverviewcanvas.h
 qgsmaptool.h
 qgsmaptoolemitpoint.h
 qgsmaptoolidentify.h
+qgsmaptoolidentifyfeature.h
 qgsmessagebaritem.h
 qgsmessagebar.h
 qgsmessagelogviewer.h
@@ -440,6 +442,7 @@ qgsmaptip.h
 qgsmaptool.h
 qgsmaptoolemitpoint.h
 qgsmaptoolidentify.h
+qgsmaptoolidentifyfeature.h
 qgsmaptoolpan.h
 qgsmaptoolzoom.h
 qgsmessagebaritem.h

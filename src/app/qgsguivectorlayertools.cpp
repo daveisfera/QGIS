@@ -25,6 +25,7 @@
 #include "qgsmessageviewer.h"
 #include "qgsfeatureaction.h"
 #include "qgsmapcanvas.h"
+#include "qgsmaptoolidentifyfeature.h"
 #include "qgsmessagebaritem.h"
 
 
@@ -125,6 +126,12 @@ bool QgsGuiVectorLayerTools::stopEditing( QgsVectorLayer* layer, bool allowCance
   }
 
   return res;
+}
+
+QgsMapToolIdentifyFeature* QgsGuiVectorLayerTools::identifySingleFeature( QgsVectorLayer* layer )
+{
+  QgsMapToolIdentifyFeature* mapTool = new QgsMapToolIdentifyFeature( layer, QgisApp::instance()->mapCanvas() );
+  return mapTool;
 }
 
 void QgsGuiVectorLayerTools::commitError( QgsVectorLayer* vlayer )

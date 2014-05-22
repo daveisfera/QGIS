@@ -61,6 +61,15 @@ class QgsGuiVectorLayerTools : public QgsVectorLayerTools, public QObject
      */
     bool stopEditing( QgsVectorLayer* layer , bool allowCancel = true );
 
+
+    /**
+     * This method should be called to identify a single feature of a layer
+     *
+     * @param layer       The layer to identify
+     * @return            The map tool
+     */
+    QgsMapToolIdentifyFeature* identifySingleFeature( QgsVectorLayer* layer );
+
   private:
     void commitError( QgsVectorLayer* vlayer );
 };

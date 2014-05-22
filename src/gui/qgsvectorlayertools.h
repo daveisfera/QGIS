@@ -18,6 +18,7 @@
 
 #include "qgsfeature.h"
 #include "qgsgeometry.h"
+#include "qgsmaptoolidentifyfeature.h"
 
 class QgsVectorLayer;
 
@@ -67,6 +68,18 @@ class GUI_EXPORT QgsVectorLayerTools
      * @return            True if successful
      */
     virtual bool stopEditing( QgsVectorLayer* layer, bool allowCancel = true ) = 0;
+
+
+    /**
+     * This method should be called to identify a single feature of a layer
+     *
+     * @param layer       The layer to identify
+     * @return            The map tool
+     */
+    virtual QgsMapToolIdentifyFeature* identifySingleFeature( QgsVectorLayer* layer ) = 0;
+
+
+
 
 };
 

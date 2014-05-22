@@ -16,7 +16,7 @@
 #include "qgsrelationreferencewidget.h"
 
 #include <QDialog>
-#include <QToolButton>
+#include <QHBoxLayout>
 
 #include "qgsattributedialog.h"
 #include "qgsapplication.h"
@@ -34,33 +34,59 @@ QgsRelationReferenceWidget::QgsRelationReferenceWidget( QWidget* parent )
     , mInitialValueAssigned( false )
     , mAttributeDialog( NULL )
     , mEditorContext( QgsAttributeEditorContext() )
+    , mEmbedForm( false )
+    , mReadOnlySelector( false )
+    , mAllowMapIdentification( false )
 {
-  mLayout = new QGridLayout( this );
-  setLayout( mLayout );
+  QVBoxLayout* mTopLayout = new QVBoxLayout( this );
+  mTopLayout->setContentsMargins( 0, 0, 0, 0 );
+  setLayout( mTopLayout );
+
+  QHBoxLayout* editLayout = new QHBoxLayout( this );
+  editLayout->setContentsMargins( 0, 0, 0, 0 );
+
+  // combobox (for non-geometric relation)
   mComboBox = new QComboBox( this );
-  mLayout->addWidget( mComboBox, 0, 0, 1, 1 );
+  editLayout->addWidget( mComboBox );
+
+  // read-only line edit
+  mLineEdit = new QLineEdit( this );
+  mLineEdit->setReadOnly( true );
+  editLayout->addWidget( mLineEdit );
 
   // action button
-  QToolButton* attributeEditorButton = new QToolButton( this );
+  mAttributeEditorButton = new QToolButton( this );
   mShowFormAction = new QAction( QgsApplication::getThemeIcon( "/mActionToggleEditing.svg" ), tr( "Open Form" ), this );
-  attributeEditorButton->addAction( mShowFormAction );
-  attributeEditorButton->setDefaultAction( mShowFormAction );
-  connect( attributeEditorButton, SIGNAL( triggered( QAction* ) ), this, SLOT( buttonTriggered( QAction* ) ) );
-  mLayout->addWidget( attributeEditorButton, 0, 1, 1, 1 );
+  // to be added pan to feature
+  mAttributeEditorButton->addAction( mShowFormAction );
+  mAttributeEditorButton->setDefaultAction( mShowFormAction );
+  connect( mAttributeEditorButton, SIGNAL( triggered( QAction* ) ), this, SLOT( buttonTriggered( QAction* ) ) );
+  editLayout->addWidget( mAttributeEditorButton );
+
+  // map identification button
+  mMapIdentificationButton = new QToolButton( this );
+  mMapIdentificationAction = new QAction( QgsApplication::getThemeIcon( "/mActionMapIdentification.svg" ), tr( "Select on map" ), this );
+  mMapIdentificationButton->addAction( mMapIdentificationAction );
+  mMapIdentificationButton->setDefaultAction( mMapIdentificationAction );
+  connect( mMapIdentificationButton, SIGNAL( triggered( QAction* ) ), this, SLOT( buttonTriggered( QAction* ) ) );
+  editLayout->addWidget( mMapIdentificationButton );
+
+  // spacer
+  editLayout->addItem( new QSpacerItem( 0, 0, QSizePolicy::Expanding ) );
+
+  // add line to top layout
+  mTopLayout->addLayout( editLayout );
 
   // embed form
   mAttributeEditorFrame = new QgsCollapsibleGroupBox( this );
   mAttributeEditorFrame->setCollapsed( true );
   mAttributeEditorLayout = new QVBoxLayout( mAttributeEditorFrame );
   mAttributeEditorFrame->setLayout( mAttributeEditorLayout );
-  mLayout->addWidget( mAttributeEditorFrame, 1, 0, 1, 3 );
+  mTopLayout->addWidget( mAttributeEditorFrame );
 
-  mLayout->addItem( new QSpacerItem( 0, 0, QSizePolicy::Expanding ), 0, 2, 1, 1 );
-}
-
-void QgsRelationReferenceWidget::displayEmbedForm( bool display )
-{
-  mAttributeEditorFrame->setVisible( display );
+  // default mode is combobox, non geometric relation and no embed form
+  mLineEdit->hide();
+  mMapIdentificationButton->hide();
 }
 
 void QgsRelationReferenceWidget::setRelation( QgsRelation relation, bool allowNullValue )
@@ -100,13 +126,15 @@ void QgsRelationReferenceWidget::setRelation( QgsRelation relation, bool allowNu
     font.setItalic( true );
     lbl->setStyleSheet( "QLabel { color: red; } " );
     lbl->setFont( font );
-    mLayout->addWidget( lbl, 1, 0, 1, 3 );
+    mTopLayout->addWidget( lbl, 1, 0 );
   }
 }
 
 void QgsRelationReferenceWidget::setRelationEditable( bool editable )
 {
+  mLineEdit->setEnabled( editable );
   mComboBox->setEnabled( editable );
+  mMapIdentificationButton->setVisible( editable );
 }
 
 void QgsRelationReferenceWidget::setRelatedFeature( const QVariant& value )
@@ -142,6 +170,22 @@ QVariant QgsRelationReferenceWidget::relatedFeature()
 void QgsRelationReferenceWidget::setEditorContext( QgsAttributeEditorContext context )
 {
   mEditorContext = context;
+}
+
+void QgsRelationReferenceWidget::setEmbedForm( bool display )
+{
+  mAttributeEditorFrame->setVisible( display );
+}
+
+void QgsRelationReferenceWidget::setReadOnlySelector( bool readOnly )
+{
+  mComboBox->setHidden( readOnly );
+  mLineEdit->setVisible( readOnly );
+}
+
+void QgsRelationReferenceWidget::setAllowMapIdentification( bool allowMapIdentification )
+{
+  mMapIdentificationButton->setVisible( allowMapIdentification );
 }
 
 void QgsRelationReferenceWidget::buttonTriggered( QAction* action )

@@ -21,6 +21,8 @@
 #include "qgsfeature.h"
 
 #include <QComboBox>
+#include <QToolButton>
+#include <QLineEdit>
 #include <QVBoxLayout>
 
 class QgsAttributeDialog;
@@ -29,10 +31,12 @@ class QgsVectorLayerTools;
 class GUI_EXPORT QgsRelationReferenceWidget : public QWidget
 {
     Q_OBJECT
+    Q_PROPERTY( bool embedForm READ embedForm WRITE setEmbedForm )
+    Q_PROPERTY( bool readOnlySelector READ readOnlySelector WRITE setReadOnlySelector )
+    Q_PROPERTY( bool allowMapIdentification READ allowMapIdentification WRITE setAllowMapIdentification )
+
   public:
     explicit QgsRelationReferenceWidget( QWidget* parent );
-
-    void displayEmbedForm( bool display );
 
     void setRelation( QgsRelation relation , bool allowNullValue );
 
@@ -43,6 +47,15 @@ class GUI_EXPORT QgsRelationReferenceWidget : public QWidget
     QVariant relatedFeature();
 
     void setEditorContext( QgsAttributeEditorContext context );
+
+    bool embedForm() {return mEmbedForm;}
+    void setEmbedForm( bool display );
+
+    bool readOnlySelector() {return mReadOnlySelector;}
+    void setReadOnlySelector( bool readOnly );
+
+    bool allowMapIdentification() {return mAllowMapIdentification;}
+    void setAllowMapIdentification( bool allowMapIdentification );
 
   signals:
     void relatedFeatureChanged( QVariant );
@@ -56,13 +69,22 @@ class GUI_EXPORT QgsRelationReferenceWidget : public QWidget
     QgsVectorLayer* mReferencedLayer;
     bool mInitialValueAssigned;
     QgsAttributeDialog* mAttributeDialog;
-    QGridLayout* mLayout;
+    QgsAttributeEditorContext mEditorContext;
+
+    QVBoxLayout* mTopLayout;
     QHash<QgsFeatureId, QVariant> mFidFkMap; // Mapping from feature id => foreign key
+    QToolButton* mMapIdentificationButton;
+    QToolButton* mAttributeEditorButton;
     QAction* mShowFormAction;
+    QAction* mMapIdentificationAction;
     QComboBox* mComboBox;
     QgsCollapsibleGroupBox* mAttributeEditorFrame;
     QVBoxLayout* mAttributeEditorLayout;
-    QgsAttributeEditorContext mEditorContext;
+    QLineEdit* mLineEdit;
+
+    bool mEmbedForm;
+    bool mReadOnlySelector;
+    bool mAllowMapIdentification;
 };
 
 

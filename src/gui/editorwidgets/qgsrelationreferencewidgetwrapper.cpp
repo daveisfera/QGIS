@@ -50,8 +50,6 @@ void QgsRelationReferenceWidgetWrapper::initWidget( QWidget* editor )
   QgsRelation relation = QgsProject::instance()->relationManager()->relation( config( "Relation" ).toString() );
   mWidget->setRelation( relation, config( "AllowNULL" ).toBool() );
 
-
-
   connect( mWidget, SIGNAL( relatedFeatureChanged( QgsFeatureId ) ), this, SLOT( relatedFeatureChanged( QgsFeatureId ) ) );
 }
 

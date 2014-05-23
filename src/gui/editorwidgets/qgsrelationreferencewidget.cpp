@@ -24,16 +24,18 @@
 #include "qgseditorwidgetfactory.h"
 #include "qgsexpression.h"
 #include "qgsfield.h"
+#include "qgsmapcanvas.h"
 #include "qgsrelreferenceconfigdlg.h"
 #include "qgsvectorlayer.h"
 
-
 QgsRelationReferenceWidget::QgsRelationReferenceWidget( QWidget* parent )
     : QWidget( parent )
-    , mReferencedLayer( NULL )
-    , mInitialValueAssigned( false )
-    , mAttributeDialog( NULL )
     , mEditorContext( QgsAttributeEditorContext() )
+    , mInitialValueAssigned( false )
+    , mMapTool( NULL )
+    , mParentAttributeDialog( NULL )
+    , mReferencedAttributeDialog( NULL )
+    , mReferencedLayer( NULL )
     , mEmbedForm( false )
     , mReadOnlySelector( false )
     , mAllowMapIdentification( false )
@@ -87,6 +89,19 @@ QgsRelationReferenceWidget::QgsRelationReferenceWidget( QWidget* parent )
   // default mode is combobox, non geometric relation and no embed form
   mLineEdit->hide();
   mMapIdentificationButton->hide();
+
+  // get if the widget is shown in attribute dialog
+  QObject* obj = parent;
+  while ( obj )
+  {
+    QgsAttributeDialog* dlg = dynamic_cast<QgsAttributeDialog*>( obj );
+    if ( dlg )
+    {
+      mParentAttributeDialog = dlg;
+      break;
+    }
+    obj = obj->parent();
+  }
 }
 
 void QgsRelationReferenceWidget::setRelation( QgsRelation relation, bool allowNullValue )
@@ -140,8 +155,14 @@ void QgsRelationReferenceWidget::setRelationEditable( bool editable )
 void QgsRelationReferenceWidget::setRelatedFeature( const QVariant& value )
 {
   QgsFeatureId fid = mFidFkMap.key( value );
+  setRelatedFeature( fid );
+}
+
+void QgsRelationReferenceWidget::setRelatedFeature( const QgsFeatureId fid )
+{
   int oldIdx = mComboBox->currentIndex();
-  mComboBox->setCurrentIndex( mComboBox->findData( fid ) );
+  int newIdx = mComboBox->findData( fid );
+  mComboBox->setCurrentIndex( newIdx );
 
   if ( !mInitialValueAssigned )
   {
@@ -151,6 +172,26 @@ void QgsRelationReferenceWidget::setRelatedFeature( const QVariant& value )
     if ( oldIdx == mComboBox->currentIndex() )
       referenceChanged( mComboBox->currentIndex() );
     mInitialValueAssigned = true;
+  }
+
+  // update line edit
+  mLineEdit->setText( mFidFkMap.value( fid ).toString() );
+
+  // deactivate map tool if activate
+  if ( mMapTool )
+  {
+    QgsMapCanvas* canvas = mMapTool->canvas();
+    canvas->unsetMapTool( mMapTool );
+  }
+}
+
+void QgsRelationReferenceWidget::mapToolChanged( QgsMapTool* newTool, QgsMapTool* oldTool )
+{
+  Q_UNUSED( newTool );
+
+  if ( oldTool == mMapTool && mParentAttributeDialog )
+  {
+    mParentAttributeDialog->show();
   }
 }
 
@@ -194,6 +235,11 @@ void QgsRelationReferenceWidget::buttonTriggered( QAction* action )
   {
     openForm();
   }
+
+  if ( action == mMapIdentificationAction )
+  {
+    mapIdentification();
+  }
 }
 
 void QgsRelationReferenceWidget::openForm()
@@ -211,9 +257,27 @@ void QgsRelationReferenceWidget::openForm()
     return;
 
   // TODO: Get a proper QgsDistanceArea thingie
-  mAttributeDialog = new QgsAttributeDialog( mReferencedLayer, new QgsFeature( feat ), true, this, true, mEditorContext );
-  mAttributeDialog->exec();
-  delete mAttributeDialog;
+  mReferencedAttributeDialog = new QgsAttributeDialog( mReferencedLayer, new QgsFeature( feat ), true, this, true, mEditorContext );
+  mReferencedAttributeDialog->exec();
+  delete mReferencedAttributeDialog;
+}
+
+void QgsRelationReferenceWidget::mapIdentification()
+{
+  QgsVectorLayerTools* tools = mEditorContext.vectorLayerTools();
+  if ( !tools )
+    return;
+
+  QgsMapToolIdentifyFeature* mMapTool = tools->identifySingleFeature( mReferencedLayer );
+  QgsMapCanvas* canvas = mMapTool->canvas();
+  canvas->setMapTool( mMapTool );
+  connect( mMapTool, SIGNAL( featureIdentified( QgsFeatureId ) ), this, SLOT( setRelatedFeature( QgsFeatureId ) ) );
+  connect( canvas, SIGNAL( mapToolSet( QgsMapTool*, QgsMapTool* ) ), this, SLOT( mapToolChanged( QgsMapTool*, QgsMapTool* ) ) );
+
+  if ( mParentAttributeDialog )
+  {
+    mParentAttributeDialog->dialog()->hide();
+  }
 }
 
 void QgsRelationReferenceWidget::referenceChanged( int index )
@@ -232,16 +296,16 @@ void QgsRelationReferenceWidget::referenceChanged( int index )
     if ( feat.isValid() )
     {
       // Backup old dialog and delete only after creating the new dialog, so we can "hot-swap" the contained QgsFeature
-      QgsAttributeDialog* oldDialog = mAttributeDialog;
+      QgsAttributeDialog* oldDialog = mReferencedAttributeDialog;
 
-      if ( mAttributeDialog && mAttributeDialog->dialog() )
+      if ( mReferencedAttributeDialog && mReferencedAttributeDialog->dialog() )
       {
-        mAttributeEditorLayout->removeWidget( mAttributeDialog->dialog() );
+        mAttributeEditorLayout->removeWidget( mReferencedAttributeDialog->dialog() );
       }
 
       // TODO: Get a proper QgsDistanceArea thingie
-      mAttributeDialog = new QgsAttributeDialog( mReferencedLayer, new QgsFeature( feat ), true, mAttributeEditorFrame, false, mEditorContext );
-      QWidget* attrDialog = mAttributeDialog->dialog();
+      mReferencedAttributeDialog = new QgsAttributeDialog( mReferencedLayer, new QgsFeature( feat ), true, mAttributeEditorFrame, false, mEditorContext );
+      QWidget* attrDialog = mReferencedAttributeDialog->dialog();
       attrDialog->setWindowFlags( Qt::Widget ); // Embed instead of opening as window
       mAttributeEditorLayout->addWidget( attrDialog );
       attrDialog->show();

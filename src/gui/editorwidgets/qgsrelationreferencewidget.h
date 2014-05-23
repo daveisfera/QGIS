@@ -19,6 +19,7 @@
 #include "qgsattributeeditorcontext.h"
 #include "qgscollapsiblegroupbox.h"
 #include "qgsfeature.h"
+#include "qgsmaptoolidentifyfeature.h"
 
 #include <QComboBox>
 #include <QToolButton>
@@ -63,14 +64,28 @@ class GUI_EXPORT QgsRelationReferenceWidget : public QWidget
   private slots:
     void buttonTriggered( QAction* action );
     void referenceChanged( int index );
-    void openForm();
+    void setRelatedFeature( const QgsFeatureId fid );
+    void mapToolChanged( QgsMapTool* newTool , QgsMapTool* oldTool );
+
 
   private:
-    QgsVectorLayer* mReferencedLayer;
-    bool mInitialValueAssigned;
-    QgsAttributeDialog* mAttributeDialog;
-    QgsAttributeEditorContext mEditorContext;
+    void openForm();
+    void mapIdentification();
 
+    // initialized
+    QgsAttributeEditorContext mEditorContext;
+    bool mInitialValueAssigned;
+    QgsMapToolIdentifyFeature* mMapTool;
+    QgsAttributeDialog* mParentAttributeDialog;
+    QgsAttributeDialog* mReferencedAttributeDialog;
+    QgsVectorLayer* mReferencedLayer;
+
+    // Q_PROPERTY
+    bool mEmbedForm;
+    bool mReadOnlySelector;
+    bool mAllowMapIdentification;
+
+    // UI
     QVBoxLayout* mTopLayout;
     QHash<QgsFeatureId, QVariant> mFidFkMap; // Mapping from feature id => foreign key
     QToolButton* mMapIdentificationButton;
@@ -81,10 +96,6 @@ class GUI_EXPORT QgsRelationReferenceWidget : public QWidget
     QgsCollapsibleGroupBox* mAttributeEditorFrame;
     QVBoxLayout* mAttributeEditorLayout;
     QLineEdit* mLineEdit;
-
-    bool mEmbedForm;
-    bool mReadOnlySelector;
-    bool mAllowMapIdentification;
 };
 
 

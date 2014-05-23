@@ -76,7 +76,7 @@ class GUI_EXPORT QgsRelationReferenceWidget : public QWidget
     QgsAttributeEditorContext mEditorContext;
     bool mInitialValueAssigned;
     QgsMapToolIdentifyFeature* mMapTool;
-    QgsAttributeDialog* mParentAttributeDialog;
+    QDialog* mParentAttributeDialog;
     QgsAttributeDialog* mReferencedAttributeDialog;
     QgsVectorLayer* mReferencedLayer;
 

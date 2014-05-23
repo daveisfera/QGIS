@@ -91,16 +91,15 @@ QgsRelationReferenceWidget::QgsRelationReferenceWidget( QWidget* parent )
   mMapIdentificationButton->hide();
 
   // get if the widget is shown in attribute dialog
-  QObject* obj = parent;
-  while ( obj )
+  while ( parent )
   {
-    QgsAttributeDialog* dlg = dynamic_cast<QgsAttributeDialog*>( obj );
+    QDialog* dlg = dynamic_cast<QDialog*>( parent );
     if ( dlg )
     {
       mParentAttributeDialog = dlg;
       break;
     }
-    obj = obj->parent();
+    parent = parent->parentWidget();
   }
 }
 
@@ -276,7 +275,7 @@ void QgsRelationReferenceWidget::mapIdentification()
 
   if ( mParentAttributeDialog )
   {
-    mParentAttributeDialog->dialog()->hide();
+    mParentAttributeDialog->hide();
   }
 }
 

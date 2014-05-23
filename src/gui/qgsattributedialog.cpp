@@ -145,6 +145,7 @@ void QgsAttributeDialog::init( QgsVectorLayer* layer, QgsFeature* feature, QgsAt
 {
   mDialog = new QDialog( parent );
   mDialog->setWindowTitle( tr( "Feature Attributes" ) );
+  mDialog->setObjectName( "QgsAttributeDialog" );
   mDialog->setLayout( new QGridLayout() );
   mDialog->layout()->setMargin( 0 );
   mAttributeForm = new QgsAttributeForm( layer, *feature, context, mDialog );

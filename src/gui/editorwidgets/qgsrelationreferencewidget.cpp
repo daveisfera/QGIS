@@ -40,7 +40,7 @@ QgsRelationReferenceWidget::QgsRelationReferenceWidget( QWidget* parent )
     , mReadOnlySelector( false )
     , mAllowMapIdentification( false )
 {
-  QVBoxLayout* mTopLayout = new QVBoxLayout( this );
+  mTopLayout = new QVBoxLayout( this );
   mTopLayout->setContentsMargins( 0, 0, 0, 0 );
   setLayout( mTopLayout );
 
@@ -156,7 +156,8 @@ void QgsRelationReferenceWidget::setRelationEditable( bool editable )
 void QgsRelationReferenceWidget::setRelatedFeature( const QVariant& value )
 {
   QgsFeatureId fid = mFidFkMap.key( value );
-  setRelatedFeature( fid );
+  if ( mReferencedLayer )
+    setRelatedFeature( fid );
 }
 
 void QgsRelationReferenceWidget::setRelatedFeature( const QgsFeatureId& fid )

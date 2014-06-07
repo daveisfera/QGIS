@@ -62,16 +62,14 @@ class GUI_EXPORT QgsRelationReferenceWidget : public QWidget
     void relatedFeatureChanged( QVariant );
 
   private slots:
-    void buttonTriggered( QAction* action );
+    void openForm();
+    void mapIdentification();
     void referenceChanged( int index );
     void setRelatedFeature( const QgsFeatureId fid );
     void mapToolChanged( QgsMapTool* newTool , QgsMapTool* oldTool );
 
 
   private:
-    void openForm();
-    void mapIdentification();
-
     // initialized
     QgsAttributeEditorContext mEditorContext;
     bool mInitialValueAssigned;

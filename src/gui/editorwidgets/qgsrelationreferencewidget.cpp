@@ -62,7 +62,7 @@ QgsRelationReferenceWidget::QgsRelationReferenceWidget( QWidget* parent )
   // to be added pan to feature
   mAttributeEditorButton->addAction( mShowFormAction );
   mAttributeEditorButton->setDefaultAction( mShowFormAction );
-  connect( mAttributeEditorButton, SIGNAL( triggered( QAction* ) ), this, SLOT( buttonTriggered( QAction* ) ) );
+  connect( mAttributeEditorButton, SIGNAL( triggered( QAction* ) ), this, SLOT( openForm() ) );
   editLayout->addWidget( mAttributeEditorButton );
 
   // map identification button
@@ -70,7 +70,7 @@ QgsRelationReferenceWidget::QgsRelationReferenceWidget( QWidget* parent )
   mMapIdentificationAction = new QAction( QgsApplication::getThemeIcon( "/mActionMapIdentification.svg" ), tr( "Select on map" ), this );
   mMapIdentificationButton->addAction( mMapIdentificationAction );
   mMapIdentificationButton->setDefaultAction( mMapIdentificationAction );
-  connect( mMapIdentificationButton, SIGNAL( triggered( QAction* ) ), this, SLOT( buttonTriggered( QAction* ) ) );
+  connect( mMapIdentificationButton, SIGNAL( triggered( QAction* ) ), this, SLOT( mapIdentification() ) );
   editLayout->addWidget( mMapIdentificationButton );
 
   // spacer
@@ -226,19 +226,6 @@ void QgsRelationReferenceWidget::setReadOnlySelector( bool readOnly )
 void QgsRelationReferenceWidget::setAllowMapIdentification( bool allowMapIdentification )
 {
   mMapIdentificationButton->setVisible( allowMapIdentification );
-}
-
-void QgsRelationReferenceWidget::buttonTriggered( QAction* action )
-{
-  if ( action == mShowFormAction )
-  {
-    openForm();
-  }
-
-  if ( action == mMapIdentificationAction )
-  {
-    mapIdentification();
-  }
 }
 
 void QgsRelationReferenceWidget::openForm()

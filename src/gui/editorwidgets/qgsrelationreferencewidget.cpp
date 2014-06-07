@@ -44,7 +44,7 @@ QgsRelationReferenceWidget::QgsRelationReferenceWidget( QWidget* parent )
   mTopLayout->setContentsMargins( 0, 0, 0, 0 );
   setLayout( mTopLayout );
 
-  QHBoxLayout* editLayout = new QHBoxLayout( this );
+  QHBoxLayout* editLayout = new QHBoxLayout();
   editLayout->setContentsMargins( 0, 0, 0, 0 );
 
   // combobox (for non-geometric relation)

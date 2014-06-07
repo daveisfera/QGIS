@@ -35,9 +35,6 @@ class GUI_EXPORT QgsRelationReferenceWidgetWrapper : public QgsEditorWidgetWrapp
     virtual void setValue( const QVariant& value );
     virtual void setEnabled( bool enabled );
 
-  private slots:
-    void relatedFeatureChanged( QgsFeatureId featureId );
-
   private:
     QgsRelationReferenceWidget* mWidget;
     QgsAttributeEditorContext mEditorContext;

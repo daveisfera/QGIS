@@ -50,7 +50,7 @@ void QgsRelationReferenceWidgetWrapper::initWidget( QWidget* editor )
   QgsRelation relation = QgsProject::instance()->relationManager()->relation( config( "Relation" ).toString() );
   mWidget->setRelation( relation, config( "AllowNULL" ).toBool() );
 
-  connect( mWidget, SIGNAL( relatedFeatureChanged( QgsFeatureId ) ), this, SLOT( relatedFeatureChanged( QgsFeatureId ) ) );
+  connect( mWidget, SIGNAL(relatedFeatureChanged(QVariant)), this, SIGNAL(valueChanged(QVariant)) );
 }
 
 QVariant QgsRelationReferenceWidgetWrapper::value()
@@ -75,9 +75,4 @@ void QgsRelationReferenceWidgetWrapper::setEnabled( bool enabled )
     return;
 
   mWidget->setRelationEditable( enabled );
-}
-
-void QgsRelationReferenceWidgetWrapper::relatedFeatureChanged( QgsFeatureId featureId )
-{
-  emit valueChanged( featureId );
 }

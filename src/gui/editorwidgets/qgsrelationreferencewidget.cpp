@@ -248,7 +248,7 @@ void QgsRelationReferenceWidget::mapIdentification()
   if ( !tools )
     return;
 
-  QgsMapToolIdentifyFeature* mMapTool = tools->identifySingleFeature( mReferencedLayer );
+  mMapTool = tools->identifySingleFeature( mReferencedLayer );
   mMapTool->canvas()->setMapTool( mMapTool );
   connect( mMapTool, SIGNAL( featureIdentified( QgsFeatureId ) ), this, SLOT( featureIdentified( QgsFeatureId ) ) );
   connect( mMapTool, SIGNAL( deactivated() ), this, SLOT( mapToolDeactivated() ) );

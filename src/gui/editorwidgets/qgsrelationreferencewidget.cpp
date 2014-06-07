@@ -127,7 +127,9 @@ void QgsRelationReferenceWidget::setRelation( QgsRelation relation, bool allowNu
 
     if ( allowNullValue )
     {
-      mComboBox->addItem( "[NULL]" );
+      const QString nullValue = QSettings().value( "qgis/nullValue", "NULL" ).toString();
+      mComboBox->addItem( nullValue );
+      mComboBox->setItemData( mComboBox->count() - 1, Qt::gray, Qt::ForegroundRole );
     }
 
     // Only connect after iterating, to have only one iterator on the referenced table at once

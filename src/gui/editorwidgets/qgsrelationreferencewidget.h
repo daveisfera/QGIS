@@ -65,8 +65,9 @@ class GUI_EXPORT QgsRelationReferenceWidget : public QWidget
     void openForm();
     void mapIdentification();
     void referenceChanged( int index );
-    void setRelatedFeature( const QgsFeatureId fid );
-    void mapToolChanged( QgsMapTool* newTool , QgsMapTool* oldTool );
+    void setRelatedFeature( const QgsFeatureId& fid );
+    void featureIdentified( const QgsFeatureId& fid );
+    void mapToolDeactivated();
 
 
   private:

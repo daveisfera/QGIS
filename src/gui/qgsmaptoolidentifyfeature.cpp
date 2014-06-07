@@ -40,3 +40,10 @@ void QgsMapToolIdentifyFeature::canvasReleaseEvent( QMouseEvent* e )
   emit featureIdentified( results[0].mFeature.id() );
 
 }
+
+
+void QgsMapToolIdentifyFeature::deactivate()
+{
+  QgsMapToolIdentify::deactivate();
+  emit deactivated();
+}

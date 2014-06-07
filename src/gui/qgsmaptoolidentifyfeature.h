@@ -27,9 +27,12 @@ class GUI_EXPORT QgsMapToolIdentifyFeature : public QgsMapToolIdentify
 
     void canvasReleaseEvent( QMouseEvent* e );
 
+    void deactivate();
+
   signals:
-    void featureIdentified( QgsFeature );
+    void featureIdentified( const QgsFeature& );
     void featureIdentified( QgsFeatureId );
+    void deactivated();
 
   private:
     QgsVectorLayer* mLayer;

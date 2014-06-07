@@ -159,7 +159,7 @@ void QgsRelationReferenceWidget::setRelatedFeature( const QVariant& value )
   setRelatedFeature( fid );
 }
 
-void QgsRelationReferenceWidget::setRelatedFeature( const QgsFeatureId fid )
+void QgsRelationReferenceWidget::setRelatedFeature( const QgsFeatureId& fid )
 {
   int oldIdx = mComboBox->currentIndex();
   int newIdx = mComboBox->findData( fid );
@@ -177,20 +177,11 @@ void QgsRelationReferenceWidget::setRelatedFeature( const QgsFeatureId fid )
 
   // update line edit
   mLineEdit->setText( mFidFkMap.value( fid ).toString() );
-
-  // deactivate map tool if activate
-  if ( mMapTool )
-  {
-    QgsMapCanvas* canvas = mMapTool->canvas();
-    canvas->unsetMapTool( mMapTool );
-  }
 }
 
-void QgsRelationReferenceWidget::mapToolChanged( QgsMapTool* newTool, QgsMapTool* oldTool )
+void QgsRelationReferenceWidget::mapToolDeactivated()
 {
-  Q_UNUSED( newTool );
-
-  if ( oldTool == mMapTool && mParentAttributeDialog )
+  if ( mParentAttributeDialog )
   {
     mParentAttributeDialog->show();
   }
@@ -257,10 +248,9 @@ void QgsRelationReferenceWidget::mapIdentification()
     return;
 
   QgsMapToolIdentifyFeature* mMapTool = tools->identifySingleFeature( mReferencedLayer );
-  QgsMapCanvas* canvas = mMapTool->canvas();
-  canvas->setMapTool( mMapTool );
-  connect( mMapTool, SIGNAL( featureIdentified( QgsFeatureId ) ), this, SLOT( setRelatedFeature( QgsFeatureId ) ) );
-  connect( canvas, SIGNAL( mapToolSet( QgsMapTool*, QgsMapTool* ) ), this, SLOT( mapToolChanged( QgsMapTool*, QgsMapTool* ) ) );
+  mMapTool->canvas()->setMapTool( mMapTool );
+  connect( mMapTool, SIGNAL( featureIdentified( QgsFeatureId ) ), this, SLOT( featureIdentified( QgsFeatureId ) ) );
+  connect( mMapTool, SIGNAL( deactivated() ), this, SLOT( mapToolDeactivated() ) );
 
   if ( mParentAttributeDialog )
   {
@@ -300,5 +290,17 @@ void QgsRelationReferenceWidget::referenceChanged( int index )
 
       delete oldDialog;
     }
+  }
+}
+
+void QgsRelationReferenceWidget::featureIdentified( const QgsFeatureId& fid )
+{
+  setRelatedFeature( fid );
+
+  // deactivate map tool if activate
+  if ( mMapTool )
+  {
+    QgsMapCanvas* canvas = mMapTool->canvas();
+    canvas->unsetMapTool( mMapTool );
   }
 }

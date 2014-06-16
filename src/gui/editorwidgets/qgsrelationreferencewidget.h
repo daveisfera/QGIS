@@ -24,7 +24,7 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
-class QgsAttributeDialog;
+class QgsAttributeForm;
 class QgsVectorLayerTools;
 
 class GUI_EXPORT QgsRelationReferenceWidget : public QgsEditorWidgetWrapper
@@ -55,7 +55,7 @@ class GUI_EXPORT QgsRelationReferenceWidget : public QgsEditorWidgetWrapper
     QPushButton* mAttributeEditorButton;
     QgsVectorLayer* mReferencedLayer;
     QVariant mCurrentValue;
-    QgsAttributeDialog* mAttributeDialog;
+    QgsAttributeForm* mAttributeForm;
     QHash<QgsFeatureId, QVariant> mFidFkMap; // Mapping from feature id => foreign key
     QgsAttributeEditorContext mEditorContext;
 };

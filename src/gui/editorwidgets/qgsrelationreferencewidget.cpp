@@ -18,6 +18,7 @@
 #include <QPushButton>
 #include <QDialog>
 
+#include "qgsattributeform.h"
 #include "qgsattributedialog.h"
 #include "qgscollapsiblegroupbox.h"
 #include "qgseditorwidgetfactory.h"
@@ -36,7 +37,7 @@ QgsRelationReferenceWidget::QgsRelationReferenceWidget( QgsVectorLayer* vl, int 
     , mAttributeEditorLayout( NULL )
     , mAttributeEditorButton( NULL )
     , mReferencedLayer( NULL )
-    , mAttributeDialog( NULL )
+    , mAttributeForm( NULL )
     , mEditorContext( context )
 {
 }
@@ -162,25 +163,7 @@ void QgsRelationReferenceWidget::referenceChanged( int index )
 
     mReferencedLayer->getFeatures( QgsFeatureRequest().setFilterFid( fid ) ).nextFeature( feat );
 
-    if ( feat.isValid() )
-    {
-      // Backup old dialog and delete only after creating the new dialog, so we can "hot-swap" the contained QgsFeature
-      QgsAttributeDialog* oldDialog = mAttributeDialog;
-
-      if ( mAttributeDialog && mAttributeDialog->dialog() )
-      {
-        mAttributeEditorLayout->removeWidget( mAttributeDialog->dialog() );
-      }
-
-      // TODO: Get a proper QgsDistanceArea thingie
-      mAttributeDialog = new QgsAttributeDialog( mReferencedLayer, new QgsFeature( feat ), true, mAttributeEditorFrame, false, mEditorContext );
-      QWidget* attrDialog = mAttributeDialog->dialog();
-      attrDialog->setWindowFlags( Qt::Widget ); // Embed instead of opening as window
-      mAttributeEditorLayout->addWidget( attrDialog );
-      attrDialog->show();
-
-      delete oldDialog;
-    }
+    mAttributeForm->setFeature( feat );
   }
 }
 
@@ -196,7 +179,7 @@ void QgsRelationReferenceWidget::openForm()
     return;
 
   // TODO: Get a proper QgsDistanceArea thingie
-  mAttributeDialog = new QgsAttributeDialog( mReferencedLayer, new QgsFeature( feat ), true, widget(), true, mEditorContext );
-  mAttributeDialog->exec();
-  delete mAttributeDialog;
+  QgsAttributeDialog* dlg = new QgsAttributeDialog( mReferencedLayer, new QgsFeature( feat ), true, widget(), true, mEditorContext );
+  dlg->exec();
+  delete dlg;
 }
